@@ -72,6 +72,29 @@ describe('useAppBoot', () => {
     expect(stop).toHaveBeenCalledTimes(1);
   });
 
+  it('stops a session that finished starting after the hook went away', async () => {
+    // Cleanup runs while `startWriterSync` is still in flight, so it has
+    // nothing to stop. Under StrictMode that is every mount: the first session
+    // would be orphaned — a second ingestion subscription alongside the live
+    // one, sending every local frame twice — and in production any
+    // unmount-during-boot leaks the session outright.
+    const stop = vi.fn();
+    let finishBoot = (): void => undefined;
+    vi.mocked(startCloudSession).mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishBoot = () => resolve(stop);
+      }),
+    );
+
+    const { unmount } = renderHook(() => useAppBoot());
+    unmount();
+    await act(async () => {
+      finishBoot();
+    });
+
+    expect(stop).toHaveBeenCalledTimes(1);
+  });
+
   it('resetLocalData reseeds and returns to a ready state', async () => {
     const { result } = renderHook(() => useAppBoot());
     await waitFor(() => {

@@ -15,7 +15,7 @@ export interface CloudDeviceActionProps {
  *
  * This device signs out, which releases its slot outright. Revoking your own row
  * would be pointless: this device holds the session, so the registrar would simply
- * rejoin it on the next sync. Any other device is removed.
+ * rejoin it on the next sync. Any other device has its slot freed.
  */
 export const CloudDeviceAction = ({
   isThisDevice,

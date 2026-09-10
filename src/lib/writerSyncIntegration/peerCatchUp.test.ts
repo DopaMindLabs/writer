@@ -14,7 +14,7 @@ import { toBase64Url } from 'writer-sync/crypto';
 import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
-import { NoteKind, NoteState } from '@/db/schema';
+import { NoteKind, NoteState, type Note } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { forgetDeviceKeyRing, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
@@ -1075,6 +1075,90 @@ describe('createPeerCatchUp', () => {
     expect(warn.mock.calls[0]?.[1]).toMatchObject({ operationId: 'op-untrusted' });
     expect(await db.syncOperations.get('op-untrusted')).toBeUndefined();
     catchUp.stop();
+  });
+
+  it('refuses peer ingress to an identity that exists only in the account registry', async () => {
+    // Regression lock for the trust-boundary split (#224): the account
+    // registry authorises frames at shared materialisation, after a durable
+    // account provider authenticated the record. It is not a pairing — peer
+    // ingress keeps the QR-established registry as its only verifier, so an
+    // unpaired same-account device must still be refused at the live session.
+    const { createEncryptionMiddleware } = await import('@/lib/cloud/crypto/middleware');
+    const { createAccountDeviceIdentityStore } = await import(
+      './accountDeviceIdentityStore'
+    );
+    const { ACCOUNT_IDENTITY_SCOPE, accountDeviceIdentityId } = await import(
+      './accountDeviceIdentity.types'
+    );
+    const { deviceIdFor, generateDeviceIdentity, publicJwkOf } = await import(
+      'writer-sync/crypto'
+    );
+    const { makePutFrame, signAuthoredFrames } = await import(
+      './materialization/writerOperationFactory'
+    );
+    const cloudDb = new LoremDB(`peer-catch-up-cloud-${crypto.randomUUID()}`, {
+      cloud: true,
+    });
+    const { deviceKeyProvider } = await import('@/lib/cloud/crypto/keyStore');
+    cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
+    await cloudDb.open();
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
+    await saveDeviceKeyRing({ ring, accountId: null });
+
+    // A cloud-authorised, never-paired device with a fully valid record.
+    const keys = await generateDeviceIdentity();
+    const deviceId = await deviceIdFor(keys.publicKey);
+    await createAccountDeviceIdentityStore(cloudDb).put({
+      id: accountDeviceIdentityId(deviceId),
+      accessScopeId: ACCOUNT_IDENTITY_SCOPE,
+      deviceId,
+      publicIdentityJwk: await publicJwkOf(keys.publicKey),
+      authorisedAt: 1723000000000,
+    });
+    // Its frame is structurally perfect and correctly signed — the refusal can
+    // only be about trust, not about shape or hashes.
+    const row: Note = {
+      accessScopeId: 's1',
+      createdBy: asPrincipalId('me'),
+      updatedBy: asPrincipalId('me'),
+      mutationId: asOperationId('op-account-only'),
+      logicalUpdatedAt: { millis: 2000, counter: 0 },
+      id: 'n9',
+      spaceId: 's1',
+      l: 0,
+      t: 0,
+      w: 184,
+      h: 80,
+      kind: NoteKind.Note,
+      state: NoteState.User,
+      body: 'from-account-device',
+      createdAt: 2000,
+    };
+    const frame = (
+      await signAuthoredFrames(keys.privateKey, [
+        await makePutFrame({ ring, deviceId, entityTable: 'notes', row }),
+      ])
+    )[0];
+
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const wire = fakeChannel();
+    const catchUp = createPeerCatchUp(cloudDb);
+    await catchUp.adopt({ session: fakeSession(wire.channel).session, deviceId });
+
+    wire.deliver({
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'frames',
+      frames: [frame],
+      final: true,
+    });
+
+    await vi.waitFor(() => {
+      expect(warn).toHaveBeenCalled();
+    });
+    expect(warn.mock.calls[0]?.[0]).toBe('refused a frame from a peer');
+    expect(await cloudDb.syncOperations.get(String(frame.operationId))).toBeUndefined();
+    catchUp.stop();
+    await cloudDb.delete();
   });
 
   it('syncs over a scope channel its peer opened, ignoring the control label', async () => {

@@ -120,7 +120,7 @@ const CanvasPendingHint = () => {
   return (
     <div
       data-testid="brain-canvas-pending-hint"
-      className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink"
+      className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] tracking-wider text-ink"
     >
       {t('brainSpace.canvas.pendingHint')}
     </div>

@@ -35,3 +35,17 @@ export const STORES: Record<string, string> = {
   syncConfigs: 'spaceId',
   docInspectorConfigs: 'spaceId',
 };
+
+/**
+ * The stores only a cloud-enabled database declares, kept beside {@link STORES}
+ * so the per-table encryption rules can resolve a schema spec for *every*
+ * table: a cloud-only row-envelope table (the account device identity
+ * registry) must classify its primary key as plaintext exactly like a base
+ * table would. `LoremDB` merges these under the same single declared version
+ * when its `cloud` option is set.
+ */
+export const CLOUD_STORES: Record<string, string> = {
+  cloudCrypto: 'id',
+  cloudDevices: 'id',
+  accountDeviceIdentities: 'id',
+};

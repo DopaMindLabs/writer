@@ -4,6 +4,7 @@ import { SearchField } from '@/components/ui/SearchField';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
 import { searchHelp, type HelpSearchResult } from '@/lib/help/search';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 interface HelpResultListProps {
   readonly results: readonly HelpSearchResult[];
@@ -25,9 +26,11 @@ export const HelpResultList = ({ results, onNavigate }: HelpResultListProps) => 
               <span className="text-[15px] font-medium text-ink">
                 {result.title}
               </span>
-              <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-ink-4">
-                {t(`categories.${result.category}`)}
-              </span>
+              <Eyebrow asChild tone="ink4">
+                <span className="shrink-0">
+                  {t(`categories.${result.category}`)}
+                </span>
+              </Eyebrow>
             </div>
             <p className="mt-1 line-clamp-2 text-[13px] text-ink-3">
               {result.excerpt}
@@ -64,9 +67,11 @@ export const HelpSearch = () => {
         <div className="mt-4">
           {results.length > 0 ? (
             <>
-              <p className="mb-1 font-mono text-[10px] uppercase tracking-wider text-ink-4">
-                {t('resultsCount', { count: results.length })}
-              </p>
+              <Eyebrow asChild tone="ink4">
+                <p className="mb-1">
+                  {t('resultsCount', { count: results.length })}
+                </p>
+              </Eyebrow>
               <HelpResultList results={results} />
             </>
           ) : (

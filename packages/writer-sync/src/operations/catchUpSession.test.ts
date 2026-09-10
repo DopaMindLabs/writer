@@ -45,6 +45,10 @@ const portsFor = (
   overrides: Partial<Omit<CatchUpPorts, 'send'>> = {},
 ): Omit<CatchUpPorts, 'send'> => ({
   journal: emptyStore(),
+  // Seen mirrors the fixture journal: these tests exercise the session, not
+  // the divergence of seen from held that compaction creates.
+  seenOperations: async () =>
+    (overrides.journal ?? emptyStore()).forScope('scope-1'),
   accessibleScopeIds: async () => ['scope-1'],
   verifySignature: async () => true,
   recordPeerAcknowledgement: async () => undefined,

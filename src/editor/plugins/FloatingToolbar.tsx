@@ -32,7 +32,7 @@ const Btn = ({ active, label, ariaLabel, onMouseDown }: BtnProps) => {
         onMouseDown(e);
       }}
       className={cn(
-        'inline-flex h-7 min-w-[28px] items-center justify-center rounded-sm px-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-2 hover:bg-paper-2 hover:text-ink',
+        'inline-flex h-7 min-w-[28px] items-center justify-center rounded-sm px-1.5 font-mono text-[11px] tracking-wider text-ink-2 hover:bg-paper-2 hover:text-ink',
         active && 'bg-paper-2 text-ink',
       )}
     >

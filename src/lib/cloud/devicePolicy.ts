@@ -1,7 +1,7 @@
 /**
  * The account's device registry — the pure policy layer. One synced,
  * **unencrypted** row per joined device (the table is deliberately outside
- * `SYNCED_TABLES`): a keyless device must be able to count rows and see ids
+ * `ROW_ENVELOPE_TABLES`): a keyless device must be able to count rows and see ids
  * *before* it holds any key, or a device past the limit could never be turned
  * away. A row carries only the addon's random per-device client identity — which
  * the server already receives on every sync — and timestamps mirroring timing the

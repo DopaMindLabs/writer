@@ -2,6 +2,16 @@ import { db } from '@/db/db';
 import { PREVIEW_OWN_ID } from './devicePreview';
 
 /**
+ * The account the preview signs in as. Key material binds to the signed-in
+ * `UserLogin.userId`, and the escrow reconciler claims a published ring for it,
+ * so a preview that reported only `isLoggedIn` would leave every account-bound
+ * path — escrow publication, the ring's account binding, the account device
+ * identity registrar — permanently ineligible and unreachable outside a live
+ * account.
+ */
+export const PREVIEW_ACCOUNT_ID = 'preview-account';
+
+/**
  * Stand in for the account state the device registrar gates on, so its **real**
  * write path can be driven headlessly.
  *
@@ -34,7 +44,7 @@ interface CloudSnapshot {
 export const installRegistrarPreview = (): void => {
   const cloud = (db as { cloud?: CloudSnapshot }).cloud;
   if (!cloud) return;
-  cloud.currentUser?.next?.({ isLoggedIn: true });
+  cloud.currentUser?.next?.({ isLoggedIn: true, userId: PREVIEW_ACCOUNT_ID });
   cloud.persistedSyncState?.next?.({
     initiallySynced: true,
     clientIdentity: PREVIEW_OWN_ID,

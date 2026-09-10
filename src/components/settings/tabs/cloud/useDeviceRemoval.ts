@@ -10,7 +10,7 @@ export interface DeviceRemoval {
 }
 
 /**
- * Confirmation state for revoking a device. Removing a slot is not destructive —
+ * Confirmation state for freeing another device's slot. Freeing a slot is not destructive —
  * nothing is deleted and the device keeps its writing — but it does reach across
  * to another machine, so it is worth a deliberate second step rather than a stray
  * click on a list row.

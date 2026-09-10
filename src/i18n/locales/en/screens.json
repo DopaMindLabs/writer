@@ -37,7 +37,7 @@
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
     "statusValueStrong": "{{version}}",
-    "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
+    "statusValueRest": " — your work is saved in IndexedDB in your local browser. Device pairing syncs it directly between your devices, and encrypted cloud sync is in beta. Clearing your browser data loses anything not synced elsewhere.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
     "sourceLabel": "Source"
@@ -45,8 +45,8 @@
   "settings": {
     "back": "back",
     "windowTitle": "lotem · settings",
-    "breadcrumb": "UNIVERSAL SETTINGS",
-    "shellSubtitle": "UNIVERSAL SETTINGS",
+    "breadcrumb": "Universal Settings",
+    "shellSubtitle": "Universal Settings",
     "comingSoonBadge": "coming soon",
     "helpAria": "What is this?",
     "groups": {
@@ -416,11 +416,11 @@
       "historyTitle": "Recent syncs",
       "historyEmpty": "No syncs yet.",
       "columns": {
-        "when": "WHEN",
-        "space": "SPACE",
-        "kind": "KIND",
-        "size": "SIZE",
-        "status": "STATUS"
+        "when": "When",
+        "space": "Space",
+        "kind": "Kind",
+        "size": "Size",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -432,8 +432,8 @@
       }
     },
     "space": {
-      "breadcrumb": "SPACE · SETTINGS",
-      "shellSubtitle": "SPACE SETTINGS",
+      "breadcrumb": "Space · Settings",
+      "shellSubtitle": "Space Settings",
       "loading": "Loading space…",
       "groups": {
         "thisSpace": "This space",
@@ -546,9 +546,9 @@
         "historyTitle": "History",
         "empty": "No snapshots yet — create one with + snapshot now.",
         "columns": {
-          "when": "WHEN",
-          "kind": "KIND",
-          "size": "SIZE",
+          "when": "When",
+          "kind": "Kind",
+          "size": "Size",
           "actions": ""
         },
         "kind": {
@@ -683,7 +683,7 @@
       "reconnect": "Reconnect",
       "reconnectLabel": "Reconnect {{name}}",
       "reconnectUnnamed": "Reconnect this paired device",
-        "removalLimitation": "Removing a device stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had. Removal is not final: pairing the device afresh — with both of you confirming the digits again — restores sync."
+        "removalLimitation": "Removing a device disconnects it straight away and stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had. Removal is not final: pairing the device afresh — with both of you confirming the digits again — restores sync."
       }
     },
     "profile": {
@@ -835,7 +835,7 @@
       },
       "deviceLimit": {
         "title": "This account already has four devices",
-        "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+        "body": "Cloud sync is in beta and supports four devices for now. Free the slot of a device you no longer use, or sign out on one of them, then try again here.",
         "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
       },
       "devices": {
@@ -850,16 +850,16 @@
         "empty": "No devices yet. This one joins the list once your writing is encrypted.",
         "signOut": "Sign out",
         "signOutAria": "Sign out of this device",
-        "revoke": "Remove",
-        "revokeAria": "Remove {{name}} from this account",
-        "revokeTitle": "Remove this device?",
-        "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
-        "revokeConfirm": "Remove device",
+        "revoke": "Free slot",
+        "revokeAria": "Free the slot held by {{name}}",
+        "revokeTitle": "Free this device’s slot?",
+        "revokeBody": "The slot is free straight away, so another device can take it. That device is asked to sign out, but it keeps syncing until it does.",
+        "revokeConfirm": "Free slot",
         "revokeCancel": "Cancel"
       },
       "revoked": {
-        "title": "This device was removed from your account",
-        "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
+        "title": "This device’s slot on your account was freed",
+        "body": "It no longer holds a slot. Sign out to finish — your writing stays on this device."
       },
       "backupNudge": {
         "title": "These notes are only on this device",
@@ -876,7 +876,7 @@
     "goHome": "Go home"
   },
   "templates": {
-    "crumb": "01 — A KIND OF ROOM",
+    "crumb": "01 — A Kind of Room",
     "headingMain": "What kind of space",
     "headingAccent": "are you starting?",
     "chooseLegend": "Choose a template",
@@ -970,8 +970,8 @@
     "mobileWarning": "Split view needs a larger screen.",
     "mobileNote": "Open this document in Write mode instead.",
     "openInWrite": "Open in Write →",
-    "leftPrefix": "LEFT —",
-    "rightPrefix": "RIGHT —",
+    "leftPrefix": "Left —",
+    "rightPrefix": "Right —",
     "rightPaneAria": "Right pane document",
     "noOtherDocs": "(no other docs)",
     "brainSpaceOption": "Brain space",
@@ -988,22 +988,22 @@
   "citations": {
     "title": "Citations",
     "breadcrumb": "Sources / ",
-    "entries": "{{count}} ENTRIES",
+    "entries": "{{count}} entries",
     "searchPlaceholder": "authors, tags, year…",
     "upload": "↑ upload .bib / .ris",
     "add": "+ add",
     "cancel": "× cancel",
     "columns": {
-      "tag": "TAG",
-      "authors": "AUTHORS",
-      "title": "TITLE",
-      "year": "YEAR",
-      "type": "TYPE",
-      "used": "USED"
+      "tag": "Tag",
+      "authors": "Authors",
+      "title": "Title",
+      "year": "Year",
+      "type": "Type",
+      "used": "Used"
     },
-    "style": "STYLE — CHICAGO (AUTHOR-DATE)",
-    "exportBib": "EXPORT AS .BIB",
-    "summary": "{{filtered}} SHOWN · {{shown}} ON THIS PAGE",
+    "style": "Style — Chicago (Author-date)",
+    "exportBib": "Export as .BIB",
+    "summary": "{{filtered}} shown · {{shown}} on this page",
     "prevPage": "Previous page",
     "nextPage": "Next page",
     "empty": "no citations yet",

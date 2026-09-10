@@ -91,7 +91,7 @@ test.describe('cloud sync device list', () => {
     await expect(peer.getByTestId('cloud-device-sign-out')).toHaveCount(0);
   });
 
-  test('revoking a device frees its slot, once confirmed', async ({ page }) => {
+  test('freeing a slot takes effect once confirmed', async ({ page }) => {
     await openDeviceList(page);
     const list = page.getByTestId('cloud-device-list');
     await expect(list).toContainText(/2 of 4 devices in use/i);
@@ -103,7 +103,13 @@ test.describe('cloud sync device list', () => {
 
     // Reaching across to another machine takes a deliberate second step.
     await expect(page.getByTestId('confirm-dialog')).toBeVisible();
-    await page.getByRole('button', { name: /Remove device/i }).click();
+    await expect(page.getByTestId('confirm-dialog')).toContainText(
+      /keeps syncing until it does/i,
+    );
+    await page
+      .getByTestId('confirm-dialog')
+      .getByRole('button', { name: 'Free slot', exact: true })
+      .click();
 
     await expect(list.getByTestId('cloud-device-preview-live-peer')).toHaveCount(0);
     await expect(list).toContainText(/1 of 4 devices in use/i);
@@ -134,13 +140,13 @@ test.describe('cloud sync device list', () => {
 });
 
 test.describe('cloud sync device revoked', () => {
-  test('a device removed elsewhere is told, rather than silently losing its slot', async ({
+  test('a device whose slot was freed elsewhere is told, rather than silently losing it', async ({
     page,
   }) => {
     await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=revoked#/settings?tab=cloudSync');
     const banner = page.getByTestId('cloud-device-revoked');
     await expect(banner).toBeVisible();
-    await expect(banner).toContainText(/removed from your account/i);
+    await expect(banner).toContainText(/slot on your account was freed/i);
   });
 });
 

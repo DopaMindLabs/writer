@@ -12,7 +12,11 @@ import {
 import type { SyncTransport } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
-import { createAttachmentChunkStore } from './attachmentChunkStore';
+import {
+  createAttachmentChunkStore,
+  manifestForAttachment,
+} from './attachmentChunkStore';
+import { peerSessions } from './peerSessionRegistry';
 
 /**
  * Sending this device's new work to the devices it is paired with, as it is
@@ -53,6 +57,12 @@ export interface LivePeerSyncOptions {
   providerId: string;
   /** This device's id, so its own work can be told from a peer's. */
   deviceId: () => Promise<string>;
+  /**
+   * Whether any peer is connected right now. Injected so a test needs no
+   * registry, and asked before a frame is handed to the link layer: asking for
+   * a transport when nothing is paired waits for a peer that may never arrive.
+   */
+  hasPeer?: () => boolean;
 }
 
 /**
@@ -117,10 +127,9 @@ const linkCache = (
 
 const openLiveLink = async (options: {
   db: LoremDB;
-  accessScopeId: AccessScopeId;
   createTransport: () => Promise<SyncTransport>;
 }): Promise<LiveLink> => {
-  const { db, accessScopeId } = options;
+  const { db } = options;
   const transport = await options.createTransport();
   const store = createAttachmentChunkStore(db);
   const send = (message: CatchUpMessage): void => {
@@ -147,11 +156,20 @@ const openLiveLink = async (options: {
     transport,
     attachments,
     offerAttachment: async (attachmentId) => {
-      const manifests = await store.manifestsForScopes([accessScopeId]);
-      const selected = manifests.filter(
-        (manifest) => manifest.attachmentId === attachmentId,
-      );
-      if (selected.length > 0) attachments.offer(selected);
+      // Only this attachment's manifest. Manifesting the whole scope would let
+      // one partial or poisoned attachment block every offer in it — and its
+      // failure would surface as a frame-send failure, named after the wrong
+      // thing. A manifest that cannot be built is reported per attachment; the
+      // frame that prompted the offer has already crossed.
+      try {
+        const manifest = await manifestForAttachment(db, attachmentId);
+        if (manifest !== null) attachments.offer([manifest]);
+      } catch (error) {
+        appLogger.warn('attachment cannot be offered to the peer', {
+          attachmentId,
+          error,
+        });
+      }
     },
     close: () => {
       off();
@@ -168,7 +186,6 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
   const links = linkCache((accessScopeId) =>
     openLiveLink({
       db,
-      accessScopeId,
       createTransport: () =>
         realtime.createTransport({
           accessScopeId,
@@ -177,7 +194,15 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
     }),
   );
 
+  const hasPeer = options.hasPeer ?? (() => peerSessions.peers().length > 0);
+
   const send = async (frame: EncryptedSyncFrame): Promise<void> => {
+    // Nothing to send to. Asking for a link would park this continuation on a
+    // peer that may never arrive, holding the frame's ciphertext for as long as
+    // the page lives — one per save, on a device that is cloud-only or simply
+    // alone. The frame is journalled either way, and catch-up carries it to
+    // whoever connects next.
+    if (!hasPeer()) return;
     const link = await links.for(frame.accessScopeId);
     const bytes = encodeCatchUpMessage({
       v: CATCH_UP_PROTOCOL_VERSION,

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
-import { renderWithProviders } from '@/test/test-utils';
+import { renderWithProviders, screen } from '@/test/test-utils';
 import * as Placeholders from './GlobalSettingsPlaceholders';
+import * as platform from '@/lib/shortcuts/platform';
 
 const COMPONENTS: (keyof typeof Placeholders)[] = [
   'GeneralPlaceholder',
@@ -22,6 +23,35 @@ describe('GlobalSettingsPlaceholders', () => {
     const { container } = renderWithProviders(<Component />);
     expect(container.firstChild).not.toBeNull();
     expect(container.textContent.length).toBeGreaterThan(0);
+  });
+
+  describe('shortcut chords', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('shows Ctrl chords off Apple platforms instead of a fixed ⌘ glyph', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+      renderWithProviders(<Placeholders.ShortcutsPlaceholder />);
+      expect(screen.getByText('Ctrl+,')).toBeInTheDocument();
+      expect(screen.getByText('Ctrl+K')).toBeInTheDocument();
+      expect(screen.getByText('Ctrl+1')).toBeInTheDocument();
+      expect(screen.queryByText(/⌘/)).not.toBeInTheDocument();
+    });
+
+    it('shows the Command glyphs on Apple platforms', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(true);
+      renderWithProviders(<Placeholders.ShortcutsPlaceholder />);
+      expect(screen.getByText('⌘,')).toBeInTheDocument();
+      expect(screen.getByText('⌘B')).toBeInTheDocument();
+    });
+
+    it('keeps non-chord hints such as markdown prefixes literal', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+      renderWithProviders(<Placeholders.ShortcutsPlaceholder />);
+      expect(screen.getByText('# →')).toBeInTheDocument();
+      expect(screen.getByText('## →')).toBeInTheDocument();
+    });
   });
 
   describe('snapshot', () => {

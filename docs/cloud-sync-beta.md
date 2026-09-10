@@ -14,8 +14,8 @@ plaintext note or document bodies.
 
 Since the operation-frame cutover (Writer Sync foundation, Stage 1), what the addon
 replicates is the **`syncOperations` journal** — immutable, already-encrypted operation
-frames shared by every provider — plus the `cloudCrypto` escrow and its own control
-tables. The ten materialised content tables are device-local projections; inbound
+frames shared by every provider — plus the `cloudCrypto` escrow, the encrypted
+`accountDeviceIdentities` registry (§6.6) and its own control tables. The ten materialised content tables are device-local projections; inbound
 frames materialise through the shared inbox path
 (`src/lib/writerSync/materialization/frameIngestion.ts`), so the same operation
 arriving through Dexie Cloud and any second provider applies exactly once. Dexie Cloud
@@ -149,9 +149,14 @@ or the envelope itself. Everything else is sealed — including the `createdBy`/
 attribution, which names a person and never travels in the clear.
 
 **Encrypted tables** derive from the authoritative table policy
-(`src/lib/writerSync/writerTablePolicy.ts`, row-envelope classification): `spaces`,
-`sections`, `docs`, `notes`, `noteAttachments`, `annotations`, `citations`,
-`connections`, `revisions`, `palettes`.
+(`src/lib/writerSync/writerTablePolicy.ts`, row-envelope classification): the ten
+journalled content tables — `spaces`, `sections`, `docs`, `notes`, `noteAttachments`,
+`annotations`, `citations`, `connections`, `revisions`, `palettes` — plus the
+`accountDeviceIdentities` control table (§6.6). Encryption coverage and the content
+lifecycle are deliberately separate sets (`ROW_ENVELOPE_TABLES` vs `CONTENT_TABLES` in
+`src/lib/cloud/crypto/tableRules.ts`): the registry is sealed like content but is
+**not** content — it is never adopted, erased or re-sealed by setup, and it replicates
+directly instead of through the operation journal.
 
 ## 4. The encryption middleware
 
@@ -493,7 +498,7 @@ keystore; the escrow and other devices are untouched.
 ## 6.5. Device registry (the four-device beta limit)
 
 The beta allows **four devices per account**, tracked in `cloudDevices` — a table that
-**syncs but is not encrypted** (it sits outside `SYNCED_TABLES`). That is deliberate: a
+**syncs but is not encrypted** (it sits outside `ROW_ENVELOPE_TABLES`). That is deliberate: a
 device that has signed in but holds no key yet must still be able to count the slots and
 learn it is past the cap, and it cannot read a sealed row. A row carries only the addon's
 random per-device client identity — which the server already receives on every sync — and
@@ -566,6 +571,67 @@ guarantees is that it will not silently retake a slot, and that its user is told
 devices racing for the last free slot can transiently both take it. Treat the limit as a
 beta courtesy, and never as a security control.
 
+## 6.6 Account device identity registry (same-account trust without pairing)
+
+Materialisation attributes every operation frame before applying it: a signature must
+verify against an **authenticated identity source** — this device's own key, an active
+QR-paired identity in the local-only `trustedDevices` registry, or a same-account record
+in `accountDeviceIdentities`. Transport is never such a source: "the provider delivered
+it" and "the payload decrypts" prove nothing about authorship, because every device
+sharing the account root can open and author content. Before this registry existed,
+cloud sync between two passphrase-unlocked devices was effectively encrypted backup —
+frames arrived and decrypted but were refused as unattributable unless the devices had
+also QR-paired.
+
+`accountDeviceIdentities` is Writer's own control table, classified once in the table
+policy as `provider-control + row-envelope + account` and outside the operation journal.
+One row per device, keyed `#writer-device:<deviceId>` (the addon's account-private `#`
+form, rewritten per user on the wire): the pseudonymous device id — already present in
+every frame's plaintext routing header — plus the device's **public** signing JWK and an
+authorisation time, all sealed in the row envelope under the account content key. That
+seal is the authorisation proof: only a holder of the account key can produce a record
+the account's devices will read. No name, email, user agent, passphrase, secret or
+private key is ever in the row.
+
+- **Stricter middleware rule (policy-derived, not a table-name check).** A directly
+  replicated encrypted control row crosses the untrusted provider boundary as a row, so
+  the lenient pre-setup plaintext behaviour of journalled content cannot apply: a
+  sync-applied write must already carry `$lipsumCipher` and no secret-class top-level
+  field (anything else is dropped, never sealed locally — sealing provider plaintext
+  would turn injected input into authenticated account data); an app write requires a
+  resolved key for every row; and every read fails closed on an unsealed stored row.
+  Pulled ciphertext still stores verbatim while keyless (sign-in-first keeps working)
+  and becomes readable only once the key arrives.
+- **The reader is a trust boundary.** A record is believed only after derive-and-compare:
+  the store looks up the deterministic id for the claimed device id, re-imports the
+  record's public JWK (validating, never repairing), re-derives the device id from it,
+  and requires the claim, primary key, sealed `deviceId` and derivation to agree.
+- **Publication.** An idempotent registrar (`accountDeviceIdentityRegistrar.ts`) runs on
+  the shared cloud lifecycle signals and publishes this device's record only once its key
+  is proven authoritative: signed in, initial pull complete, ring bound to this account,
+  escrow present, fingerprints equal, no live mismatch. A settled account is a no-write
+  pass (no sync feedback loop); a conflicting record for this id fails closed and is
+  never overwritten.
+- **Verification.** The materialisation verifier resolves **both** sources for a frame's
+  device id and, when both name it, requires the same identity — a disagreement refuses
+  the frame rather than trying keys until one fits. Trust is resolved once per device per
+  ingestion sweep (negatives included) and the memo dies with the sweep, so an identity
+  row that replicates after its operation frame is honoured on the next settled round or
+  key acquisition; no timers exist. An operation whose author is still unknown stays
+  unaccepted in the journal, and each sweep logs the refusal with its operation id — a
+  registry row the provider withholds or deletes therefore shows up as that repeating
+  breadcrumb, not as silent data loss.
+- **P2P stays independent.** Peer ingress verifies against the QR-established registry
+  alone; an account record does not admit a live peer session, account identities are
+  never written into `trustedDevices`, and cloud delivery never advances a paired peer's
+  acknowledgement watermark (acknowledgements drive compaction and belong to the
+  authenticated connection). A device that is both paired and cloud-authorised may
+  receive one operation on both routes; the shared inbox applies it once.
+- **Removal is not revocation.** Removing a cloud device (§6.5) frees a slot and notifies
+  the device; it does not — cannot — revoke key material a device already holds. True
+  exclusion requires account/scope key rotation, which does not exist yet (the HKDF info
+  and epoch are fixed), and the registry must never be presented as key revocation.
+
 ## 7. What the server can and cannot see
 
 | Server **cannot** see | Server **can** see |
@@ -574,6 +640,7 @@ beta courtesy, and never as a security control.
 | Titles, names, note text, annotations | Timestamps (`createdAt`/`updatedAt`) |
 | Citation authors/titles/abstracts | Note **kinds**, citation **keys** and **years** (indexed) |
 | Attachment bytes | Your **email** (sign-in identity) |
+| Account identity **JWKs** and authorisation times (sealed, §6.6) | The registry's pseudonymous device id (already in every frame's routing header) |
 | Any field not a primary key or index | Sync timing and originating IP |
 
 Sign-in is invite-only (server-side allow-list). The at-rest local database is also
@@ -606,7 +673,12 @@ the file holds no secrets.
   up a real offline `dexie-cloud-addon` database and proves: ciphertext at rest (P1),
   **ciphertext in the `$<table>_mutations` sync queue — the go/no-go (P2)**, plaintext
   through the app (P3), IV uniqueness (P4), Blob round-trips (P5), and untouched
-  local-only tables (P6). Envelope, key, recovery-code and setup suites cover the rest.
+  local-only tables (P6). The same spike gates the replicated control rows of §6.6: a
+  keyed registry write queues no plaintext identity material, a sync-applied plaintext
+  identity row is dropped rather than sealed, an unsealed stored row is unreadable on
+  every path, and pulled ciphertext held keyless opens only after unlock. Envelope, key,
+  recovery-code, setup, identity-store, registrar, frame-verifier, ingestion-ordering and
+  peer-ingress suites cover the rest.
   The write-lock **surfaces** (the settings conflict banner and the New-space notice) are driven
   headlessly by the dev/e2e boot params `?cloud-mismatch=1` and `?cloud-keyless=1`
   (`applyDevBootParams` in `src/App.tsx`), which force the respective signal so the UI can be
@@ -641,9 +713,13 @@ the file holds no secrets.
 7. Sign in with an invited email (OTP).
 8. Create a doc in A → it appears **decrypted** in B; edit it in B with A's editor open →
    the change reconciles into A's editor (§5), and A keeps a safety revision of its prior
-   local state.
+   local state. A and B must **not** be QR-paired for this step: same-account convergence
+   is carried by the account identity registry (§6.6), and pairing would mask its failure.
 9. Inspect the stored rows via the Dexie Cloud dashboard/REST: every content field must be
-   **absent**, with only `$lipsumCipher` plus ids/indexed fields visible.
+   **absent**, with only `$lipsumCipher` plus ids/indexed fields visible. For
+   `accountDeviceIdentities`, only the `#writer-device:` id, `accessScopeId`, provider
+   metadata and the envelope may be visible — search the raw data for the JWK `x`/`y`
+   values and the `authorisedAt` timestamp; they must not appear in plaintext.
 10. **Wiped-device re-sign-in (the key-conflict path, §5.1).** In browser B clear site data
     (IndexedDB `lipsum` and `lipsum-cloud-keystore`), reactivate via `?cloud-sync=on`, set a
     **new** passphrase, then sign in with the same account. B must detect the mismatch and

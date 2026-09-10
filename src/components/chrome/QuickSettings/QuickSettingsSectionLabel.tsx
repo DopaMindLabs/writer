@@ -7,8 +7,8 @@ interface SectionLabelProps {
 }
 
 /**
- * The uppercase-mono group heading in Quick Settings ("APPEARANCE", "WRITING",
- * "MORE"). A thin adapter over the shared `ui/SectionLabel` that adds the
+ * The mono group heading in Quick Settings ("Appearance", "Writing",
+ * "More"). A thin adapter over the shared `ui/SectionLabel` that adds the
  * popover's row padding — so the mono label voice comes from one recipe, not a
  * hand-rolled class string.
  */

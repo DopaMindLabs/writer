@@ -79,3 +79,27 @@ test('closes the Quick Help overlay with Escape', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('help-palette')).toBeHidden();
 });
+
+test('renders fenced code, external links and slug-suffixed headings in articles', async ({
+  page,
+}) => {
+  // A fenced block renders through the `pre`/`code` components.
+  await page.goto('/#/help/citations-and-bibliography');
+  const article = page.getByTestId('help-article');
+  await expect(article).toBeVisible();
+  await expect(article.locator('pre')).toContainText('@article{fitts1954');
+
+  // An absolute href opens in a new tab, and carries the opener protections.
+  await page.goto('/#/help/accessibility');
+  const external = article.getByRole('link', { name: 'WCAG 2.2' });
+  await expect(external).toHaveAttribute('href', 'https://www.w3.org/TR/WCAG22/');
+  await expect(external).toHaveAttribute('target', '_blank');
+  await expect(external).toHaveAttribute('rel', 'noopener noreferrer');
+
+  // A heading carrying an explicit `{#slug}` anchors to that id, and the
+  // suffix itself is stripped from the rendered text.
+  await page.goto('/#/help/formatting-and-markdown');
+  const heading = article.getByRole('heading', { name: 'Inline code spans' });
+  await expect(heading).toHaveAttribute('id', 'inline-code');
+  await expect(heading).not.toContainText('{#');
+});

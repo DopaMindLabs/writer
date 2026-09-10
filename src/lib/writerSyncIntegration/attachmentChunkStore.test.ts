@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
+import { appLogger } from '@/lib/appLogger';
 import type { NoteAttachment } from '@/db/schema';
 import {
   forgetDeviceKeyRing,
@@ -15,6 +16,7 @@ import {
 import {
   generateDeviceIdentity,
   publicJwkOf,
+  toBase64,
   toBase64Url,
   type DeviceIdentityKeys,
 } from 'writer-sync/crypto';
@@ -223,5 +225,36 @@ describe('createAttachmentChunkStore', () => {
       chunkCount: 2,
     });
     expect(await adapter.manifestsForScopes(['other-scope'])).toEqual([]);
+  });
+
+  it('skips an attachment whose chunks cannot form a manifest, keeping the rest', async () => {
+    // One partial or poisoned attachment must not block the whole catalogue —
+    // it is skipped by name, and every other attachment is still offered.
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const { chunks } = await thinFrame();
+    await db.syncAttachmentChunks.bulkPut(chunks);
+    await db.noteAttachments.put(attachment(bytesOf()));
+    // A second attachment in the same scope with a hole where chunk 0 should be.
+    await db.noteAttachments.put({
+      ...attachment(bytesOf()),
+      id: 'a-poisoned',
+      noteId: 'n-poisoned',
+    });
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'a-poisoned',
+      index: 1,
+      accessScopeId: 's1',
+      bytes: toBase64(new Uint8Array([1])),
+    });
+    const adapter = createAttachmentChunkStore(db);
+
+    const manifests = await adapter.manifestsForScopes(['s1']);
+
+    expect(manifests.map((manifest) => manifest.attachmentId)).toEqual(['a1']);
+    expect(warn).toHaveBeenCalledWith(
+      'attachment skipped from the offer catalogue',
+      expect.objectContaining({ attachmentId: 'a-poisoned' }),
+    );
+    warn.mockRestore();
   });
 });

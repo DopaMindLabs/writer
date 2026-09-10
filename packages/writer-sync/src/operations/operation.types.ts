@@ -55,10 +55,18 @@ export interface EncryptedSyncFrame extends SyncOperationHeader {
   signature: string;
 }
 
-/** An accepted operation recorded in the receiver's inbox. */
+/**
+ * An accepted operation recorded in the receiver's inbox. Never pruned: beyond
+ * replay protection, the entries are the durable record of what this device has
+ * *seen* per scope and origin — the catch-up manifest's source once compaction
+ * has dropped the frames themselves — so each carries the ordering fields.
+ */
 export interface SyncInboxEntry {
   operationId: OperationId;
   accessScopeId: AccessScopeId;
+  /** The originating device, kept so the entry can stand in for its frame. */
+  deviceId: DeviceId;
+  logicalAt: HybridLogicalTimestamp;
   entityTable: string;
   entityId: string;
   /** What materialisation did with the operation. */

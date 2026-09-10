@@ -73,3 +73,56 @@ test('ticks the current section and shows an empty state for no matches', async 
   await expect(page.getByRole('option')).toHaveCount(0);
   await expect(page.getByText('No sections found')).toBeVisible();
 });
+
+test.describe('Workflow: filing a document by keyboard', () => {
+  test('open the row menu, pick a section with the arrows, and confirm the move', async ({
+    page,
+  }) => {
+    let docId = '';
+    let target = '';
+
+    await test.step('Given a fiction space with its seeded Manuscript doc', async () => {
+      await createSpaceFromTemplate(page, 'fiction');
+      docId = await firstDocId(page);
+      await expect(
+        sectionByLabel(page, 'Manuscript').locator(
+          `[data-testid="sidebar-doc-${docId}"]`,
+        ),
+      ).toBeVisible();
+    });
+
+    await test.step('When they open the move list from the row menu', async () => {
+      await openMoveList(page, docId);
+      await page.getByTestId(`sidebar-doc-${docId}-move-list-search`).focus();
+    });
+
+    await test.step('And they walk the list with the arrow keys', async () => {
+      const search = page.getByTestId(`sidebar-doc-${docId}-move-list-search`);
+      // Down twice then up once settles on the second row, proving the active
+      // index moves both ways rather than only forward.
+      await search.press('ArrowDown');
+      await search.press('ArrowDown');
+      await search.press('ArrowUp');
+      target = String(await page.getByRole('option').nth(1).textContent()).trim();
+      expect(target).toBeTruthy();
+      await search.press('Enter');
+    });
+
+    await test.step('Then the document is filed under that section', async () => {
+      await expect(
+        sectionByLabel(page, target).locator(
+          `[data-testid="sidebar-doc-${docId}"]`,
+        ),
+      ).toBeVisible();
+    });
+
+    await test.step('And Escape closes the list when they change their mind', async () => {
+      await openMoveList(page, docId);
+      const search = page.getByTestId(`sidebar-doc-${docId}-move-list-search`);
+      await search.focus();
+      // Escape is left to bubble so the surrounding menu closes with it.
+      await search.press('Escape');
+      await expect(search).toBeHidden();
+    });
+  });
+});

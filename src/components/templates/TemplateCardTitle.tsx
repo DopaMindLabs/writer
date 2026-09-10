@@ -20,7 +20,7 @@ export const TemplateCardTitle = ({
       <span className="font-serif text-[18px] leading-tight text-ink">
         {label}
         {tpl.stage !== TemplateStage.Stable && (
-          <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3">
+          <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3">
             {t(`templates.stage.${tpl.stage}`)}
           </span>
         )}

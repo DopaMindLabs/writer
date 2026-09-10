@@ -61,7 +61,7 @@ const localOnly = (table: string): WriterTablePolicy => ({
 
 const providerControl = (
   table: string,
-  encryption: 'already-wrapped' | 'plaintext-control',
+  encryption: 'already-wrapped' | 'plaintext-control' | 'row-envelope',
 ): WriterTablePolicy => ({
   table,
   replication: 'provider-control',
@@ -100,10 +100,15 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   localOnly('meta'),
   localOnly('docUpdates'),
   // Provider control tables. The escrow is already passphrase-wrapped, so row
-  // encryption must not touch it; the rest are the provider's own plaintext
-  // control rows (device registry, Dexie realm and membership records).
+  // encryption must not touch it; the plaintext rows are the provider's own
+  // control data (device registry, Dexie realm and membership records). The
+  // account device identity registry is Writer's own control table: directly
+  // replicated like the rest, but row-envelope sealed under the account key so
+  // the provider carries only authenticated ciphertext — that seal is what
+  // makes a record proof of authorisation by an account-key holder.
   providerControl('cloudCrypto', 'already-wrapped'),
   providerControl('cloudDevices', 'plaintext-control'),
+  providerControl('accountDeviceIdentities', 'row-envelope'),
   providerControl('realms', 'plaintext-control'),
   providerControl('members', 'plaintext-control'),
   // The operation protocol. `syncOperations` is the provider-neutral replicated

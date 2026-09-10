@@ -97,7 +97,7 @@ them.
 - Primary CTA: ink fill + white text. Secondary: 1 px underline.
 
 **`Type.mono` · Geist Mono** — eyebrows, dates, counts, shortcuts.
-- 9–11 px, letter-spaced 0.6–1.2. All caps unless it's a number/date.
+- 9–11 px, letter-spaced 0.6–1.2. Casing comes from the string, not from `text-transform`.
 - Mono italics don't exist. Mono is always upright.
 - Use for meta only — never as a substitute for sans UI text.
 
@@ -137,7 +137,7 @@ them.
 **Type rules**
 
 - **Eyebrows** are mono, 9–10 px, `Color.ink3`, letter-spaced 0.8–1.2. They sit above titled
-  blocks.
+  blocks. Casing belongs to the content, not to `text-transform`.
 - **Titles** are serif, weight 400 (regular) — never weight 700. Letter-spacing -0.3 to -1.2
   depending on size. Use `text-wrap: balance`.
 - **Body prose** is serif, 14–18 px, `Color.ink2`, line-height 1.5–1.65, `text-wrap: pretty`.
@@ -166,14 +166,14 @@ Tiny mono micro-label. Sits above every titled block.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `children` | node | — | The label text. Almost always uppercase. |
+| `children` | node | — | The label text, in the casing the translation supplies. |
 | `size` | number | `10` | Font size in px. Common values: 9, 10. |
-| `tone` | `"ink2" \| "ink3" \| "ink4"` | `"ink3"` | Colour token (ink only — status is never tinted into a label). |
+| `tone` | `"ink" \| "ink2" \| "ink3" \| "ink4" \| "paper" \| "inherit"` | `"ink3"` | Colour token (ink only — status is never tinted into a label). `inherit` names no colour, for a label whose colour is owned by a parent state (an active tab, a hovered row). |
 | `asChild` | boolean | `false` | Render through Radix `Slot` so the style lands on the child element (e.g. a `<th>`/`<td>`). |
 
 **Usage rules**
 
-- Always uppercase, letter-spaced 1.0–1.2.
+- Letter-spaced 1.0–1.2. Casing comes from the string, never from `text-transform`: uppercasing in CSS applies a Latin convention to every locale, is wrong for scripts that have no case, and cannot be overridden by a translator.
 - Pair with a serif title — never with another mono line.
 - Length: short.
 
@@ -424,7 +424,7 @@ Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ct
 
 ### 3.10 `SectionLabel`
 
-The one uppercase-mono heading for a group of rows — the "APPEARANCE" / "WRITING" labels in
+The one mono heading for a group of rows — the "Appearance" / "Writing" labels in
 Quick Settings, the group eyebrows inside menus, the settings-nav group headings. It is a
 named specialisation of `Eyebrow` (§3.1) that shares the same recipe
 (`Eyebrow.recipe.ts`), narrowed to the group-label sizes and tones — so every section label

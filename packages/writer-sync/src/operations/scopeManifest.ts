@@ -22,13 +22,25 @@ import { compareOperations } from './convergence';
  * `journalCompaction.ts`.
  */
 
-/** What one device holds from one originating device, within one scope. */
+/**
+ * One operation a device has seen — the ordering fields alone. A frame
+ * satisfies this structurally; so does a durable seen-record kept after the
+ * frame itself has been compacted away.
+ */
+export interface SeenOperation {
+  accessScopeId: AccessScopeId;
+  deviceId: DeviceId;
+  operationId: OperationId;
+  logicalAt: HybridLogicalTimestamp;
+}
+
+/** What one device has seen from one originating device, within one scope. */
 export interface OriginSummary {
   originDeviceId: DeviceId;
-  /** The convergence-newest operation held from this origin. */
+  /** The convergence-newest operation seen from this origin. */
   highWaterMark: OperationId;
   logicalAt: HybridLogicalTimestamp;
-  /** How many operations from this origin are held — the compact summary. */
+  /** How many operations from this origin have been seen — the compact summary. */
   count: number;
 }
 
@@ -49,15 +61,15 @@ export interface CatchUpRequest {
   after?: HybridLogicalTimestamp;
 }
 
-const summariseOrigin = (frames: readonly EncryptedSyncFrame[]): OriginSummary => {
-  const newest = frames.reduce((best, frame) =>
-    compareOperations(frame, best) > 0 ? frame : best,
+const summariseOrigin = (seen: readonly SeenOperation[]): OriginSummary => {
+  const newest = seen.reduce((best, operation) =>
+    compareOperations(operation, best) > 0 ? operation : best,
   );
   return {
     originDeviceId: newest.deviceId,
     highWaterMark: newest.operationId,
     logicalAt: newest.logicalAt,
-    count: frames.length,
+    count: seen.length,
   };
 };
 
@@ -71,16 +83,18 @@ const groupBy = <T>(items: readonly T[], key: (item: T) => string): Map<string, 
   return groups;
 };
 
-/** Summarise a journal as one manifest per scope. */
+/** Summarise everything a device has seen as one manifest per scope. */
 export const buildScopeManifests = (
-  frames: readonly EncryptedSyncFrame[],
+  seen: readonly SeenOperation[],
 ): ScopeManifest[] =>
-  [...groupBy(frames, (frame) => frame.accessScopeId)].map(([accessScopeId, scoped]) => ({
-    accessScopeId,
-    origins: [...groupBy(scoped, (frame) => String(frame.deviceId))].map(([, byOrigin]) =>
-      summariseOrigin(byOrigin),
-    ),
-  }));
+  [...groupBy(seen, (operation) => operation.accessScopeId)].map(
+    ([accessScopeId, scoped]) => ({
+      accessScopeId,
+      origins: [...groupBy(scoped, (operation) => String(operation.deviceId))].map(
+        ([, byOrigin]) => summariseOrigin(byOrigin),
+      ),
+    }),
+  );
 
 const findOrigin = (
   manifests: readonly ScopeManifest[],

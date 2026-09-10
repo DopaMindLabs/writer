@@ -6,7 +6,7 @@ exports[`SyncResultsTable > snapshot > should match the snapshot of the per-spac
     class="mt-6"
   >
     <h3
-      class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
     >
       Last run
     </h3>
@@ -28,7 +28,7 @@ exports[`SyncResultsTable > snapshot > should match the snapshot of the per-spac
             class="py-2.5 text-right"
           >
             <span
-              class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
+              class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
             >
               <svg
                 aria-hidden="true"
@@ -66,7 +66,7 @@ exports[`SyncResultsTable > snapshot > should match the snapshot of the per-spac
             class="py-2.5 text-right"
           >
             <span
-              class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
+              class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
             >
               <svg
                 aria-hidden="true"

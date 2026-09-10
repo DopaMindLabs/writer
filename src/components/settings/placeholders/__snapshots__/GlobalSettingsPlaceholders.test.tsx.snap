@@ -5,9 +5,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
   <div>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -137,9 +137,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -196,7 +196,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono tracking-[0.11em] text-[9px] opacity-60"
               >
                 default
               </span>
@@ -237,7 +237,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono tracking-[0.11em] text-[9px] opacity-60"
               >
                 neutral
               </span>
@@ -272,7 +272,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono tracking-[0.11em] text-[9px] opacity-60"
               >
                 dark
               </span>
@@ -364,9 +364,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -564,9 +564,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -582,7 +582,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
         class="mb-8"
       >
         <h3
-          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+          class="font-mono text-ink-3 text-[10px] tracking-[0.08em] mb-2"
         >
           Navigation
         </h3>
@@ -594,11 +594,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Open settings
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ ,
-          </span>
+            Ctrl+,
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -608,11 +608,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Quick settings
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ K
-          </span>
+            Ctrl+K
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -622,11 +622,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Find in doc
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ F
-          </span>
+            Ctrl+F
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -636,11 +636,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Toggle focus
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ .
-          </span>
+            Ctrl+.
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -650,18 +650,18 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Toggle inspector
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ I
-          </span>
+            Ctrl+I
+          </kbd>
         </div>
       </div>
       <div
         class="mb-8"
       >
         <h3
-          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+          class="font-mono text-ink-3 text-[10px] tracking-[0.08em] mb-2"
         >
           Formatting
         </h3>
@@ -673,11 +673,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Bold
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ B
-          </span>
+            Ctrl+B
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -687,11 +687,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Italic
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ I
-          </span>
+            Ctrl+I
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -701,11 +701,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Underline
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ U
-          </span>
+            Ctrl+U
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -715,11 +715,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Heading 1
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
             # →
-          </span>
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -729,18 +729,18 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Heading 2
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
             ## →
-          </span>
+          </kbd>
         </div>
       </div>
       <div
         class="mb-8"
       >
         <h3
-          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+          class="font-mono text-ink-3 text-[10px] tracking-[0.08em] mb-2"
         >
           Modes
         </h3>
@@ -752,11 +752,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Write mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 1
-          </span>
+            Ctrl+1
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -766,11 +766,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Read mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 2
-          </span>
+            Ctrl+2
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -780,19 +780,19 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Split mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 3
-          </span>
+            Ctrl+3
+          </kbd>
         </div>
       </div>
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -816,7 +816,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Fiction
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Manuscript · World · Workshop
           </div>
@@ -830,7 +830,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Research
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Sources · Notes · Drafts
           </div>
@@ -844,7 +844,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Journal
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Daily · Weekly · Reflections
           </div>
@@ -858,7 +858,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Essay
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Outline · Drafts · Final
           </div>
@@ -867,9 +867,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -901,7 +901,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Evidence
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFF3A8
             </div>
@@ -934,7 +934,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               To revise
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFD6E0
             </div>
@@ -967,7 +967,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Reference
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #CFE3FA
             </div>
@@ -1000,7 +1000,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Quote
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #D6EBCF
             </div>
@@ -1033,7 +1033,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Loose end
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #E8E8E8
             </div>
@@ -1053,9 +1053,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -1112,9 +1112,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -1207,9 +1207,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -1308,9 +1308,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -1384,9 +1384,9 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        UNIVERSAL SETTINGS
+        Universal Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"

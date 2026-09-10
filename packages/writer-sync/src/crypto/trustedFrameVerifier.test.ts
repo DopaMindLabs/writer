@@ -121,6 +121,21 @@ describe('createTrustedFrameVerifier', () => {
   it('imports a device’s key once however many frames it verifies', async () => {
     const keys = await generateDeviceIdentity();
     const record = await recordFor({ publicKey: keys.publicKey });
+    const verify = createTrustedFrameVerifier(registryOf(record));
+    const importKey = vi.spyOn(crypto.subtle, 'importKey');
+
+    const frame = await signedFrame(keys.privateKey);
+    await verify(frame);
+    await verify(frame);
+    await verify(frame);
+
+    expect(importKey).toHaveBeenCalledTimes(1);
+    importKey.mockRestore();
+  });
+
+  it('asks the registry about every frame, so the cached key never outvotes it', async () => {
+    const keys = await generateDeviceIdentity();
+    const record = await recordFor({ publicKey: keys.publicKey });
     const find = vi.fn().mockResolvedValue(record);
     const verify = createTrustedFrameVerifier({ ...registryOf(record), find });
 
@@ -129,6 +144,36 @@ describe('createTrustedFrameVerifier', () => {
     await verify(frame);
     await verify(frame);
 
-    expect(find).toHaveBeenCalledTimes(1);
+    expect(find).toHaveBeenCalledTimes(3);
+  });
+
+  it('refuses the next frame from a device revoked mid-session', async () => {
+    const keys = await generateDeviceIdentity();
+    const active = await recordFor({ publicKey: keys.publicKey });
+    const find = vi
+      .fn()
+      .mockResolvedValueOnce(active)
+      .mockResolvedValue({ ...active, status: TrustedDeviceStatus.Revoked });
+    const verify = createTrustedFrameVerifier({ ...registryOf(active), find });
+
+    const frame = await signedFrame(keys.privateKey);
+    await expect(verify(frame)).resolves.toBe(true);
+    await expect(verify(frame)).resolves.toBe(false);
+  });
+
+  it('re-imports when a re-paired device presents a different identity key', async () => {
+    const first = await generateDeviceIdentity();
+    const second = await generateDeviceIdentity();
+    const find = vi
+      .fn()
+      .mockResolvedValueOnce(await recordFor({ publicKey: first.publicKey }))
+      .mockResolvedValue(await recordFor({ publicKey: second.publicKey }));
+    const verify = createTrustedFrameVerifier({
+      ...registryOf(await recordFor({ publicKey: first.publicKey })),
+      find,
+    });
+
+    await expect(verify(await signedFrame(first.privateKey))).resolves.toBe(true);
+    await expect(verify(await signedFrame(second.privateKey))).resolves.toBe(true);
   });
 });

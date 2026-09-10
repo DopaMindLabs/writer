@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import {
-  SYNCED_TABLES,
+  journalledTables,
+  rowEnvelopeTables,
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
+import {
+  CONTENT_TABLES,
+  ROW_ENVELOPE_TABLES,
   CIPHER_FIELD,
   isEncryptedTable,
   plaintextFieldsFor,
@@ -32,6 +37,15 @@ describe('tableRules', () => {
     expect(docs.has('name')).toBe(false);
   });
 
+  it('yields only the reserved and routing fields for an unknown table', () => {
+    // No schema spec exists, so the fallback empty spec contributes nothing.
+    const fields = plaintextFieldsFor('imaginary');
+    expect(fields.has('id')).toBe(false);
+    expect(fields.has('realmId')).toBe(true);
+    expect(fields.has(CIPHER_FIELD)).toBe(true);
+    expect(fields.has('accessScopeId')).toBe(true);
+  });
+
   it('extracts both members of a compound index', () => {
     const connections = plaintextFieldsFor('connections');
     // '... [spaceId+fromNoteId], [spaceId+toNoteId]'
@@ -39,14 +53,14 @@ describe('tableRules', () => {
     expect(connections.has('toNoteId')).toBe(true);
   });
 
-  it('lists exactly the ten synced content tables', () => {
-    expect([...SYNCED_TABLES]).toHaveLength(10);
-    expect(SYNCED_TABLES).toContain('noteAttachments');
-    expect(SYNCED_TABLES).not.toContain('backups');
+  it('lists the ten journalled content tables as domain content', () => {
+    expect([...CONTENT_TABLES]).toHaveLength(10);
+    expect(CONTENT_TABLES).toContain('noteAttachments');
+    expect(CONTENT_TABLES).not.toContain('backups');
   });
 
   it('keeps routing metadata plaintext so providers can route without a key', () => {
-    for (const table of SYNCED_TABLES) {
+    for (const table of ROW_ENVELOPE_TABLES) {
       const fields = plaintextFieldsFor(table);
       expect(fields.has('accessScopeId')).toBe(true);
       expect(fields.has('mutationId')).toBe(true);
@@ -55,10 +69,46 @@ describe('tableRules', () => {
   });
 
   it('seals attribution — createdBy and updatedBy are never plaintext', () => {
-    for (const table of SYNCED_TABLES) {
+    for (const table of ROW_ENVELOPE_TABLES) {
       const fields = plaintextFieldsFor(table);
       expect(fields.has('createdBy')).toBe(false);
       expect(fields.has('updatedBy')).toBe(false);
     }
+  });
+});
+
+describe('encryption coverage vs content lifecycle', () => {
+  it('derives encryption coverage from the row-envelope classification', () => {
+    expect([...ROW_ENVELOPE_TABLES].sort()).toEqual([...rowEnvelopeTables()].sort());
+    for (const table of ROW_ENVELOPE_TABLES) {
+      expect(isEncryptedTable(table)).toBe(true);
+    }
+  });
+
+  it('derives the content lifecycle set from the journalled classification', () => {
+    expect([...CONTENT_TABLES].sort()).toEqual([...journalledTables()].sort());
+  });
+
+  it('keeps the two sets independent concepts — content is the journalled subset', () => {
+    // Every journalled content table is row-envelope encrypted, but the reverse
+    // is not a given: a directly replicated encrypted control table (the account
+    // device identity registry) is row-envelope without being domain content.
+    for (const table of CONTENT_TABLES) {
+      expect(ROW_ENVELOPE_TABLES).toContain(table);
+    }
+    expect(ROW_ENVELOPE_TABLES).toContain('accountDeviceIdentities');
+    expect(CONTENT_TABLES).not.toContain('accountDeviceIdentities');
+  });
+
+  it('seals the account identity material and keeps only routing fields plaintext', () => {
+    expect(isEncryptedTable('accountDeviceIdentities')).toBe(true);
+    const fields = plaintextFieldsFor('accountDeviceIdentities');
+    // The primary key and the scope route the row; everything that states an
+    // identity stays inside the cipher envelope.
+    expect(fields.has('id')).toBe(true);
+    expect(fields.has('accessScopeId')).toBe(true);
+    expect(fields.has('deviceId')).toBe(false);
+    expect(fields.has('publicIdentityJwk')).toBe(false);
+    expect(fields.has('authorisedAt')).toBe(false);
   });
 });

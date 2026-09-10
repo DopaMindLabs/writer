@@ -5,9 +5,9 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
   <div>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        SPACE · SETTINGS
+        Space · Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -37,7 +37,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Fiction
             </div>
             <div
-              class="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mt-0.5"
             >
               Manuscript · World · Workshop
             </div>
@@ -70,9 +70,9 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        SPACE · SETTINGS
+        Space · Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -104,7 +104,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Evidence
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFF3A8
             </div>
@@ -137,7 +137,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               To revise
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFD6E0
             </div>
@@ -170,7 +170,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Reference
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #CFE3FA
             </div>
@@ -203,7 +203,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Quote
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #D6EBCF
             </div>
@@ -236,7 +236,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Loose end
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               #E8E8E8
             </div>
@@ -256,9 +256,9 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        SPACE · SETTINGS
+        Space · Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -339,9 +339,9 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        SPACE · SETTINGS
+        Space · Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -402,7 +402,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
             class="flex items-center gap-3 border-b border-rule/40 py-2"
           >
             <div
-              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] text-ink-2"
             >
               Y
             </div>
@@ -421,7 +421,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               owner
             </span>
@@ -430,7 +430,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
             class="flex items-center gap-3 border-b border-rule/40 py-2"
           >
             <div
-              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] text-ink-2"
             >
               M
             </div>
@@ -449,7 +449,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               editor
             </span>
@@ -458,7 +458,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
             class="flex items-center gap-3 border-b border-rule/40 py-2"
           >
             <div
-              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] text-ink-2"
             >
               S
             </div>
@@ -477,7 +477,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
             >
               viewer
             </span>
@@ -487,9 +487,9 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
     </section>
     <section>
       <p
-        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+        class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
       >
-        SPACE · SETTINGS
+        Space · Settings
       </p>
       <h1
         class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"

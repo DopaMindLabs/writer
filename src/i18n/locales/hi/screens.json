@@ -290,7 +290,7 @@
       "subtitle": "आपका काम कहाँ रहता है और कितनी जगह लेता है।",
       "comingSoonBody": "IndexedDB उपयोग, संग्रहण अनुमान, और एक-क्लिक पूर्ण वाइप।",
       "storageLabel": "उपयोग किया गया संग्रहण",
-      "storageValue": "≈ 12.4 MB · 4 स्पेस, 38 दस्तावेज़",
+      "storageValue": "≈ 12.4 Mb · 4 स्पेस, 38 दस्तावेज़",
       "engineLabel": "संग्रहण इंजन",
       "engineValue": "IndexedDB (स्थानीय ब्राउज़र)",
       "wipeLabel": "सब कुछ मिटाएँ",
@@ -714,7 +714,7 @@
       "type": "प्रकार",
       "used": "उपयोग किया"
     },
-    "style": "शैली — CHICAGO (लेखक-तिथि)",
+    "style": "शैली — Chicago (लेखक-तिथि)",
     "exportBib": ".BIB के रूप में निर्यात करें",
     "summary": "{{filtered}} दिखाए गए · {{shown}} इस पेज पर",
     "prevPage": "पिछला पेज",

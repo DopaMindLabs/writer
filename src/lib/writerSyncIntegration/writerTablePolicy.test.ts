@@ -18,7 +18,13 @@ describe('writerTablePolicy coverage', () => {
   });
 
   it('classifies the provider control tables the cloud schema adds', () => {
-    for (const table of ['cloudCrypto', 'cloudDevices', 'realms', 'members']) {
+    for (const table of [
+      'cloudCrypto',
+      'cloudDevices',
+      'accountDeviceIdentities',
+      'realms',
+      'members',
+    ]) {
       expect(policyFor(table)?.replication).toBe('provider-control');
     }
   });
@@ -57,12 +63,20 @@ describe('classification invariants', () => {
     }
   });
 
-  it('row-envelope encryption appears only on synced content', () => {
+  it('row-envelope encryption appears only on replicated tables', () => {
     for (const policy of WRITER_TABLE_POLICIES) {
       if (policy.encryption === 'row-envelope') {
-        expect(policy.replication).toBe('synced-content');
+        expect(['synced-content', 'provider-control']).toContain(policy.replication);
       }
     }
+  });
+
+  it('classifies the account device identity registry as encrypted provider control', () => {
+    const policy = policyFor('accountDeviceIdentities');
+    expect(policy?.replication).toBe('provider-control');
+    expect(policy?.encryption).toBe('row-envelope');
+    expect(policy?.scope).toBe('account');
+    expect(policy?.operationJournal).toBe(false);
   });
 
   it('keeps the escrow already-wrapped, never row-envelope encrypted', () => {
@@ -71,9 +85,10 @@ describe('classification invariants', () => {
 });
 
 describe('derived sets match the established behaviour', () => {
-  it('derives the ten row-envelope content tables', () => {
+  it('derives the row-envelope tables: ten content tables plus the account registry', () => {
     expect([...rowEnvelopeTables()].sort()).toEqual(
       [
+        'accountDeviceIdentities',
         'annotations',
         'citations',
         'connections',
@@ -121,8 +136,17 @@ describe('derived sets match the established behaviour', () => {
     expect(scopeGroup('space')).not.toContain('cloudDevices');
   });
 
-  it('journals every synced content table today', () => {
-    expect([...journalledTables()].sort()).toEqual([...rowEnvelopeTables()].sort());
+  it('journals exactly the synced content subset of the row-envelope tables', () => {
+    const journalled = new Set(journalledTables());
+    const rowEnvelopeOnly = rowEnvelopeTables().filter(
+      (table) => !journalled.has(table),
+    );
+    // The account registry is sealed like content but replicated directly as a
+    // control table — it must never enter the operation journal.
+    expect(rowEnvelopeOnly).toEqual(['accountDeviceIdentities']);
+    for (const table of journalledTables()) {
+      expect(rowEnvelopeTables()).toContain(table);
+    }
   });
 
   it('replicates attachment chunks as already-wrapped ciphertext', () => {

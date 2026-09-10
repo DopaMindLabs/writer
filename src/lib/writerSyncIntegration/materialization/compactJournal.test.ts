@@ -156,6 +156,8 @@ describe('compactJournal', () => {
     await db.syncInbox.put({
       operationId: asOperationId('op-old'),
       accessScopeId: 'scope-1',
+      deviceId: asDeviceId('device-1'),
+      logicalAt: { millis: NOW - 40 * MILLIS_PER_DAY, counter: 0 },
       entityTable: 'notes',
       entityId: 'entity-op-old',
       result: 'applied',

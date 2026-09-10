@@ -32,10 +32,16 @@ describe('DocInspectorIcons', () => {
     });
 
     it('should render all four section buttons with matching aria-label', () => {
+      const labels: Record<InspectorSection, string> = {
+        outline: 'Outline',
+        info: 'Info',
+        history: 'History',
+        actions: 'Actions',
+      };
       renderWithProviders(<DocInspectorIcons />);
       for (const id of SECTIONS) {
         const btn = screen.getByTestId(`doc-inspector-icons-${id}`);
-        expect(btn).toHaveAttribute('aria-label', id.toUpperCase());
+        expect(btn).toHaveAttribute('aria-label', labels[id]);
       }
     });
   });

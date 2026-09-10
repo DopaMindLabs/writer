@@ -248,10 +248,21 @@ and `syncTombstones`:
    first time;
 2. journals the frame verbatim into `syncOperations`;
 3. materialises (`applied`, `superseded` or `tombstoned`);
-4. writes the `syncInbox` entry.
+4. writes the `syncInbox` entry, carrying the frame's origin device and logical
+   time alongside the result.
 
 Because the check and the write share a transaction, concurrent delivery of the
 same operation through two providers cannot both pass.
+
+The inbox is never pruned, and it is more than replay protection: its entries
+are the durable record of what this device has **seen** per scope and origin.
+The catch-up scope manifest is built from that seen-set (the union of the
+retained journal and the inbox), never from the journal alone — compaction
+drops frames every peer holds, and a manifest built from what *survives* forgets
+whole origins, so a peer would re-author the scope as fresh full-state frames on
+every session, for ever. What a device has seen only grows, so the manifests of
+two converged devices agree — same marks, same counts on both sides — and the
+exchange goes quiet.
 
 > **Known gap carried into Stage 2A.** The journal grows without bound: Stage 1
 > never prunes `syncOperations`. `SyncTombstone.acknowledgedBy` is the seam for
@@ -365,7 +376,11 @@ overlaps a page already taken, skips one, or arrives while a page is still
 outstanding fails the session with `AttachmentCursorError`, as does a page
 offering no manifests. Silently re-offering or overwriting the page in flight
 would drop the attachments in it and leave both devices acknowledging a place in
-the catalogue neither is at.
+the catalogue neither is at. The holder's catalogue is therefore append-only for
+the life of the session: an offer made while the session is open — a live link
+naming attachments one by one as they are written — extends the catalogue and is
+served at the continued cursor, riding a round-trip already in flight where one
+is outstanding. An offer never restarts the catalogue at zero.
 
 The receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
 time, and asks for the next page only once the one in flight has been answered:

@@ -145,6 +145,11 @@ const createKeystoreService = (): KeystoreService => {
       if (cached?.accountId !== null) return;
       await db().rings.update(DEVICE, { accountId });
       cached = { accountId, ring: cached.ring };
+      // The claim is what makes account-gated work eligible — the account
+      // identity registrar will not publish under a ring that is not yet the
+      // signed-in account's. Announcing it lets that run now rather than
+      // waiting for the next settled sync round to notice the binding.
+      notifyRingChange();
     },
     forgetDeviceKeyRing: async () => {
       await db().rings.delete(DEVICE);

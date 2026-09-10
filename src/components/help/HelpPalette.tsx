@@ -9,24 +9,26 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { SearchField } from '@/components/ui/SearchField';
+import { Kbd } from '@/components/ui/Kbd';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
 import { useHelp } from '@/store/help';
 import { searchHelp, type HelpSearchResult } from '@/lib/help/search';
 import { HelpResultList } from './HelpSearch';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 const SHORTCUTS: readonly { readonly keys: string; readonly labelKey: string }[] = [
-  { keys: '⌘K', labelKey: 'shortcuts.help' },
-  { keys: '⌘\\', labelKey: 'shortcuts.focus' },
+  { keys: 'mod+k', labelKey: 'shortcuts.help' },
+  { keys: 'mod+\\', labelKey: 'shortcuts.focus' },
 ];
 
 const ShortcutsList = () => {
   const { t } = useTranslation('help');
   return (
     <div className="py-2">
-      <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-4">
+      <Eyebrow tone="ink4" className="mb-2">
         {t('palette.shortcutsHeading')}
-      </div>
+      </Eyebrow>
       <ul className="space-y-1.5">
         {SHORTCUTS.map((s) => (
           <li
@@ -34,9 +36,10 @@ const ShortcutsList = () => {
             className="flex items-center justify-between text-[14px] text-ink-2"
           >
             <span>{t(s.labelKey)}</span>
-            <kbd className="rounded-sm border border-rule bg-paper-2 px-1.5 py-0.5 font-mono text-[11px] text-ink-3">
-              {s.keys}
-            </kbd>
+            <Kbd
+              keys={s.keys}
+              className="rounded-sm border border-rule bg-paper-2 px-1.5 py-0.5 text-[11px] text-ink-3"
+            />
           </li>
         ))}
       </ul>
@@ -118,9 +121,9 @@ export const HelpPalette = () => {
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
             {t('openCenter')}
           </Link>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-4">
-            {t('palette.hint')}
-          </span>
+          <Eyebrow asChild tone="ink4">
+            <span>{t('palette.hint')}</span>
+          </Eyebrow>
         </div>
       </DialogContent>
     </Dialog>

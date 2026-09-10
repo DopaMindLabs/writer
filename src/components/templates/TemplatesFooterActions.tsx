@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export interface TemplatesFooterActionsProps {
   submitting: boolean;
@@ -25,10 +26,12 @@ export const TemplatesFooterActions = ({
         >
           <span className="h-4 w-4 rounded-full bg-ink-4" />
         </div>
-        <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
-          {t('templates.syncLabel')}{' '}
-          <span className="italic text-ink-4">{t('templates.syncValue')}</span>
-        </span>
+        <Eyebrow asChild size={11}>
+          <span>
+            {t('templates.syncLabel')}{' '}
+            <span className="italic text-ink-4">{t('templates.syncValue')}</span>
+          </span>
+        </Eyebrow>
       </div>
       <button
         data-testid="templates-submit"

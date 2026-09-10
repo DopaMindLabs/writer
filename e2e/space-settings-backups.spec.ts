@@ -95,6 +95,154 @@ test('backups tab: snapshot adds a row that can be downloaded and deleted', asyn
   await expect(page.getByTestId('backups-history')).toHaveCount(0);
 });
 
+test('backups tab: annotations and the palette round-trip through a restore', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  // Both tables ship in the archive but have no authoring surface yet, so the
+  // snapshot side is seeded directly and the restore proves the codecs parse
+  // what the archive renders.
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/([^/?#]+)/);
+  const docId = /\/d\/([^/?#]+)/.exec(page.url())?.[1] ?? '';
+  expect(docId).toBeTruthy();
+
+  const seedCounts = await page.evaluate(
+    ({ scope, doc }) =>
+      new Promise<{ annotations: number; palettes: number }>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const tx = db.transaction(['annotations', 'palettes'], 'readwrite');
+          const meta = {
+            accessScopeId: scope,
+            createdBy: 'me',
+            updatedBy: 'me',
+            mutationId: 'op-backup-seed',
+            logicalUpdatedAt: { millis: 1, counter: 0 },
+          };
+          tx.objectStore('annotations').put({
+            ...meta,
+            id: 'ann-roundtrip',
+            docId: doc,
+            rangeStart: 0,
+            rangeEnd: 8,
+            kind: 'highlight',
+            color: 'yellow',
+            body: 'survives the restore',
+            author: 'me',
+            createdAt: 1,
+          });
+          tx.objectStore('palettes').put({
+            ...meta,
+            id: 'palette-roundtrip',
+            spaceId: scope,
+            slots: [{ name: 'Key idea', color: '#ffd166' }],
+          });
+          tx.oncomplete = () => {
+            db.close();
+            resolve({ annotations: 1, palettes: 1 });
+          };
+          tx.onerror = () => {
+            db.close();
+            reject(new Error('could not seed annotations and palette'));
+          };
+        };
+      }),
+    { scope: spaceId, doc: docId },
+  );
+  expect(seedCounts).toEqual({ annotations: 1, palettes: 1 });
+
+  // Citations do have an authoring surface, so this one goes in through it —
+  // the archive carried the table but no test had ever made it parse a row.
+  await page.goto(`/#/s/${spaceId}/citations`);
+  await expect(page.getByTestId('citations-pane')).toBeVisible();
+  await page.getByRole('button', { name: '+ add' }).click();
+  const citationForm = page.getByTestId('citations-manual-add');
+  await expect(citationForm).toBeVisible();
+  await page
+    .getByTestId('citations-manual-add-input')
+    .fill(
+      '@article{roundtrip2026, author={Round Trip}, title={Survives The Restore}, year={2026}}',
+    );
+  await page.getByTestId('citations-manual-add-submit').click();
+  await expect(citationForm).not.toBeVisible();
+
+  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
+  const snapDownload = page.waitForEvent('download');
+  await page.getByTestId('space-settings-backups-snapshot').click();
+  await snapDownload;
+  await expect(page.getByTestId('backups-history')).toBeVisible();
+
+  await page.getByTestId('backups-history').locator('[data-testid$="-restore"]').first().click();
+  await page.getByTestId('restore-backup-dialog-confirm').click();
+  await expect(page.getByText(/snapshot restored/i)).toBeVisible();
+
+  // Read the restored rows straight from IndexedDB. Polled rather than read
+  // once: the restore re-renders the surface as its live queries settle, which
+  // can tear down the execution context mid-evaluate.
+  const readRestored = () =>
+    page.evaluate(
+      () =>
+        new Promise<{
+          annotation: string;
+          slots: number;
+          citationKey: string;
+        }>((resolve, reject) => {
+          const open = indexedDB.open('lipsum');
+          open.onerror = () => reject(new Error('could not open lipsum db'));
+          open.onsuccess = () => {
+            const db = open.result;
+            const tx = db.transaction(
+              ['annotations', 'palettes', 'citations'],
+              'readonly',
+            );
+            const ann = tx.objectStore('annotations').get('ann-roundtrip');
+            const pal = tx.objectStore('palettes').get('palette-roundtrip');
+            const cites = tx.objectStore('citations').getAll();
+            tx.oncomplete = () => {
+              const annotation =
+                (ann.result as { body?: string } | undefined)?.body ?? '';
+              const slots =
+                (pal.result as { slots?: unknown[] } | undefined)?.slots?.length ??
+                0;
+              // The BibTeX key survives verbatim; the title is normalised to
+              // sentence case on import, so the key is the stable assertion.
+              const citationKey =
+                (cites.result as { key?: string }[]).find(
+                  (c) => c.key === 'roundtrip2026',
+                )?.key ?? '';
+              db.close();
+              resolve({ annotation, slots, citationKey });
+            };
+            tx.onerror = () => {
+              db.close();
+              reject(new Error('could not read restored rows'));
+            };
+          };
+        }),
+    );
+
+  // The citation is the codec the archive never exercised before; the status
+  // stages cannot join it here, living only on the global config row, which a
+  // space archive never carries.
+  await expect
+    .poll(async () => {
+      try {
+        return await readRestored();
+      } catch {
+        return null;
+      }
+    })
+    .toEqual({
+      annotation: 'survives the restore',
+      slots: 1,
+      citationKey: 'roundtrip2026',
+    });
+});
+
 test('backups tab: restoring a snapshot rolls the space back and keeps a pre-restore snapshot', async ({
   page,
 }) => {

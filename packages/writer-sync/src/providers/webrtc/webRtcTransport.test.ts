@@ -175,6 +175,35 @@ describe('backpressure', () => {
     expect(channel.sent).toHaveLength(2);
   });
 
+  it('keeps queued writes ahead of later ones when the buffer drains quietly', () => {
+    // The low-water threshold sits at half the high-water mark, so a buffer
+    // that falls between them fires no `bufferedamountlow` event. A write
+    // arriving in that band must not overtake what is already queued: the
+    // channel is ordered and reliable, and the catch-up exchange reads it as a
+    // sequence — a reordered frame corrupts the conversation rather than
+    // arriving late.
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    transport.send(new Uint8Array([1]));
+    transport.send(new Uint8Array([2]));
+    expect(channel.sent).toHaveLength(0);
+
+    // Below the high-water mark, above the low-water threshold: room for a
+    // write, but no event to drain on. What room there is belongs to the
+    // oldest queued message, not to the one arriving now.
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES - 1;
+    transport.send(new Uint8Array([3]));
+
+    expect(channel.sent.map((bytes) => new Uint8Array(bytes)[0])).toEqual([1]);
+
+    // The rest follow in the order they were written, the newcomer last.
+    channel.bufferedAmount = 0;
+    channel.emit('bufferedamountlow');
+    expect(channel.sent.map((bytes) => new Uint8Array(bytes)[0])).toEqual([1, 2, 3]);
+  });
+
   it('sets a low-water threshold so the channel will tell it when to resume', () => {
     const channel = fakeChannel();
     createWebRtcTransport(channel);

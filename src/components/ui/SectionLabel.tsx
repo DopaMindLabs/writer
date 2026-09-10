@@ -9,8 +9,8 @@ export interface SectionLabelProps
 }
 
 /**
- * The one uppercase-mono heading for a group of rows — the "APPEARANCE" /
- * "WRITING" labels in Quick Settings, the group eyebrows in menus and the
+ * The one mono heading for a group of rows — the "Appearance" /
+ * "Writing" labels in Quick Settings, the group eyebrows in menus and the
  * settings nav. A named specialisation of `Eyebrow` (same recipe), so every
  * section label reads identically instead of being hand-rolled per surface.
  */

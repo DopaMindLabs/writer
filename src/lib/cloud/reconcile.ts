@@ -6,6 +6,7 @@ import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
 import {
   applyPulledBody,
+  runUnderSyncApplyLock,
   type Reconcilable,
   type ReconcileResult,
 } from '@/lib/reconcile';
@@ -195,7 +196,13 @@ interface ReconcileCounts {
  * rest; unmounted docs then run in bounded batches that yield the event loop
  * between them, and docs unchanged since their last reconcile are skipped.
  */
-const reconcileLibrary = async (): Promise<ReconcileSummary> => {
+const reconcileLibrary = (): Promise<ReconcileSummary> =>
+  // Serialised with the frame-ingestion sweep: the snapshot below must not be
+  // taken while frames are landing newer bodies, or the sweep hands back a
+  // stale body as the winner (see `runUnderSyncApplyLock`).
+  runUnderSyncApplyLock(reconcileLibraryLocked);
+
+const reconcileLibraryLocked = async (): Promise<ReconcileSummary> => {
   const docs = await db.docs.toArray();
   const present = new Set(docs.map((doc) => doc.id));
   // Keep the skip-cache bounded: drop entries for docs no longer in the library.

@@ -1,12 +1,17 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { HelpPalette } from './HelpPalette';
 import { useHelp } from '@/store/help';
+import * as platform from '@/lib/shortcuts/platform';
 
 describe('HelpPalette', () => {
   beforeEach(() => {
     useHelp.setState({ open: false });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('is not rendered while closed', () => {
@@ -22,6 +27,23 @@ describe('HelpPalette', () => {
     expect(
       screen.getByRole('link', { name: /Open full Help Center/ }),
     ).toBeInTheDocument();
+  });
+
+  it('shows Ctrl chords off Apple platforms instead of a fixed ⌘ glyph', () => {
+    vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+    useHelp.setState({ open: true });
+    renderWithProviders(<HelpPalette />);
+    expect(screen.getByText('Ctrl+K')).toBeInTheDocument();
+    expect(screen.getByText('Ctrl+\\')).toBeInTheDocument();
+    expect(screen.queryByText(/⌘/)).not.toBeInTheDocument();
+  });
+
+  it('shows the Command glyphs on Apple platforms', () => {
+    vi.spyOn(platform, 'isApplePlatform').mockReturnValue(true);
+    useHelp.setState({ open: true });
+    renderWithProviders(<HelpPalette />);
+    expect(screen.getByText('⌘K')).toBeInTheDocument();
+    expect(screen.getByText('⌘\\')).toBeInTheDocument();
   });
 
   it('searches and closes after picking a result', async () => {

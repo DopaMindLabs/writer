@@ -7,8 +7,10 @@ import {
   type DeviceId,
 } from 'writer-sync/core';
 import type { EncryptedSyncFrame, SyncTombstone } from 'writer-sync/operations';
+import type { PeerLinkState, PeerSession } from 'writer-sync/providers/webrtc';
 import { LoremDB } from '@/db/LoremDB';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
+import { createPeerSessionRegistry } from './peerSessionRegistry';
 import { removeTrustedDevice } from './removeTrustedDevice';
 
 /**
@@ -71,6 +73,34 @@ const trust = async (deviceId: DeviceId): Promise<void> => {
   });
 };
 
+/** A session that records whether it was closed. */
+const fakeSession = () => {
+  let closed = false;
+  const session = {
+    channel: () => null,
+    onChannel: () => () => undefined,
+    onAnyChannel: () => () => undefined,
+    openChannel: () => new Promise<never>(() => undefined),
+    createOffer: () => Promise.resolve(''),
+    acceptOffer: () => Promise.resolve(''),
+    acceptAnswer: () => Promise.resolve(),
+    linkState: (): PeerLinkState => 'connected',
+    onLinkStateChange: () => () => undefined,
+    close: () => {
+      closed = true;
+    },
+  } as unknown as PeerSession;
+  return Object.assign(session, { isClosed: () => closed });
+};
+
+/** A registry holding one live session for the device about to be removed. */
+const connected = (deviceId: DeviceId = PEER) => {
+  const registry = createPeerSessionRegistry();
+  const session = fakeSession();
+  registry.add({ session, deviceId });
+  return Object.assign(registry, { session });
+};
+
 beforeEach(async () => {
   db = new LoremDB('remove-trusted-device');
   await db.open();
@@ -86,7 +116,7 @@ describe('removeTrustedDevice', () => {
   it('revokes the device and releases what was held for it', async () => {
     await trust(PEER);
 
-    await removeTrustedDevice({ db, deviceId: PEER, at: NOW });
+    await removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions: connected() });
 
     const record = await db.trustedDevices.get(String(PEER));
     expect(record?.status).toBe(TrustedDeviceStatus.Revoked);
@@ -107,10 +137,11 @@ describe('removeTrustedDevice', () => {
       throw new Error('the journal refused this delete');
     };
     db.syncOperations.hook('deleting', refuse);
+    const sessions = connected();
 
-    await expect(removeTrustedDevice({ db, deviceId: PEER, at: NOW })).rejects.toThrow(
-      /refused this delete/,
-    );
+    await expect(
+      removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions }),
+    ).rejects.toThrow(/refused this delete/);
     db.syncOperations.hook('deleting').unsubscribe(refuse);
 
     const record = await db.trustedDevices.get(String(PEER));
@@ -118,5 +149,27 @@ describe('removeTrustedDevice', () => {
     expect(record?.revokedAt).toBeUndefined();
     expect(await db.syncTombstones.count()).toBe(1);
     expect(await db.syncOperations.get('op-delete')).toBeDefined();
+    // Still trusted, so still connected: the removal is not a fact yet.
+    expect(sessions.session.isClosed()).toBe(false);
+  });
+
+  it('closes the removed device’s live session', async () => {
+    await trust(PEER);
+    const sessions = connected();
+
+    await removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions });
+
+    expect(sessions.session.isClosed()).toBe(true);
+    expect(sessions.peers()).toHaveLength(0);
+  });
+
+  it('leaves a device that is not being removed connected', async () => {
+    await trust(PEER);
+    await trust(OTHER);
+    const sessions = connected(OTHER);
+
+    await removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions });
+
+    expect(sessions.session.isClosed()).toBe(false);
   });
 });

@@ -267,7 +267,6 @@ body {
   font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .lipsum-tour-popover .driver-popover-close-btn {

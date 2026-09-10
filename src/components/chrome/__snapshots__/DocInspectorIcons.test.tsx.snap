@@ -36,10 +36,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       class="my-1.5 h-px w-4 bg-rule"
     />
     <button
-      aria-label="OUTLINE"
+      aria-label="Outline"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-outline"
-      title="OUTLINE"
+      title="Outline"
       type="button"
     >
       <svg
@@ -76,10 +76,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       </svg>
     </button>
     <button
-      aria-label="INFO"
+      aria-label="Info"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-info"
-      title="INFO"
+      title="Info"
       type="button"
     >
       <svg
@@ -110,10 +110,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
     </button>
     <button
       aria-current="page"
-      aria-label="HISTORY"
+      aria-label="History"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink"
       data-testid="doc-inspector-icons-history"
-      title="HISTORY"
+      title="History"
       type="button"
     >
       <svg
@@ -141,10 +141,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       </svg>
     </button>
     <button
-      aria-label="ACTIONS"
+      aria-label="Actions"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-actions"
-      title="ACTIONS"
+      title="Actions"
       type="button"
     >
       <svg
@@ -249,10 +249,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
     />
     <button
       aria-current="page"
-      aria-label="OUTLINE"
+      aria-label="Outline"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink"
       data-testid="doc-inspector-icons-outline"
-      title="OUTLINE"
+      title="Outline"
       type="button"
     >
       <svg
@@ -289,10 +289,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       </svg>
     </button>
     <button
-      aria-label="INFO"
+      aria-label="Info"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-info"
-      title="INFO"
+      title="Info"
       type="button"
     >
       <svg
@@ -322,10 +322,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       </svg>
     </button>
     <button
-      aria-label="HISTORY"
+      aria-label="History"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-history"
-      title="HISTORY"
+      title="History"
       type="button"
     >
       <svg
@@ -353,10 +353,10 @@ exports[`DocInspectorIcons > snapshot > should match the snapshot across all var
       </svg>
     </button>
     <button
-      aria-label="ACTIONS"
+      aria-label="Actions"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink"
       data-testid="doc-inspector-icons-actions"
-      title="ACTIONS"
+      title="Actions"
       type="button"
     >
       <svg

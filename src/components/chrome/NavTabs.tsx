@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 export interface NavTabDef {
   id: string;
@@ -76,12 +77,14 @@ export const NavTabs = ({ groups, active, onSelect, label = 'Settings sections' 
       >
         {groups.map((g, gi) => (
           <div key={gi} className="mb-1.5 last:mb-0">
-            <div
+            <SectionLabel
+              size={9}
+              tone="ink4"
               data-testid={`settings-tabs-group-${String(gi)}`}
-              className="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+              className="px-6 pb-1 pt-2.5"
             >
               {g.label}
-            </div>
+            </SectionLabel>
             <ul>
               {g.tabs.map((tab) => (
                 <li key={tab.id}>

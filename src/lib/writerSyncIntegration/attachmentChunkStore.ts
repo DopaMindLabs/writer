@@ -64,20 +64,52 @@ const manifestsForScopes = async (
   const groups = groupsOf(rows);
   const attachmentIds = [...groups.keys()];
   const attachments = await db.noteAttachments.bulkGet(attachmentIds);
-  return Promise.all(
-    attachmentIds.flatMap((attachmentId, index) => {
-      if (attachments[index] === undefined) return [];
+  const manifests = await Promise.all(
+    attachmentIds.map(async (attachmentId, index) => {
+      if (attachments[index] === undefined) return null;
       const chunks = groups.get(attachmentId);
       invariant(chunks, 'attachment chunk group disappeared');
-      return [
-        buildChunkManifest({
+      // Skipped by name rather than thrown: one partial or poisoned attachment
+      // must not block the whole catalogue.
+      try {
+        return await buildChunkManifest({
           attachmentId,
           content: contentOf(chunks),
           chunkBytes: TRANSFER_CHUNK_BYTES,
-        }),
-      ];
+        });
+      } catch (error) {
+        appLogger.warn('attachment skipped from the offer catalogue', {
+          attachmentId,
+          error,
+        });
+        return null;
+      }
     }),
   );
+  return manifests.filter((manifest) => manifest !== null);
+};
+
+/**
+ * The manifest for one attachment, or `null` when this device cannot serve it
+ * — no chunks held, or the domain row is gone. A partial or poisoned chunk set
+ * throws, and the caller decides what one bad attachment costs: a live offer
+ * names it and moves on rather than letting it block a whole scope.
+ */
+export const manifestForAttachment = async (
+  db: LoremDB,
+  attachmentId: string,
+) => {
+  const rows = await db.syncAttachmentChunks
+    .where('attachmentId')
+    .equals(attachmentId)
+    .toArray();
+  if (rows.length === 0) return null;
+  if ((await db.noteAttachments.get(attachmentId)) === undefined) return null;
+  return buildChunkManifest({
+    attachmentId,
+    content: contentOf(rows),
+    chunkBytes: TRANSFER_CHUNK_BYTES,
+  });
 };
 
 /**

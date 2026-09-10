@@ -1,7 +1,7 @@
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncState, UserLogin } from 'dexie-cloud-addon';
-import { SYNCED_TABLES } from './crypto/tableRules';
+import { CONTENT_TABLES } from './crypto/tableRules';
 import { fingerprintsEqual, ESCROW_ID } from './crypto/keys';
 import {
   deviceKeyProvider,
@@ -53,7 +53,7 @@ const warnMismatch = (
 export const hasLocalSyncedData = async (
   db: LoremDB = appDb,
 ): Promise<boolean> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     if ((await db.table(table).count()) > 0) return true;
   }
   return false;
@@ -194,17 +194,25 @@ const createRunner = (run: () => Promise<unknown>): (() => void) => {
  * user or leave `initial`.
  */
 /**
- * Guard against key material outliving a sign-out or account switch. When the
- * signed-in account differs from the one the cached ring is bound to (and the
- * binding is a concrete account, not the unclaimed `null`), drop the cached ring
- * **synchronously** so the keyless-lock monitor blocks writes at once — before
- * any content can be sealed with the old account's key — then forget the ring and
- * its pending escrow from the keystore.
+ * Guard against key material outliving an account switch. When a **different**
+ * account is signed in from the one the cached ring is bound to, drop the cached
+ * ring **synchronously** so the keyless-lock monitor blocks writes at once —
+ * before any content can be sealed with the old account's key — then forget the
+ * ring and its pending escrow from the keystore.
+ *
+ * Only a concrete other account counts. A `null` account means "nobody is signed
+ * in *as far as this emission knows*", which every boot produces: the addon
+ * publishes its user subject before it has restored the persisted login. Reading
+ * that as a switch deleted the key ring on every page load, so a device that had
+ * just unlocked was locked out again the moment the user navigated — observed on
+ * the live beta database. Signing out deliberately has its own paths
+ * ({@link forgetThisDevice}, device reset); this guard is about not sealing one
+ * account's content with another's key.
  */
 const guardIdentityChange = (accountId: string | null): void => {
   const bound = deviceKeyProvider.accountId();
   const ring = deviceKeyProvider.current();
-  if (ring !== null && bound !== null && bound !== accountId) {
+  if (ring !== null && bound !== null && accountId !== null && bound !== accountId) {
     invalidateCachedRing();
     void forgetThisDevice().catch(() => undefined);
   }

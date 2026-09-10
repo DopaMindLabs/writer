@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Dexie from 'dexie';
 import { generateRootSecret, deriveKeyRing } from './keys';
 import {
@@ -105,6 +105,26 @@ describe('device keyStore account binding', () => {
     // Persisted, not just cached.
     await loadDeviceKeyRing();
     expect(deviceKeyProvider.accountId()).toBe('acct-a');
+  });
+
+  it('announces the claim, so account-gated work re-runs without another sync round', async () => {
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
+    await saveDeviceKeyRing({ accountId: null, ring });
+    const changes = vi.fn();
+    const stop = onDeviceKeyRingChange(changes);
+
+    await bindDeviceKeyRing('acct-a');
+
+    // Everything gated on "this ring belongs to the signed-in account" — the
+    // account identity registrar above all — becomes eligible at this moment.
+    // Without the signal it would wait for the next settled sync to notice.
+    expect(changes).toHaveBeenCalledTimes(1);
+
+    // A repeat claim changes nothing and must stay silent, or the registrars it
+    // wakes would re-run on every reconcile pass for no reason.
+    await bindDeviceKeyRing('acct-a');
+    expect(changes).toHaveBeenCalledTimes(1);
+    stop();
   });
 
   it('never rebinds a ring already bound to a different account', async () => {

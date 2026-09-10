@@ -7,6 +7,7 @@ import { routes } from '@/lib/routes';
 import { getArticleMeta } from '@/lib/help/registry';
 import { getHelpDoc, type HelpDoc, type HelpHeading } from '@/lib/help/content';
 import { Markdown } from './Markdown';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 interface OnThisPageProps {
   readonly slug: string;
@@ -18,9 +19,7 @@ const OnThisPage = ({ slug, headings }: OnThisPageProps) => {
   if (headings.length < 3) return null;
   return (
     <aside className="mb-8 border-l-2 border-rule pl-4">
-      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t('onThisPage')}
-      </div>
+      <Eyebrow>{t('onThisPage')}</Eyebrow>
       <ul className="mt-2 space-y-1">
         {headings.map((h) => (
           <li key={h.id} className={h.depth === 3 ? 'pl-3' : undefined}>
@@ -52,9 +51,7 @@ const Related = ({ related, locale }: RelatedProps) => {
   if (items.length === 0) return null;
   return (
     <section className="mt-12 border-t border-rule pt-6">
-      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t('related')}
-      </div>
+      <Eyebrow>{t('related')}</Eyebrow>
       <ul className="mt-3 space-y-2">
         {items.map(({ slug, doc }) => (
           <li key={slug}>

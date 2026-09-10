@@ -6,6 +6,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { IconButton } from '@/components/ui/icon';
 import { CitationsPane } from './CitationsPane';
 import { routes } from '@/lib/routes';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 interface CitationsSidePanelProps {
   spaceId: string;
@@ -31,9 +32,9 @@ export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
       className="fixed inset-0 z-40 flex h-full w-full flex-col bg-paper animate-in slide-in-from-right duration-200 md:static md:inset-auto md:z-auto md:max-w-[32rem] md:shrink-0 md:border-l md:border-rule"
     >
       <div className="flex h-8 shrink-0 items-center justify-between border-b border-rule px-2">
-        <span className="px-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          {t('citations.title')}
-        </span>
+        <Eyebrow asChild>
+          <span className="px-2">{t('citations.title')}</span>
+        </Eyebrow>
         <div className="flex items-center">
           <IconButton
             icon={Maximize2}
