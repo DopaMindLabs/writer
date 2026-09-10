@@ -835,7 +835,7 @@
       },
       "deviceLimit": {
         "title": "This account already has four devices",
-        "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+        "body": "Cloud sync is in beta and supports four devices for now. Free the slot of a device you no longer use, or sign out on one of them, then try again here.",
         "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
       },
       "devices": {
@@ -850,16 +850,16 @@
         "empty": "No devices yet. This one joins the list once your writing is encrypted.",
         "signOut": "Sign out",
         "signOutAria": "Sign out of this device",
-        "revoke": "Remove",
-        "revokeAria": "Remove {{name}} from this account",
-        "revokeTitle": "Remove this device?",
-        "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
-        "revokeConfirm": "Remove device",
+        "revoke": "Free slot",
+        "revokeAria": "Free the slot held by {{name}}",
+        "revokeTitle": "Free this device’s slot?",
+        "revokeBody": "The slot is free straight away, so another device can take it. That device is asked to sign out, but it keeps syncing until it does.",
+        "revokeConfirm": "Free slot",
         "revokeCancel": "Cancel"
       },
       "revoked": {
-        "title": "This device was removed from your account",
-        "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
+        "title": "This device’s slot on your account was freed",
+        "body": "It no longer holds a slot. Sign out to finish — your writing stays on this device."
       },
       "backupNudge": {
         "title": "These notes are only on this device",

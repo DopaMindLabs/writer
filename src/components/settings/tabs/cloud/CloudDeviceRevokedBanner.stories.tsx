@@ -10,5 +10,5 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** This device's slot was removed from another device. */
+/** This device's slot on the account was freed. */
 export const Revoked: Story = {};

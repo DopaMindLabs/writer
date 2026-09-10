@@ -53,19 +53,21 @@ describe('CloudDeviceList', () => {
     expect(screen.getByTestId('cloud-device-other')).toBeInTheDocument();
   });
 
-  it('confirms before revoking, and only then removes the device', async () => {
+  it('confirms before freeing a slot, and only then frees it', async () => {
     useDeviceList.mockReturnValue(list());
     renderWithProviders(<CloudDeviceList onSignOut={vi.fn()} />);
 
     await userEvent.click(screen.getByTestId('cloud-device-revoke'));
     // Reaching across to another machine deserves a deliberate second step.
     expect(removeCloudDevice).not.toHaveBeenCalled();
+    // Freeing a slot is not access removal: the dialog says the device keeps syncing.
+    expect(screen.getByText(/keeps syncing until it does/i)).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: /Remove device/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Free slot' }));
     expect(removeCloudDevice).toHaveBeenCalledWith('other');
   });
 
-  it('removes nothing when the confirmation is dismissed', async () => {
+  it('frees nothing when the confirmation is dismissed', async () => {
     useDeviceList.mockReturnValue(list());
     renderWithProviders(<CloudDeviceList onSignOut={vi.fn()} />);
 

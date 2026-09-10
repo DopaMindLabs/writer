@@ -2,10 +2,10 @@ import { renderWithProviders, screen } from '@/test/test-utils';
 import { CloudDeviceRevokedBanner } from './CloudDeviceRevokedBanner';
 
 describe('CloudDeviceRevokedBanner', () => {
-  it('explains that this device was removed from the registry', () => {
+  it('explains that the slot for this device was freed elsewhere', () => {
     renderWithProviders(<CloudDeviceRevokedBanner />);
     expect(screen.getByTestId('cloud-device-revoked')).toBeInTheDocument();
-    expect(screen.getByText(/removed from your account/i)).toBeInTheDocument();
+    expect(screen.getByText(/slot on your account was freed/i)).toBeInTheDocument();
     expect(screen.getByText(/sign out to finish/i)).toBeInTheDocument();
     expect(screen.queryByRole('button')).toBeNull();
   });

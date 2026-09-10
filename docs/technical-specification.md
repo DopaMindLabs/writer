@@ -401,8 +401,8 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   goes **stale after 7 days** of silence and is then reclaimable, which is what stops a
   discarded browser profile holding a slot for ever; only live slots count against the limit,
   so stale and revoked rows never lock a new device out. Users see their devices in Cloud
-  settings and can **sign out** of the current one or **revoke** any other, which frees its
-  slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
+  settings and can **sign out** of the current one or **free the slot** of any other, which
+  frees it at once and leaves a tombstone so that device can tell its slot was freed. The limit
   is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
   a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
   transiently both take it. Both windows are overridable per deployment, in seconds, via
@@ -414,11 +414,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   a device has no name to show, by design. The current device is badged **This device** and a
   reclaimable one **Inactive**. Every row can free its own slot by the means that fits it: the
   current device **signs out** (revoking itself would be pointless — it holds the session and
-  would rejoin), any other is **removed** behind a confirmation. The list is shown to a
+  would rejoin), any other has its slot **freed** behind a confirmation. The list is shown to a
   *blocked* device too: that is the device that most needs to free a slot, and until now the
   only way to free one was to sign out on the machine holding it — useless for a laptop that
-  was wiped or given away. A removed device sees **This device was removed from your account**
-  and is asked to sign out; nothing of its writing is deleted.
+  was wiped or given away. A device whose slot was freed sees **This device’s slot on your
+  account was freed** and is asked to sign out; nothing of its writing is deleted.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
   changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
   time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
