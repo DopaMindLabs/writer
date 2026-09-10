@@ -835,7 +835,7 @@
       },
       "deviceLimit": {
         "title": "This account already has four devices",
-        "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+        "body": "Cloud sync is in beta and supports four devices for now. Free the slot of a device you no longer use, or sign out on one of them, then try again here.",
         "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
       },
       "devices": {
