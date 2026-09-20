@@ -2,8 +2,10 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
 import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
+import type { Note } from '@/db/schema';
 import {
   seedBrainSpaceCanvas,
+  sampleMetadata,
   sampleNote,
   sampleSpace,
 } from '@/test/fixtures';
@@ -18,12 +20,31 @@ const waitForNoteRendered = async (): Promise<void> => {
   // across polls: the trailing focusNote()/live-query renders then commit inside
   // act() instead of in an inter-poll gap or after the test body returns.
   await act(async () => {
-    await waitFor(() => {
-      expect(
-        document.querySelector('[data-testid^="brain-note-"]'),
-      ).not.toBeNull();
-    });
+    // Generous timeout: creating a note now also resolves the current principal
+    // (a db.meta read), which under a fully parallel suite run can push the
+    // write past waitFor's default 1s.
+    await waitFor(
+      () => {
+        expect(
+          document.querySelector('[data-testid^="brain-note-"]'),
+        ).not.toBeNull();
+      },
+      { timeout: 4000 },
+    );
   });
+};
+
+/** Wait until the clicked note lands in Dexie and return the stored rows. */
+const waitForStoredNote = async (): Promise<Note[]> => {
+  await act(async () => {
+    await waitFor(
+      async () => {
+        expect(await db.notes.count()).toBeGreaterThan(0);
+      },
+      { timeout: 4000 },
+    );
+  });
+  return db.notes.toArray();
 };
 
 describe('BrainSpaceCanvas', () => {
@@ -102,6 +123,12 @@ describe('BrainSpaceCanvas', () => {
         expect(await db.notes.count()).toBe(0);
       });
       await user.click(button);
+      // Wait for the write to land before waiting on the render: creating a
+      // note resolves the current principal and journals an encrypted
+      // operation frame, so under a fully parallel suite run the write itself
+      // can take longer than a render wait should have to budget for. Once the
+      // row exists, the render is only a live-query tick away.
+      await waitForStoredNote();
       await waitForNoteRendered();
       expect(await db.notes.count()).toBe(1);
     });
@@ -112,8 +139,10 @@ describe('BrainSpaceCanvas', () => {
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitForNoteRendered();
-      const [note] = await db.notes.toArray();
+      // Placement is a database assertion; rendering is covered by the
+      // add-to-Dexie test above. Waiting on the row keeps this independent of
+      // live-query re-render timing between tests in this file.
+      const [note] = await waitForStoredNote();
       expect(note.l).toBe(24);
       expect(note.t).toBe(24);
     });
@@ -127,8 +156,7 @@ describe('BrainSpaceCanvas', () => {
       scroll.scrollTop = 1300;
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitForNoteRendered();
-      const [note] = await db.notes.toArray();
+      const [note] = await waitForStoredNote();
       expect(note.l).toBe(1824);
       expect(note.t).toBe(1324);
     });
@@ -200,6 +228,7 @@ describe('BrainSpaceCanvas', () => {
       // empty <g> alone would also pass if connection rendering were broken
       // entirely, so we assert exactly the valid connection survives.
       await db.connections.put({
+        ...sampleMetadata(),
         id: 'c-valid',
         spaceId: 's1',
         fromNoteId: 'n1',
@@ -207,6 +236,7 @@ describe('BrainSpaceCanvas', () => {
         createdAt: 0,
       });
       await db.connections.put({
+        ...sampleMetadata(),
         id: 'c-orphan',
         spaceId: 's1',
         fromNoteId: 'n1',

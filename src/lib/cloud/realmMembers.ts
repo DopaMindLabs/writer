@@ -1,8 +1,10 @@
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
+import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
-import type { ScopeMember } from '@/lib/syncProviders/types';
-import { ScopeRole } from '@/lib/syncProviders/types';
+import type { ScopeMember } from 'writer-sync/core';
+import { ScopeRole } from 'writer-sync/core';
+import type { DexieRow } from './dexieRow';
 import { isShared, privateRealmOf } from './spaceRealm';
 
 /**
@@ -31,7 +33,8 @@ import { isShared, privateRealmOf } from './spaceRealm';
 
 /** The realm a space is shared into, or a refusal if it is not shared. */
 const sharedRealmOf = async (spaceId: string, db: LoremDB): Promise<string> => {
-  const space = await db.spaces.get(spaceId);
+  // Realm binding lives on the persisted adapter row, never the domain type.
+  const space: DexieRow<Space> | undefined = await db.spaces.get(spaceId);
   invariant(space, `Unknown space: ${spaceId}`);
   const { realmId } = space;
   // The addon stamps every row with the owner's private realm, so "not shared"

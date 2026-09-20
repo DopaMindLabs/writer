@@ -1,9 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
 import type { Revision } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useRevisions } from './useRevisions';
 
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
+  ...sampleMetadata(),
   id: overrides.id ?? 'r',
   docId: overrides.docId ?? 'd1',
   body: overrides.body ?? 'body',

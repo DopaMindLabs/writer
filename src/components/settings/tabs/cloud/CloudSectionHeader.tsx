@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
  */
 export const CloudSectionHeader = () => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.${name}`);
+  const k = (name: string) => t(`settings.cloud.${name}`);
   return (
     <>
       <h2 className="text-[15px] font-semibold text-ink">{k('title')}</h2>

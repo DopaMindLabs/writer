@@ -18,13 +18,13 @@ export const CloudReconcileStatusRow = () => {
       kind="error"
       className="mt-2"
       data-testid="cloud-reconcile-error"
-      title={t('settings.account.cloud.reconcile.failedTitle')}
-      action={t('settings.account.cloud.reconcile.retry')}
+      title={t('settings.cloud.reconcile.failedTitle')}
+      action={t('settings.cloud.reconcile.retry')}
       onAction={() => {
         requestReconcile('manual');
       }}
     >
-      {t('settings.account.cloud.reconcile.failedBody')}
+      {t('settings.cloud.reconcile.failedBody')}
     </InlineBanner>
   );
 };

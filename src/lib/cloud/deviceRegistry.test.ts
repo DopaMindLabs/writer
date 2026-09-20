@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from './crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from './crypto/keys';
+import { deriveKeyRing, generateRootSecret } from './crypto/keys';
 import {
   DEVICE_REFRESH_INTERVAL_MS,
   DEVICE_STALE_AFTER_MS,
@@ -47,7 +47,7 @@ afterEach(async () => {
 });
 
 const acquireKey = async (): Promise<void> => {
-  await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+  await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
 };
 
 describe('registerThisDevice', () => {

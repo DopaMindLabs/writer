@@ -2,6 +2,10 @@ import { db } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
 import { collabStore } from '@/lib/collab/collabStore';
+import {
+  currentPrincipal,
+  touchedMetadataFields,
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { docBodyBaselineKey } from './docBodyBaseline';
 
 /**
@@ -20,6 +24,7 @@ export const deleteDocCascade = async (
   database: LoremDB = db,
 ): Promise<void> => {
   invariant(docId, 'deleteDocCascade: docId is required');
+  const principal = await currentPrincipal();
   await database.transaction(
     'rw',
     [
@@ -39,8 +44,16 @@ export const deleteDocCascade = async (
       const linked = (await database.notes.toArray()).filter(
         (note) => note.linkedDocId === docId,
       );
+      // Each unlink is its own logical mutation — the operation journal keys
+      // frames by mutation id, so every touched note mints a fresh one.
       await Promise.all(
-        linked.map((note) => database.notes.put({ ...note, linkedDocId: undefined })),
+        linked.map((note) =>
+          database.notes.put({
+            ...note,
+            linkedDocId: undefined,
+            ...touchedMetadataFields(principal),
+          }),
+        ),
       );
       await database.docs.delete(docId);
     },

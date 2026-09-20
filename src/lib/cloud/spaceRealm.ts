@@ -1,46 +1,27 @@
-import type { Collection, Table } from 'dexie';
+import type { Table } from 'dexie';
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
+import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
+import type { AccessScopeId } from 'writer-sync/core';
+import type { EncryptedSyncFrame } from 'writer-sync/operations';
+import { DEXIE_CLOUD_PROVIDER_ID } from './dexieCloudProviderId';
+import type { DexieRow } from './dexieRow';
 
 /**
- * Moving a space into its own access-control realm, and back out again.
+ * Moving an access scope into its own Dexie realm, and back out again.
  *
- * `spaceId` stays an application relationship; the realm is the access-control
- * boundary. The addon owns `realmId`: its access-control middleware stamps every
- * written row with the current user's id — literally `'unauthorized'` while
- * signed out, rewritten to the real id on login — so a row's *private* realm is
- * a value, not an absent field. Sharing therefore means restamping the space and
- * every row that syncs with it from that private realm onto a custom one, and
- * unsharing means restamping them back.
+ * `realmId` is the addon's access-control boundary and stays entirely inside
+ * this adapter. Since the frame cutover it applies to a different set of rows:
+ * materialised content tables are local projections that never leave the device,
+ * so stamping them with a realm would achieve nothing. What replicates is the
+ * operation journal — so a realm binds the scope's **frames**, and the scope's
+ * binding is recorded in `syncProviderBindings` so frames written later inherit
+ * it without re-reading Dexie's own tables.
  *
- * The stamped set is exactly the tables that sync: a local-only row (settings,
- * backups, `docUpdates`, the collab seed markers) never reaches the server, so
- * giving it a realm would be meaningless at best and misleading at worst.
+ * The realm exists; nothing here grants anyone else access to it. Membership
+ * provisioning and cross-user key delivery remain absent (see `realmMembers`).
  */
-
-/** Synced descendants reachable by the `spaceId` index. */
-const SPACE_SCOPED = [
-  'sections',
-  'docs',
-  'notes',
-  'noteAttachments',
-  'citations',
-  'connections',
-  'palettes',
-] as const;
-
-/** Synced descendants reachable only through their document. */
-const DOC_SCOPED = ['annotations', 'revisions'] as const;
-
-/** Every table a realm stamp touches — exactly the synced content tables. */
-export const REALM_TABLE_NAMES = ['spaces', ...SPACE_SCOPED, ...DOC_SCOPED] as const;
-
-const tablesFor = (db: LoremDB) => [
-  ...REALM_TABLE_NAMES.map((name) => db.table(name)),
-  db.realms,
-  db.members,
-];
 
 /**
  * The realm a row sits in when it belongs to nobody but its owner. The addon
@@ -58,62 +39,70 @@ export const privateRealmOf = (db: LoremDB): string =>
  */
 const UNAUTHORIZED = 'unauthorized';
 
-/** Whether a space has been moved out of its owner's private realm. */
+/** Whether a scope has been moved out of its owner's private realm. */
 export const isShared = (realmId: string | undefined, privateRealm: string): boolean =>
   realmId !== undefined && realmId !== privateRealm;
 
-/**
- * Read the matching rows through the wrapped query path, stamp them in memory,
- * and write them back through the wrapped mutation path. A cursor-driven update
- * would see and store rows underneath the encryption middleware — raw
- * ciphertext on a locked device — so rows must round-trip through
- * `toArray`/`bulkPut` instead (see crypto/middleware.ts).
- */
-const restampRows = async <T extends { realmId?: string }, K>(options: {
-  matches: Collection<T, K>;
-  table: Table<T, K>;
-  stamp: (row: { realmId?: string }) => void;
-}): Promise<void> => {
-  const rows = await options.matches.toArray();
-  if (rows.length === 0) return;
-  rows.forEach(options.stamp);
-  await options.table.bulkPut(rows);
-};
+/** The tables a scope transition writes: the journal plus the binding record. */
+const tablesFor = (db: LoremDB) => [
+  db.syncOperations,
+  db.syncProviderBindings,
+  db.realms,
+  db.members,
+];
 
 /**
- * Apply `stamp` to the space and every synced row beneath it.
+ * Stamp every already-enqueued frame for a scope with `realmId`.
  *
- * Must be called inside a transaction covering {@link REALM_TABLE_NAMES}: a
- * half-stamped space would sync some rows into the realm and strand the rest in
- * the owner's private realm, where no member could read them. Exported so the
- * fan-out can be tested directly — it is the part that has to be right, and it
- * needs no cloud account, unlike minting the realm itself.
+ * Frames are classified `already-wrapped`, so they carry no row envelope and can
+ * be restamped in place — the ciphertext payload is untouched, which is what
+ * makes this safe: the realm is provider routing, never part of what the frame
+ * says. Must run inside a transaction covering the journal, so a half-stamped
+ * scope cannot strand some of its operations outside the realm its peers read.
+ *
+ * Exported so the fan-out can be tested without a cloud account.
  */
-export const restampSpace = async (options: {
+export const restampScopeFrames = async (options: {
   db: LoremDB;
-  spaceId: string;
-  stamp: (row: { realmId?: string }) => void;
+  accessScopeId: AccessScopeId;
+  realmId: string;
+}): Promise<number> => {
+  const { db, accessScopeId, realmId } = options;
+  // The adapter boundary: the *persisted* frame row is the neutral frame plus
+  // Dexie's own metadata, and only this module may see that intersection.
+  const journal: Table<DexieRow<EncryptedSyncFrame>, string> =
+    db.table('syncOperations');
+  const frames = await journal.where({ accessScopeId }).toArray();
+  if (frames.length === 0) return 0;
+  await journal.bulkPut(frames.map((frame) => ({ ...frame, realmId })));
+  return frames.length;
+};
+
+/** Record (or clear) the scope's binding to this provider's external scope. */
+const writeBinding = async (options: {
+  db: LoremDB;
+  scopeId: AccessScopeId;
+  externalScopeId: string | undefined;
 }): Promise<void> => {
-  const { db, spaceId, stamp } = options;
-  await restampRows({ matches: db.spaces.where({ id: spaceId }), table: db.spaces, stamp });
-  for (const name of SPACE_SCOPED) {
-    const table = db.table<{ realmId?: string }, string>(name);
-    await restampRows({ matches: table.where({ spaceId }), table, stamp });
+  const { db, scopeId, externalScopeId } = options;
+  if (externalScopeId === undefined) {
+    await db.syncProviderBindings.delete([scopeId, DEXIE_CLOUD_PROVIDER_ID]);
+    return;
   }
-  const docIds = await db.docs.where({ spaceId }).primaryKeys();
-  if (docIds.length === 0) return;
-  for (const name of DOC_SCOPED) {
-    const table = db.table<{ realmId?: string }, string>(name);
-    await restampRows({ matches: table.where('docId').anyOf(docIds), table, stamp });
-  }
+  await db.syncProviderBindings.put({
+    scopeId,
+    providerInstanceId: DEXIE_CLOUD_PROVIDER_ID,
+    externalScopeId,
+    enabled: true,
+  });
 };
 
 /**
- * Give a space its own realm and file every synced row into it. Returns the new
- * realm id. The realm is named after the space so it is recognisable wherever
- * realms are listed.
+ * Give a scope its own realm and file its enqueued frames into it. Returns the
+ * new realm id. The realm is named after the space so it is recognisable
+ * wherever realms are listed.
  *
- * Refuses a space that already has a realm: re-sharing would mint a second realm
+ * Refuses a scope that already has a realm: re-sharing would mint a second realm
  * and orphan the first, taking its members' access with it.
  */
 export const createSpaceRealm = async (
@@ -128,52 +117,42 @@ export const createSpaceRealm = async (
     privateRealm !== UNAUTHORIZED,
     'Cannot share a space while signed out of the cloud',
   );
-  const space = await db.spaces.get(spaceId);
+  const space: DexieRow<Space> | undefined = await db.spaces.get(spaceId);
   invariant(space, `Cannot share unknown space: ${spaceId}`);
+  const existing = await db.syncProviderBindings.get([spaceId, DEXIE_CLOUD_PROVIDER_ID]);
   invariant(
-    !isShared(space.realmId, privateRealm),
-    `Space is already shared: ${spaceId} (realm ${String(space.realmId)})`,
+    !isShared(existing?.externalScopeId, privateRealm),
+    `Space is already shared: ${spaceId} (realm ${String(existing?.externalScopeId)})`,
   );
 
   return db.transaction('rw', tablesFor(db), async () => {
     const realmId = await db.realms.add({ name: space.name });
-    await restampSpace({
-      db,
-      spaceId,
-      stamp: (row) => {
-        row.realmId = realmId;
-      },
-    });
+    await restampScopeFrames({ db, accessScopeId: spaceId, realmId });
+    await writeBinding({ db, scopeId: spaceId, externalScopeId: realmId });
     return realmId;
   });
 };
 
 /**
- * Return a space to its owner's private realm: restamp every synced row with
- * that realm, then delete the custom realm and its membership. Dropping the
- * members is the point — a realm left behind with members would keep granting
- * access to rows that have moved out of it.
+ * Return a scope to its owner's private realm: restamp its frames with that
+ * realm, drop the binding, then delete the custom realm and its membership.
+ * Dropping the members is the point — a realm left behind with members would
+ * keep granting access to operations that have moved out of it.
  *
- * A no-op on a space that was never shared.
+ * A no-op on a scope that was never shared.
  */
 export const dropSpaceRealm = async (
   spaceId: string,
   db: LoremDB = appDb,
 ): Promise<void> => {
-  const space = await db.spaces.get(spaceId);
-  invariant(space, `Cannot unshare unknown space: ${spaceId}`);
   const privateRealm = privateRealmOf(db);
-  const { realmId } = space;
+  const binding = await db.syncProviderBindings.get([spaceId, DEXIE_CLOUD_PROVIDER_ID]);
+  const realmId = binding?.externalScopeId;
   if (realmId === undefined || !isShared(realmId, privateRealm)) return;
 
   await db.transaction('rw', tablesFor(db), async () => {
-    await restampSpace({
-      db,
-      spaceId,
-      stamp: (row) => {
-        row.realmId = privateRealm;
-      },
-    });
+    await restampScopeFrames({ db, accessScopeId: spaceId, realmId: privateRealm });
+    await writeBinding({ db, scopeId: spaceId, externalScopeId: undefined });
     await db.members.where({ realmId }).delete();
     await db.realms.delete(realmId);
   });

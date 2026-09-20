@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import type { DragEndEvent, DragStartEvent } from '@/components/libs/dnd';
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useDragAnnounce } from './useDragAnnounce';
 
 const section = (id: string, label: string): Section => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   parentSectionId: null,
@@ -12,6 +14,7 @@ const section = (id: string, label: string): Section => ({
   order: 0,
 });
 const doc = (id: string, sectionId: string, name: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

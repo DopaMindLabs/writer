@@ -2,10 +2,12 @@ import { vi } from 'vitest';
 import type { ComponentProps } from 'react';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import type { AddController } from './Sidebar.types';
 import { SortableSectionList } from './SortableSectionList';
 
 const makeDoc = (over: Partial<Doc> = {}): Doc => ({
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'secA',
@@ -17,6 +19,7 @@ const makeDoc = (over: Partial<Doc> = {}): Doc => ({
 });
 
 const secA: Section = {
+  ...sampleMetadata(),
   id: 'secA',
   spaceId: 's1',
   parentSectionId: null,

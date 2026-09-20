@@ -3,6 +3,7 @@ import JSZip from 'jszip';
 import { db } from '@/db/db';
 import {
   FIXED_TIME,
+  sampleMetadata,
   sampleSpace,
   sampleSection,
   sampleSubsection,
@@ -222,6 +223,7 @@ describe('buildSpaceMarkdownZipFor', () => {
 
   it('places docs under just the section slug when the parent section is missing', async () => {
     await db.sections.put({
+      ...sampleMetadata(),
       id: 'orphan-sub',
       spaceId: 's1',
       parentSectionId: 'missing-parent',
@@ -243,8 +245,8 @@ describe('buildSpaceMarkdownZipFor', () => {
 
   it('disambiguates sibling sections that slugify to the same folder', async () => {
     await db.sections.bulkPut([
-      { id: 'dupA', spaceId: 's1', parentSectionId: null, label: 'Drafts', order: 1 },
-      { id: 'dupB', spaceId: 's1', parentSectionId: null, label: 'Drafts!', order: 2 },
+      { ...sampleMetadata(), id: 'dupA', spaceId: 's1', parentSectionId: null, label: 'Drafts', order: 1 },
+      { ...sampleMetadata(), id: 'dupB', spaceId: 's1', parentSectionId: null, label: 'Drafts!', order: 2 },
     ]);
     await db.docs.bulkPut([
       { ...sampleDoc, id: 'docA', sectionId: 'dupA', name: 'A' },
@@ -336,6 +338,7 @@ describe('buildSpaceMarkdownZipFor', () => {
   it('renders citations sorted by author and tolerates missing fields', async () => {
     await db.citations.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'c-z',
         spaceId: 's1',
         key: 'zenith2020',
@@ -346,6 +349,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         useCount: 1,
       },
       {
+        ...sampleMetadata(),
         id: 'c-a',
         spaceId: 's1',
         key: 'anonNd',
@@ -356,6 +360,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         useCount: 0,
       },
       {
+        ...sampleMetadata(),
         id: 'c-a2',
         spaceId: 's1',
         key: 'alsoAnon',
@@ -389,6 +394,7 @@ describe('buildSpaceMarkdownZipFor', () => {
     ]);
     await db.connections.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'conn1',
         spaceId: 's1',
         fromNoteId: 'src-note',
@@ -396,6 +402,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'conn2',
         spaceId: 's1',
         fromNoteId: 'empty-note',
@@ -403,6 +410,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'conn3',
         spaceId: 's1',
         fromNoteId: 'ghost-from',
@@ -423,6 +431,7 @@ describe('buildSpaceMarkdownZipFor', () => {
     await db.docs.put({ ...sampleDoc, id: 'd-anno', name: 'Annotated' });
     await db.annotations.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'a1',
         docId: 'd-anno',
         rangeStart: 0,
@@ -434,6 +443,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'a2',
         docId: 'd-anno',
         rangeStart: 5,
@@ -455,6 +465,7 @@ describe('buildSpaceMarkdownZipFor', () => {
 
   it('renders the highlight palette with numbered slots', async () => {
     await db.palettes.put({
+      ...sampleMetadata(),
       id: 'p1',
       spaceId: 's1',
       slots: [
@@ -480,6 +491,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       attachments: [],
       annotations: [
         {
+          ...sampleMetadata(),
           id: 'a-orphan',
           docId: 'ghost-doc',
           rangeStart: 0,
@@ -510,6 +522,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       notes: [{ ...sampleNote, id: 'n1', title: 'Mood board' }],
       attachments: [
         {
+          ...sampleMetadata(),
           id: 'att1',
           noteId: 'n1',
           spaceId: sampleSpace.id,
@@ -520,6 +533,7 @@ describe('buildSpaceMarkdownZipFor', () => {
           createdAt: FIXED_TIME,
         },
         {
+          ...sampleMetadata(),
           id: 'att2',
           noteId: 'n1',
           spaceId: sampleSpace.id,
@@ -595,6 +609,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       name: string,
       mime: string,
     ): SpaceSnapshot['attachments'][number] => ({
+      ...sampleMetadata(),
       id,
       noteId: 'n1',
       spaceId: sampleSpace.id,
@@ -652,6 +667,7 @@ describe('buildSpaceMarkdownZipFor', () => {
   it('renders annotations and palette content when present', async () => {
     await db.annotations.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'a1',
         docId: sampleDoc.id,
         rangeStart: 0,
@@ -663,6 +679,7 @@ describe('buildSpaceMarkdownZipFor', () => {
         createdAt: 0,
       },
       {
+        ...sampleMetadata(),
         id: 'a2',
         docId: sampleDoc.id,
         rangeStart: 12,
@@ -673,6 +690,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       },
     ]);
     await db.palettes.put({
+      ...sampleMetadata(),
       id: 'p1',
       spaceId: sampleSpace.id,
       slots: [
@@ -681,6 +699,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       ],
     });
     await db.citations.put({
+      ...sampleMetadata(),
       id: 'c1',
       spaceId: sampleSpace.id,
       key: 'Doe2024',
@@ -691,6 +710,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       useCount: 0,
     });
     await db.connections.put({
+      ...sampleMetadata(),
       id: 'conn1',
       spaceId: sampleSpace.id,
       fromNoteId: sampleNote.id,

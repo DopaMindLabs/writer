@@ -1,11 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Doc } from '@/db/schema';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { LockBanner } from './LockBanner';
 
 const FIXED_TIME = 1704067200000;
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const lockedDoc: Doc = {
+  ...entityMetadata,
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

@@ -7,7 +7,7 @@ description: >
   "sync hangs", "sync loop", "won't sync", "pairing failed", "P2P", "frame rejected",
   "device limit", "cloud harness", "reproduce sync bug".
 metadata:
-  version: "2.1.0"
+  version: "2.2.0"
   tags: "writer-sync,sync,debugging,p2p,dexie-cloud,playwright"
 ---
 
@@ -21,8 +21,8 @@ Start with `work-on-writer-sync`, then identify the failing boundary:
 |---|---|
 | Pairing, verification code, reconnect or peer discovery | Writer Sync pairing/WebRTC tests and normative protocol docs |
 | Frame rejection, non-convergence, replay or attachment stall | engine `core` / `operations` / `crypto` tests and frame protocol |
-| Sync capability missing or provider not started | `src/lib/writerSync/` and `src/lib/syncProviders/` |
-| Pulled body accepted but row/CRDT state is wrong | `src/lib/reconcile/` and `src/lib/docs/docRepository.ts` |
+| Sync capability missing or provider not started | `src/lib/writerSyncIntegration/` when present; otherwise `src/lib/writerSync/` and `src/lib/syncProviders/` |
+| Valid frame accepted but Writer state is wrong | `src/lib/writerSyncIntegration/materialization/` when present; otherwise `src/lib/reconcile/` and `src/lib/docs/docRepository.ts` |
 | Cloud loop, key/escrow/account/device problem | Dexie Cloud provider and live cloud harness below |
 
 Trace the failure from the first violated invariant. Do not switch providers merely to
@@ -33,9 +33,8 @@ tests, then load that provider's own transport/configuration diagnostics. Do not
 provider has an account, server, durable store or discovery channel unless its declared
 capabilities say so.
 
-If a feature branch adds frame materialisation or table-policy modules, locate their actual
-paths with `navigate-writer-codebase` before tracing them. Do not infer a directory from the
-feature name.
+Use `navigate-writer-codebase` to confirm the current branch's boundary before tracing it;
+do not infer a directory from the feature name.
 
 ## Engine and peer diagnostics
 

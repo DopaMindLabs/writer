@@ -5,6 +5,7 @@ import {
   readDocBodyBaseline,
   deleteDocBodyBaseline,
 } from '@/lib/docs';
+import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import {
   addDocWithoutCrdt,
   canon,
@@ -88,7 +89,7 @@ describe('reconcileDocForMount', () => {
 
       await expect(
         reconcileDocForMount('d1', canon('different pulled content')),
-      ).resolves.toBeUndefined();
+      ).resolves.toBe('reseeded');
 
       warn.mockRestore();
     });
@@ -131,6 +132,113 @@ describe('reconcileDocForMount', () => {
       expect(logged).not.toContain('local content');
       warn.mockRestore();
     });
+  });
+
+  describe('reporting which side won', () => {
+    // The frame sweep drives this same gate for a document that is already on
+    // screen, and has to know what happened: only a reseeded lineage needs the
+    // other tabs telling, and a converged doc must tell them nothing at all.
+    it('reports that the log already matched the body', async () => {
+      await seedLocalDoc('d1', canon('already in sync'));
+
+      await expect(reconcileDocForMount('d1', canon('already in sync'))).resolves.toBe(
+        'accepted',
+      );
+    });
+
+    it('reports reseeding a document no editor has open', async () => {
+      await seedLocalDoc('d1', canon('stale local content'));
+      await writeDocBodyBaseline('d1', canon('stale local content'));
+
+      await expect(reconcileDocForMount('d1', canon('newer pulled content'))).resolves.toBe(
+        'reseeded',
+      );
+    });
+
+    it('reports restoring through the editor a document is open in', async () => {
+      await seedLocalDoc('d1', canon('stale local content'));
+      await writeDocBodyBaseline('d1', canon('stale local content'));
+      const unregister = registerEditorHandle('d1', {
+        restoreBody: () => Promise.resolve(),
+      });
+
+      await expect(reconcileDocForMount('d1', canon('newer pulled content'))).resolves.toBe(
+        'restored',
+      );
+
+      unregister();
+    });
+
+    it('reports keeping unsaved keystrokes', async () => {
+      await seedLocalDoc('d1', canon('typed but not yet autosaved'));
+      await writeDocBodyBaseline('d1', canon('stale body'));
+
+      await expect(reconcileDocForMount('d1', canon('stale body'))).resolves.toBe(
+        'kept-local',
+      );
+    });
+  });
+
+  describe('the safety revision, when the caller can do without it', () => {
+    /**
+     * A body arriving from a paired device lands on every pause in the other
+     * person's typing. Minting a revision for each one would fill the history —
+     * and `revisions` replicates — so the sweep asks for the revision only where
+     * it protects something: local work that was never written to the row.
+     */
+    it('skips it when the editor holds nothing the row does not', async () => {
+      await seedLocalDoc('d1', canon('saved local content'));
+      await writeDocBodyBaseline('d1', canon('saved local content'));
+
+      await reconcileDocForMount('d1', canon('arrived from a peer'), {
+        cleanSnapshotRevision: 'skip',
+      });
+
+      expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+      expect(await crdtSnapshot('d1')).toBe(canon('arrived from a peer'));
+    });
+
+    it('keeps it for unsaved keystrokes even when asked to skip', async () => {
+      await seedLocalDoc('d1', canon('typed but not yet autosaved'));
+      await writeDocBodyBaseline('d1', canon('older saved body'));
+
+      await reconcileDocForMount('d1', canon('arrived from a peer'), {
+        cleanSnapshotRevision: 'skip',
+      });
+
+      const revisions = await db.revisions.where('docId').equals('d1').toArray();
+      expect(revisions).toHaveLength(1);
+      expect(revisions[0]?.text).toContain('typed but not yet autosaved');
+    });
+
+    it('keeps it when the baseline cannot prove the editor is clean', async () => {
+      await seedLocalDoc('d1', canon('local content'));
+      await deleteDocBodyBaseline('d1');
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await reconcileDocForMount('d1', canon('arrived from a peer'), {
+        cleanSnapshotRevision: 'skip',
+      });
+
+      expect(await db.revisions.where('docId').equals('d1').count()).toBe(1);
+      warn.mockRestore();
+    });
+  });
+
+  it('runs one reconciliation of a document at a time', async () => {
+    // Sweeps overlap by design — three independent triggers fire them — and the
+    // mount gate runs the same function. Two at once would each read the state
+    // before either wrote, and both would mint the same safety revision.
+    await seedLocalDoc('d1', canon('stale local content'));
+    await writeDocBodyBaseline('d1', canon('stale local content'));
+
+    await Promise.all([
+      reconcileDocForMount('d1', canon('newer pulled content')),
+      reconcileDocForMount('d1', canon('newer pulled content')),
+    ]);
+
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(1);
+    expect(await crdtSnapshot('d1')).toBe(canon('newer pulled content'));
   });
 
   it('decides the same winner regardless of the row updatedAt (no wall-clock comparison)', async () => {

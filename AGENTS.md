@@ -140,6 +140,43 @@ and docs.
   (e.g. **Help Center**). Don't rename a slug just to spell it the British way.
 - When adding or editing copy, match the British spellings already in surrounding text.
 
+## Sync engine boundary (read before touching sync)
+
+The reusable engine lives in **`packages/writer-sync/`** and is consumed only through
+`writer-sync/core`, `writer-sync/crypto` and `writer-sync/operations`. Writer-specific
+wiring — table policy, materialisation, configuration, boot and React context — lives in
+**`src/lib/writerSyncIntegration/`**. The old `src/lib/syncProviders/` and
+`src/lib/writerSync/` directories no longer exist; do not recreate either name.
+
+- The package must never import from the app: no `@/` alias, no path into `src/`, no React,
+  Dexie, Yjs or Lexical, no `node:` builtin, and no wildcard re-export. These are enforced by
+  `packages/writer-sync/test/packageBoundary.test.ts` — a failure there is a boundary breach,
+  not a test to relax.
+- Anything new that is genuinely provider-, transport- and framework-neutral belongs in the
+  package, behind an explicit barrel export. Anything that knows a Writer table, a Dexie
+  handle or a React hook belongs in the integration layer.
+- `packages/writer-sync/test/consumer.test.ts` is a second consumer standing in for a future
+  host application. If a change forces it to reach past the public subpaths, the port is
+  wrong — fix the port, not the fixture.
+
+## Database schema versions (read before touching `STORES`)
+
+`LoremDB` (`src/db/LoremDB.ts`) declares **one** Dexie version. New tables and index
+changes go straight into `STORES` (`src/db/stores.ts`) under that single `version(1)` —
+do **not** add a `version(2)`, an `upgrade()` callback, or any other migration path. The
+same applies to the other device-local databases (`lipsum-cloud-keystore`,
+`lipsum-device-vault`). This is enforced: `src/db/db.test.ts` and `src/db/buildDb.test.ts`
+assert `verno === 1`.
+
+Writer has no users. There is no installed data to preserve and no backward compatibility
+to keep — if a local database goes stale, wipe and reseed it (`?reseed=1`) rather than
+writing a migration.
+
+Every table in `STORES` must also be classified in
+`src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table fails
+`writerTablePolicy.test.ts`. That classification, not a version number, is what guards a
+new table.
+
 ## Design system (read before building UI)
 
 [`docs/design-system.md`](./docs/design-system.md) is the **single source of truth** for

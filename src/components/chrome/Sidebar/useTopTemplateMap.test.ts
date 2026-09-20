@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import type { Space } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useTopTemplateMap } from './useTopTemplateMap';
 
 const spaceWithTemplate = (template: string): Space => ({
+  ...sampleMetadata(),
   id: 's1',
   tag: 'TST',
   name: 'Test Space',

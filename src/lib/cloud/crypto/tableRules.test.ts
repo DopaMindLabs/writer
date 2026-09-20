@@ -44,4 +44,21 @@ describe('tableRules', () => {
     expect(SYNCED_TABLES).toContain('noteAttachments');
     expect(SYNCED_TABLES).not.toContain('backups');
   });
+
+  it('keeps routing metadata plaintext so providers can route without a key', () => {
+    for (const table of SYNCED_TABLES) {
+      const fields = plaintextFieldsFor(table);
+      expect(fields.has('accessScopeId')).toBe(true);
+      expect(fields.has('mutationId')).toBe(true);
+      expect(fields.has('logicalUpdatedAt')).toBe(true);
+    }
+  });
+
+  it('seals attribution — createdBy and updatedBy are never plaintext', () => {
+    for (const table of SYNCED_TABLES) {
+      const fields = plaintextFieldsFor(table);
+      expect(fields.has('createdBy')).toBe(false);
+      expect(fields.has('updatedBy')).toBe(false);
+    }
+  });
 });

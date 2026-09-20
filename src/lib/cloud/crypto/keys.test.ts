@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
-  generateMasterSecret,
+  generateRootSecret,
   deriveKeyRing,
   calibrateIterations,
-  wrapMasterSecret,
-  unwrapMasterSecret,
+  wrapRootSecret,
+  unwrapRootSecret,
   fingerprintsEqual,
   canonicalisePassphrase,
   WrongPassphraseError,
@@ -23,15 +23,15 @@ describe('cloud keys', () => {
     // never syncs, so a second device can never be joined with the passphrase.
     // Regression guard: assert the literal, not the constant against itself.
     expect(ESCROW_ID).toBe('#v1');
-    const escrow = await wrapMasterSecret(generateMasterSecret(), 'pw', FAST);
+    const escrow = await wrapRootSecret(generateRootSecret(), 'pw', FAST);
     expect(escrow.id).toBe('#v1');
   });
 
-  it('wrap then unwrap round-trips the master secret', async () => {
-    const master = generateMasterSecret();
+  it('wrap then unwrap round-trips the root secret', async () => {
+    const master = generateRootSecret();
     expect(master).toHaveLength(32);
-    const escrow = await wrapMasterSecret(master, 'correct horse battery', FAST);
-    const recovered = await unwrapMasterSecret(escrow, 'correct horse battery');
+    const escrow = await wrapRootSecret(master, 'correct horse battery', FAST);
+    const recovered = await unwrapRootSecret(escrow, 'correct horse battery');
     expect(Array.from(recovered)).toEqual(Array.from(master));
   });
 
@@ -39,15 +39,15 @@ describe('cloud keys', () => {
     // "café" composed (NFC, as a desktop keyboard emits it) versus decomposed
     // (NFD, as an iOS keyboard emits it): same visible passphrase, different
     // byte sequences. Canonicalisation must make them derive the same KEK.
-    const master = generateMasterSecret();
-    const escrow = await wrapMasterSecret(master, 'caf\u00e9', FAST);
-    const recovered = await unwrapMasterSecret(escrow, 'cafe\u0301');
+    const master = generateRootSecret();
+    const escrow = await wrapRootSecret(master, 'caf\u00e9', FAST);
+    const recovered = await unwrapRootSecret(escrow, 'cafe\u0301');
     expect(Array.from(recovered)).toEqual(Array.from(master));
   });
 
   it('throws WrongPassphraseError on a bad passphrase (GCM auth failure)', async () => {
-    const escrow = await wrapMasterSecret(generateMasterSecret(), 'right', FAST);
-    await expect(unwrapMasterSecret(escrow, 'wrong')).rejects.toBeInstanceOf(
+    const escrow = await wrapRootSecret(generateRootSecret(), 'right', FAST);
+    await expect(unwrapRootSecret(escrow, 'wrong')).rejects.toBeInstanceOf(
       WrongPassphraseError,
     );
   });
@@ -57,7 +57,7 @@ describe('cloud keys', () => {
   });
 
   it('derives a non-extractable AES-GCM-256 content key', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     expect(ring.epoch).toBe(1);
     expect(ring.contentKey.extractable).toBe(false);
     expect(ring.contentKey.algorithm.name).toBe('AES-GCM');
@@ -65,9 +65,9 @@ describe('cloud keys', () => {
   });
 
   it('produces a fresh salt and iv for each escrow of the same secret', async () => {
-    const master = generateMasterSecret();
-    const a = await wrapMasterSecret(master, 'pw', FAST);
-    const b = await wrapMasterSecret(master, 'pw', FAST);
+    const master = generateRootSecret();
+    const a = await wrapRootSecret(master, 'pw', FAST);
+    const b = await wrapRootSecret(master, 'pw', FAST);
     expect(Array.from(a.salt)).not.toEqual(Array.from(b.salt));
     expect(Array.from(a.iv)).not.toEqual(Array.from(b.iv));
     expect(Array.from(a.wrapped)).not.toEqual(Array.from(b.wrapped));
@@ -97,7 +97,7 @@ describe('canonicalisePassphrase', () => {
 
 describe('cloud key fingerprints', () => {
   it('derives a fixed-length fingerprint deterministically from the master', async () => {
-    const master = generateMasterSecret();
+    const master = generateRootSecret();
     const a = await deriveKeyRing(master, 1);
     const b = await deriveKeyRing(master, 1);
     expect(a.fingerprint).toHaveLength(16);
@@ -105,24 +105,24 @@ describe('cloud key fingerprints', () => {
   });
 
   it('gives different masters different fingerprints', async () => {
-    const a = await deriveKeyRing(generateMasterSecret(), 1);
-    const b = await deriveKeyRing(generateMasterSecret(), 1);
+    const a = await deriveKeyRing(generateRootSecret(), 1);
+    const b = await deriveKeyRing(generateRootSecret(), 1);
     expect(Array.from(a.fingerprint)).not.toEqual(Array.from(b.fingerprint));
   });
 
-  it('is one-way: the fingerprint is not the master secret', async () => {
-    const master = generateMasterSecret();
+  it('is one-way: the fingerprint is not the root secret', async () => {
+    const master = generateRootSecret();
     const { fingerprint } = await deriveKeyRing(master, 1);
     expect(Array.from(fingerprint)).not.toEqual(Array.from(master));
   });
 
   it('stamps the escrow with the same fingerprint the ring carries', async () => {
-    const master = generateMasterSecret();
+    const master = generateRootSecret();
     const ring = await deriveKeyRing(master, 1);
-    const escrow = await wrapMasterSecret(master, 'pw', FAST);
+    const escrow = await wrapRootSecret(master, 'pw', FAST);
     expect(Array.from(escrow.fingerprint)).toEqual(Array.from(ring.fingerprint));
     // Round-trip: an escrow unwrapped elsewhere re-derives the same fingerprint.
-    const recovered = await unwrapMasterSecret(escrow, 'pw');
+    const recovered = await unwrapRootSecret(escrow, 'pw');
     const recoveredRing = await deriveKeyRing(recovered, 1);
     expect(fingerprintsEqual(escrow.fingerprint, recoveredRing.fingerprint)).toBe(
       true,

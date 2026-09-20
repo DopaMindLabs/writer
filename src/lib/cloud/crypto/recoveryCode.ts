@@ -1,7 +1,7 @@
 import { invariant } from '@/lib/invariant';
 
 /**
- * The recovery code is the 32-byte master secret plus one checksum byte,
+ * The recovery code is the 32-byte root secret plus one checksum byte,
  * rendered in Crockford base32 and grouped into 8-character blocks. It is shown
  * exactly once at setup; entering it re-derives the master on a new device.
  */
@@ -48,7 +48,7 @@ const decodeBase32 = (str: string): Uint8Array => {
 };
 
 export const encodeRecoveryCode = (master: Uint8Array): string => {
-  invariant(master.length === 32, 'recovery code expects a 32-byte master secret');
+  invariant(master.length === 32, 'recovery code expects a 32-byte root secret');
   const withCheck = new Uint8Array(33);
   withCheck.set(master);
   withCheck[32] = checksumByte(master);

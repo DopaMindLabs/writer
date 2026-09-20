@@ -23,7 +23,7 @@ export interface RecoveryCodeDialogProps {
 export const RecoveryCodeDialog = ({ code, open, onDone }: RecoveryCodeDialogProps) => {
   const { t } = useTranslation('screens');
   const [confirmed, setConfirmed] = useState(false);
-  const k = (name: string) => t(`settings.account.cloud.recovery.${name}`);
+  const k = (name: string) => t(`settings.cloud.recovery.${name}`);
   return (
     <Dialog
       open={open}

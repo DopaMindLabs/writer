@@ -18,11 +18,11 @@ const messageOf = (error: unknown): string =>
  * error keeps the router pinned on the failing location, and React Router does
  * not reset a render-time error boundary on a same-location `navigate` — so
  * "Unlock in settings" must be a hard navigation. It re-runs app boot (which
- * re-hydrates the key and re-reconciles the escrow), landing on the Account tab
+ * re-hydrates the key and re-reconciles the escrow), landing on the Cloud sync tab
  * where a genuine mismatch shows its resolvable conflict banner.
  */
-const accountSettingsHref = (): string => {
-  const path = routes.settings('account');
+const cloudSettingsHref = (): string => {
+  const path = routes.settings('cloudSync');
   return import.meta.env.VITE_ROUTER === 'browser' ? path : `/#${path}`;
 };
 
@@ -39,7 +39,7 @@ export const RouteErrorScreen = () => {
     return (
       <CloudKeyErrorScreen
         onUnlock={() => {
-          window.location.assign(accountSettingsHref());
+          window.location.assign(cloudSettingsHref());
         }}
         onReset={async () => {
           await resetCloudDevice();

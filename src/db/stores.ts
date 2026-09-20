@@ -1,9 +1,20 @@
 /**
- * The single source of truth for the `version(1)` schema spec. Kept separate
- * from the {@link LoremDB} class so the cloud-sync layer can derive per-table
- * rules (which fields sync, which are encrypted) from the same definition.
+ * The single source of truth for the schema spec. Kept separate from the
+ * {@link LoremDB} class so the cloud-sync layer can derive per-table rules
+ * (which fields sync, which are encrypted) from the same definition.
+ *
+ * **One declared version.** Writer has no users, so there is nothing to migrate
+ * and no backward compatibility to keep. Add a table here; do not add a
+ * `version(n)`. Wipe and reseed a stale local database rather than writing a
+ * migration for it.
  */
 export const STORES: Record<string, string> = {
+  syncOperations: 'operationId, accessScopeId, [entityTable+entityId]',
+  syncAttachmentChunks: '[attachmentId+index], attachmentId, accessScopeId',
+  syncInbox: 'operationId, [entityTable+entityId]',
+  syncTombstones: '[entityTable+entityId], accessScopeId',
+  syncProviderBindings: '[scopeId+providerInstanceId], scopeId',
+  trustedDevices: 'deviceId, principalId',
   spaces: 'id, createdAt, updatedAt',
   sections:
     'id, spaceId, parentSectionId, order, [spaceId+order], [spaceId+parentSectionId]',

@@ -4,7 +4,13 @@ import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
-import { sampleDoc, sampleSpace, sampleSection, serializedBody } from '@/test/fixtures';
+import {
+  sampleDoc,
+  sampleMetadata,
+  sampleSpace,
+  sampleSection,
+  serializedBody,
+} from '@/test/fixtures';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { VersionHistoryModal } from './VersionHistoryModal';
 
@@ -15,6 +21,7 @@ const doc: Doc = {
 };
 
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
+  ...sampleMetadata(),
   id: overrides.id ?? 'r',
   docId: overrides.docId ?? doc.id,
   body: overrides.body ?? serializedBody('body'),

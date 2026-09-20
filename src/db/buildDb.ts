@@ -9,23 +9,34 @@ import {
 import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
+import { writerJournalDeps } from '@/lib/writerSyncIntegration/materialization/writerJournalDeps';
+import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
+import {
+  localOnlyTables,
+  rowEnvelopeTables,
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { LoremDB } from './LoremDB';
 
 /**
- * Local-only tables that must never leave the device: preferences, backups, sync
- * bookkeeping and the per-doc CRDT update log. Everything else is content that
- * syncs (field-encrypted) plus `cloudCrypto` (the passphrase-wrapped escrow,
- * which must sync so a second device can recover the key).
+ * Tables the Dexie Cloud addon must not replicate, derived from the
+ * authoritative table policy so replication can never drift from the
+ * classification.
+ *
+ * Two groups compose it: the local-only tables (preferences, backups, sync
+ * bookkeeping, the CRDT update log and the operation-protocol receiver state),
+ * and — since the frame cutover — the materialised content tables. Writer owns
+ * its materialised rows as local projections; what replicates is the
+ * `syncOperations` journal of immutable encrypted frames, plus `cloudCrypto`
+ * (the passphrase-wrapped escrow) and the addon's own control tables.
  */
-const UNSYNCED = [
-  'settings',
-  'backups',
-  'syncs',
-  'syncConfigs',
-  'docInspectorConfigs',
-  'meta',
-  'docUpdates',
-] as const;
+const UNSYNCED: readonly string[] = [...localOnlyTables(), ...rowEnvelopeTables()];
+
+/**
+ * Outbound framing dependencies: keys resolve through the same provider the
+ * encryption middleware polls, and both the frame's device attribution and the
+ * key that signs it come from this device's cryptographic identity — read
+ * together so a signature can never claim a device id it does not belong to.
+ */
 
 /**
  * Constructs the app database. It builds a Dexie Cloud instance with the
@@ -39,7 +50,16 @@ const UNSYNCED = [
 export const buildDb = (name = 'lipsum'): LoremDB => {
   applyCloudFlagFromUrl();
   const cloud = hasCloudEnv() && (readCloudFlag() || wasCloudProvisioned());
-  if (!cloud) return new LoremDB(name);
+  if (!cloud) {
+    // Local row encryption is independent of any provider: a P2P-only Writer
+    // must not become a plaintext local database merely because no cloud URL is
+    // configured. Pre-setup the resolver holds no key, so the middleware passes
+    // plaintext through — the keyless local-first flow is unchanged.
+    const db = new LoremDB(name);
+    db.use(createEncryptionMiddleware(deviceKeyProvider));
+    db.use(createOperationJournalMiddleware(writerJournalDeps));
+    return db;
+  }
 
   const databaseUrl = cloudDatabaseUrl();
   invariant(databaseUrl, 'cloud sync enabled without a database URL');
@@ -59,5 +79,6 @@ export const buildDb = (name = 'lipsum'): LoremDB => {
     largeStringThreshold: Infinity,
   });
   db.use(createEncryptionMiddleware(deviceKeyProvider));
+  db.use(createOperationJournalMiddleware(writerJournalDeps));
   return db;
 };

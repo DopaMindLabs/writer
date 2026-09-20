@@ -1,5 +1,9 @@
 import { vi } from 'vitest';
-import { serializedBlocks, serializedBody } from '@/test/fixtures';
+import {
+  sampleMetadata,
+  serializedBlocks,
+  serializedBody,
+} from '@/test/fixtures';
 import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
@@ -12,6 +16,7 @@ import { DocInspector } from './DocInspector';
 const SECTIONS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
 
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
+  ...sampleMetadata(),
   id: overrides.id ?? 'r',
   docId: overrides.docId ?? 'd1',
   body: overrides.body ?? serializedBody('body'),
@@ -25,6 +30,7 @@ const makeRevision = (overrides: Partial<Revision>): Revision => ({
 
 const seedDoc = (overrides: Partial<Doc> = {}): Promise<string> =>
   db.docs.put({
+    ...sampleMetadata(),
     id: 'd1',
     spaceId: 's1',
     sectionId: 'sec1',
@@ -417,6 +423,7 @@ describe('DocInspector', () => {
 
     it('restores a revision via the confirm dialog (no native popup)', async () => {
       await db.docs.put({
+        ...sampleMetadata(),
         id: 'd1',
         spaceId: 's1',
         sectionId: 'sec1',
@@ -492,7 +499,10 @@ describe('DocInspector', () => {
       await waitFor(async () => {
         expect((await db.revisions.get('rev-pin'))?.pinned).toBe(true);
       });
-      await userEvent.click(within(row).getByLabelText(/unpin version/i));
+      // The row re-renders from a live query *after* the write commits, so the
+      // stored value settling does not mean the label has flipped yet. Query for
+      // the new label rather than assuming this tick is late enough.
+      await userEvent.click(await within(row).findByLabelText(/unpin version/i));
       await waitFor(async () => {
         expect((await db.revisions.get('rev-pin'))?.pinned).toBe(false);
       });
@@ -500,6 +510,7 @@ describe('DocInspector', () => {
 
     it('logs an error when a restore attempt rejects', async () => {
       await db.docs.put({
+        ...sampleMetadata(),
         id: 'd1',
         spaceId: 's1',
         sectionId: 'sec1',

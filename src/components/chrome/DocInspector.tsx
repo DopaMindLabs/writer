@@ -9,6 +9,7 @@ import {
   useGlobalInspectorConfig,
 } from '@/hooks/useDocInspectorConfig';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import type { Doc, Revision } from '@/db/schema';
 import { updateDocMeta } from '@/lib/docs';
 import {
@@ -555,7 +556,7 @@ const RevisionRowActions = ({ revision }: { revision: Revision }) => {
   const { t } = useTranslation('chrome');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const togglePin = (): void => {
-    void db.revisions.update(revision.id, { pinned: !revision.pinned });
+    void updateReplicatedRow(db.revisions, revision.id, { pinned: !revision.pinned });
   };
   const restore = (): void => {
     void restoreRevision(revision.docId, revision.id).catch((err: unknown) => {

@@ -1,6 +1,6 @@
 # LIpsum Writer — Technical Specification
 
-> Derived from the test suite (16 Playwright e2e specs + 60+ Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
+> Derived from the test suite (95 Playwright e2e spec files, 359 tests; 446 Vitest unit/component spec files, 3277 tests) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
 
 ---
 
@@ -40,7 +40,7 @@
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, a per-section ⋯ menu (add document, rename, delete), add section (on every template unless it sets `allowConfiguration: false`), drag / keyboard reordering of sections and documents, Brain Space link with unsorted-note count, settings cog. The Workshop section is protected from rename and delete. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; a bottom **more** sheet whose App group (settings, about, help, what's new, accessibility, account, contact) is shared with the desktop Quick Settings menu so the two cannot drift; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
-| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Account** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
+| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Profile** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
@@ -55,7 +55,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and a **"Device sync"** link at the top right of the header leading to Settings → Device sync (§ 4.9.2). Unconditional, in the nav's own voice, carrying no live state — connection state belongs beside the device it describes. It replaced a flag-gated "Sign in to sync" button, which left the sync needing no account with no way in from Home. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
@@ -73,10 +73,52 @@
 
 `Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
-The schema is declared in a single Dexie version. When the encrypted cloud-sync beta
-(§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) — is
-added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring is
-held in a separate, never-synced keystore database rather than a table here.
+The schema is declared in a single Dexie version, which includes the Writer Sync
+operation-protocol stores — `syncOperations` (the append-only journal of immutable
+encrypted operation frames), `syncInbox`
+(accepted operation ids), `syncTombstones` (deletion tombstones) and
+`syncProviderBindings` (per-scope provider configuration). Every synced entity row
+carries provider-neutral replication metadata: a plaintext `accessScopeId`,
+`mutationId` and hybrid-logical `logicalUpdatedAt` for routing, deduplication and
+deterministic convergence, plus encrypted `createdBy`/`updatedBy` attribution
+(principal ids from the local profile — never emails, and never mapped to any
+provider's authorisation field). Replication, encryption, scope kind and journal
+membership per table are classified once in
+`src/lib/writerSyncIntegration/writerTablePolicy.ts`. When the encrypted cloud-sync beta
+(§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) —
+is added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring
+is held in a separate, never-synced keystore database rather than a table here.
+
+**Sync remains single-user.** The operation journal deduplicates the same logical
+mutation across providers (an accepted `operationId` never applies twice) and
+tombstones prevent deleted entities resurrecting from stale updates. Dormant realm and
+member groundwork inside the Dexie adapter does **not** enable sharing: no invitation,
+role provisioning or cross-user key delivery exists. Frames are signed by the device
+that authored them and verified against the trusted-device registry (§ 4.9.2), so
+attribution is checkable rather than merely asserted.
+
+Every synced write is journalled at one chokepoint: a database middleware emits the
+write's encrypted frame in the same transaction as the write itself, so a mutation and
+its replicated operation cannot come apart, and each touched row is its own logical
+mutation (a reorder that moves three documents emits three operations, not one). While
+the device holds no content key nothing is journalled; setting up or unlocking
+encryption re-seals what was written keyless and backfills its operations at the same
+time.
+
+**Every material change mints a new operation.** A partial update (a rename, a note
+edit, a reorder, a bulk retype) and every row an archive restore writes back take a
+fresh `mutationId` and logical time. Reusing the stored one would journal an operation
+the other devices have already accepted, and they would discard the change as a replay
+— the edit would appear to save locally and never arrive anywhere else.
+
+**Convergence is decided by logical time, then device id — never by arrival order.**
+The rule is symmetric: an inbound deletion that lost to a later update is recorded as
+superseded instead of removing the row, and where two deletions race the later one owns
+the tombstone. Accepting an operation merges its logical time into this device's clock
+(ignoring readings more than five minutes ahead of local wall time), so a device whose
+clock lags still stamps its next edit after everything it has already accepted. The
+logical time travels inside the payload's authenticated header, so a provider or peer
+cannot retime an operation without invalidating its ciphertext.
 
 **Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 
@@ -94,7 +136,7 @@ A **space** is an independent writing project with its own sections, documents, 
 3. Enter a **name** and a **tag** (short label).
 4. Submit. The space is created in IndexedDB and the user lands on its first doc. While the cloud
    write lock is engaged (a key mismatch, or signed in without a key), an inline notice explains
-   the reason and links to the Account tab, and submission is disabled until it is resolved.
+   the reason and links to the Cloud sync tab, and submission is disabled until it is resolved.
 
 **Switch spaces.** The SpaceRail on the left lists existing spaces in Write mode. In Focus mode it collapses to a compact FocusRail.
 
@@ -287,14 +329,14 @@ Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back t
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **Profile** | Active | On-device profile: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. Cloud sync lives in its own tab (§ 4.9.1), not here. |
 | **About** | Active | Build information and links: app **version**, the **commit** SHA and **build time** embedded at build time (`vite.config.ts` defines → `lib/version`), the licence, and Source / Changelog / Send-feedback links to the repository. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
-*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
+*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `ProfileTab.test.tsx`, `CloudSyncTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
 
-#### 4.9.1 Encrypted cloud sync (invite-only beta, hidden by default)
+#### 4.9.1 Encrypted cloud sync (beta, hidden by default)
 
 An opt-in beta that replicates a space's content across a user's devices via
 [Dexie Cloud](https://dexie.org/cloud/), with **all content encrypted on the client
@@ -303,7 +345,7 @@ are on: a build gate (`VITE_DEXIE_CLOUD_URL` must be an `https://` URL) and a pe
 gate (`?cloud-sync=on`, persisted to `localStorage`). With either gate off there are no
 cloud code paths, no cloud UI, and the schema is identical to the base app.
 
-- **Key model.** A 32-byte master secret is minted on setup. An `AES-256-GCM` content
+- **Key model.** A 32-byte root secret is minted on setup. An `AES-256-GCM` content
   key is derived from it (HKDF-SHA-256, non-extractable), plus a public one-way
   **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
   The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
@@ -366,7 +408,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   stale content. That mount gate never leaves a document unopenable: if a divergent doc's local
   provenance marker is missing (so it cannot be proved locally authored) it still opens, taking the
   current row body and keeping the local side as a recoverable revision, rather than blocking the
-  editor for good. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  editor for good. The same gate is driven again whenever a paired device's writing lands
+  underneath an editor that is already open (§ 4.9.2), so it no longer runs only at mount; one
+  reconciliation of a document runs at a time, chained in the order they were asked for, since
+  two at once would each read the state before either had written and both would mint the same
+  safety revision. The mounted-editor flush is **awaitable and reports which body it persisted**: if
   the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
   revision and the live local text is kept, so neither side is ever silently overwritten. A
   freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
@@ -410,9 +456,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   the whole account keyless. If no account escrow exists either, the flag protects nothing and
   erase clears it. The route-level
   recovery screen still catches a genuine read failure, and its **Unlock in settings** action
-  is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
+  is a full navigation to the Cloud sync tab. Never clobbers, never silently loses. The New-space
   (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >
-  keyless > none) drives an inline notice that names the reason and links to the Account tab, and
+  keyless > none) drives an inline notice that names the reason and links to the Cloud sync tab, and
   space creation is disabled while a lock holds; a submit that still races the lock is caught and
   mapped to the same notice (`CloudKeyError` → locked, anything else → a generic failure), so a
   refused write is never an unhandled rejection.
@@ -437,7 +483,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
   the Home page (flag-gated) as a button at the top right of the header so it is discoverable
   before a space exists; the **Quick settings**
-  popover always offers a direct **Account** link to the account settings tab (where sign-in and
+  popover always offers a direct **Profile** link to the profile settings tab (where the display name and
   encryption live), regardless of the flag. Every sign-in attempt first opens an
   **evaluation-account acknowledgement** dialog: a red (danger) warning banner states that
   cloud sync is a demonstration
@@ -470,7 +516,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
   citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
   (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
-  the sync protocol already exposes). Sign-in is invite-only.
+  the sync protocol already exposes). Account creation is not supported.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
@@ -485,6 +531,343 @@ incl. the missing-baseline fallback), `useDocCrdtReady.test.tsx`, `snapshot.test
 CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
 write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
 `cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.
+
+#### 4.9.2 Device pairing (Stage 2A, in progress)
+
+Direct device-to-device sync over the local network, with no Writer-operated
+server. The normative protocol lives in `packages/writer-sync/docs/`
+(threat model, pairing protocol, test vectors); this section tracks what is
+wired into the app.
+
+- **Entry point.** Settings → Device sync → **Pair another device** opens the
+  pairing dialog; the tab itself is one link away from Home (§ 4.9 route table).
+  The dialog is mounted only while open and opens on a **start choice**: *Show a
+  code to start pairing* or *Scan the code on your other device*. Nothing protocol-shaped is on that screen — no code, no symbol pager,
+  no scanner — so the flow reads as a sequence (one device shows, the other
+  scans) instead of two codes appearing at once with nothing to say whose turn
+  it is.
+- **The choice is presentational.** It selects what this screen displays and
+  nothing else; the protocol half a device plays is still settled by the payload
+  that arrives (`resolvePairingRole` — a reply is accepted by the device whose
+  offer it answers, an offer is answered by whichever device read it). Choosing
+  *show* on both devices costs a tap, not a stuck exchange: the showing screen's
+  own action leads to the scanner. This is not the earlier role question, which
+  committed a device to a half before anything had been scanned.
+- **One step per screen.** A code and a scanner are never shown together, nor a
+  code beside the verification gate. Two QR surfaces at once read as two things
+  to do at once and give no clue which device is meant to be doing which.
+- **Showing.** Gathering starts when the dialog opens, not when the code is
+  asked for, so choosing *show* reveals a code that is usually already prepared;
+  until it is, the wait is named in place. Every device gathers a WebRTC offer
+  over a connection with **no ICE servers** (same-network only, never a public
+  STUN fallback) and displays it as one or more QR symbols, with a single
+  action — **It's been scanned — scan the reply** — that replaces the code with
+  the scanner and back. Candidate gathering is bounded by a deadline; reaching
+  it is not a failure, and the code is shown from whatever candidates were
+  gathered. Only a description with **no** candidate at all fails. Failures are
+  reported generically (never peer-supplied text), with two named exceptions
+  whose advice differs: a payload too large to encode (retrying cannot shrink
+  it) and an expired code (the fix is a fresh code — payloads are valid for
+  five minutes, sized for the photograph-and-paste path).
+- **Reading.** A device that reads an offer answers it, from a session opened
+  for the purpose: it cannot answer a description it authored, so the offer it
+  was showing is closed and replaced. It then shows the reply for the peer to
+  read back, and moves to the digits only when the user says the reply was
+  taken — nothing reaches this device when its peer reads a code. That ordering
+  is why the reply and the gate are separate screens: this device knows the six
+  digits as soon as it has answered, but its peer learns them only after reading
+  the reply.
+- **Nothing lands under a moving finger.** The reply step replaces the scanner
+  the instant a payload decodes, so the reply waits **behind a reveal** rather
+  than sharing a screen with the action that dismisses it, and the digits keep a
+  secondary way back to it. That way back re-shows the same reply: answering is
+  replay-guarded, and a second answer would move the digits the peer is
+  comparing against. Without both, a reflex press cost the whole exchange. The
+  reply keeps the usual five-minute validity — the guard buys deliberation, not
+  a longer life.
+- **Role resolution.** Decided from the payload (`resolvePairingRole`): a reply
+  is accepted by the device whose offer it answers, and an offer is answered by
+  whichever device read it. An earlier rule ranked the two device ids and let
+  only the greater answer, which is sound for two devices watching a channel and
+  wrong for two watching a camera — in the ordinary flow only one device ever
+  reads anything, so the lower-ranked reader waited on a reply nobody was
+  preparing. Scanning on both devices now fails visibly on the next scan instead
+  of hanging. A device that reads **its own** code is told so, with the scanner
+  left open.
+- **Verification gate.** Both devices hold at the same gate and complete only on
+  an explicit human confirmation that the six digits match. Nothing is
+  transferred on authentication alone.
+- **Trust is committed in two phases.** Confirming the digits authenticates the
+  peer in memory only. Nothing is written to `trustedDevices`, the session is not
+  published to the P2P provider, no scope channel is taken up and catch-up does
+  not start until the root secret has crossed; the device is recorded at that
+  point and gains sync authority only then. An incomplete pairing therefore
+  leaves nothing behind, whether it expired, failed or was cut short by the tab
+  closing — there is no cleanup step for a crash to skip. A known device id
+  presenting a different identity key is refused before any key material moves,
+  not after.
+- **Confirming too late.** The session deadline is the earlier of the two signed
+  ones, and is checked again when the account key is sealed — the step the human
+  confirmation gates. Past it the pairing ends instead of completing: no key is
+  sealed, the ephemeral key is discarded, the channel closes, and the dialog
+  reads *expired*. Nothing was recorded, so a device the user had removed is
+  still removed and one that was already trusted is untouched.
+- **Reading a code.** Three paths, offered together: the **live camera**, an
+  **uploaded photograph**, or **pasted text**. The camera is offered first
+  because it is the only one that works between a desktop and a phone unaided,
+  but it is never the only one — the other two need no permission and remain
+  present regardless. `getUserMedia` is called on an explicit press, never on
+  mount, and asks for the rear camera by preference. Frames are sampled every
+  300 ms and passed straight to the decoder; a frame that will not decode is the
+  normal case, not an error. The stream is released on every exit — a successful
+  scan, an explicit stop, or the surface unmounting — so no camera outlives the
+  dialog. A refusal (`NotAllowedError` / `SecurityError`) and an absent camera
+  are reported as distinct, non-terminal states with the fallbacks intact, and
+  the user may try again. Delivery requires `Permissions-Policy: camera=(self)`
+  in `vercel.json`; without it the browser blocks the camera in production while
+  local development works. Decoding happens entirely on the device — where the
+  browser has no `BarcodeDetector` the WASM engine is **served by the app**,
+  never fetched from a CDN, so scanning works offline and contacts nobody. An
+  uploaded photograph is decoded to a bitmap before the platform detector sees
+  it: Chromium's own `BarcodeDetector` refuses a `Blob` although the IDL admits
+  one, and a chosen file is exactly that.
+- **Pairing code display.** The codec carries **2600 characters per symbol**
+  (headroom under the encoder's 2953-character version-40/EC-L ceiling for the
+  part prefix), so an ordinary offer is a single symbol and no pager appears.
+  A payload larger than that is split into the codec's bounded sequence (max 8
+  parts) and stepped through manually — no timed cycling, so nothing needs
+  reduced-motion gating. The symbol's own text sits beneath it as selectable
+  text and follows the pager, so the exchange works with no camera at all. A
+  payload past the symbol ceiling reports an error rather than rendering
+  nothing. Outstanding symbols are named individually ("Still to scan: symbol
+  2"), never as a bare count that reads as a quantity. Progress and failure are
+  announced via `role="status"` / an error banner, and failure copy never embeds
+  peer-supplied text.
+- **Device identity.** Created on first use and stored in the never-synced
+  device vault: a non-extractable ECDSA P-256 pair persisted as `CryptoKey`s.
+  The device id is **derived from the public key** (SHA-256 over its SPKI form,
+  first 16 bytes), never minted, so id and key cannot disagree. The account
+  vault binds stored roots to this same id.
+- **Journal retention and compaction.** Settings → Account → **Keep sync history
+  for** sets how long journalled operations are kept: 7 / 30 / 90 days or 1 year,
+  default **30 days**, stored in `meta` (`journalRetentionDays`, malformed values
+  read as the default). The journal is compacted once per sync boot, off the boot
+  path (best-effort, logged on failure). A frame is dropped once **every
+  currently-trusted device has acknowledged it**, or once the window has elapsed —
+  whichever comes first, so a device that never returns cannot hold the journal
+  open. With no trusted device paired, the window governs alone. Acknowledgements
+  are tracked per originating device within a scope, never as one mark per scope:
+  an operation from one device that is logically older than an acknowledged
+  operation from another has not thereby been seen. Inbox rows are **never**
+  pruned — the inbox is the replay guard — and a deletion is exempt from the
+  window entirely: a tombstone and the signed delete frame it names are one
+  retention unit, dropped together in one transaction. A peer's acknowledgement
+  marks every deletion from that origin it has read past, recorded with the
+  watermark it arrived with, so the evidence outlives the frames the comparison
+  was made against. Release needs every still-trusted device to have marked it;
+  age alone can take neither half, so a long-absent device can neither resurrect
+  a deleted entity nor be left holding it. Removing a device is the other
+  release: it is what lets go of what was only being kept for that device, and
+  what releases everything when the last device goes — a routine pass with no
+  devices paired deliberately holds, because a peer paired tomorrow could still
+  be holding what was deleted today. A peer last seen beyond the window resynchronises by full
+  state exchange, not journal replay: it is sent freshly minted `put` frames for
+  current state alongside the scope's retained deletions, which merge by the
+  normal convergence rules rather than overwriting what it changed while away.
+- **Frames are device-signed.** Every journalled frame carries an ECDSA P-256
+  signature made with this device's identity key, computed over the whole frame
+  except the signature itself under a domain label distinct from the pairing
+  labels. A receiver verifies it after structural and payload-hash validation and
+  before decryption, against the public key in its trusted-device record. A frame
+  whose origin is unknown, removed or revoked — or whose signature is absent or
+  does not verify — is refused and never journalled. The AAD already proved a
+  frame's header and payload belonged together; the signature is what makes its
+  `deviceId` a claim the receiver can check, since every device in the account
+  holds the same content key. One consequence: a device accepts operations only
+  from devices it has itself paired with, so a device paired with two others
+  cannot relay their operations to each other.
+- **Transfer and catch-up.** Paired devices exchange one manifest per accessible
+  scope — a high-water mark and a count per originating device — and each asks
+  only for what it lacks. Counts, not marks alone, reveal a gap: a peer holding
+  more operations behind the same mark is missing frames no mark can name, so
+  that origin is requested whole. A scope this device cannot decrypt is never
+  requested. Replies are batched under both the protocol's frame-count ceiling
+  and the byte budget the transport advertises, so no message outgrows the
+  channel; a frame too large for any message even alone is skipped and
+  reported rather than allowed to kill the reply, and a send failure mid-reply
+  never withholds the final marker the acknowledgement depends on. Verified
+  frames are appended to the journal and materialised by the
+  same inbox-guarded sweep every provider shares, so an operation arriving by two
+  providers still applies exactly once. Attachments transfer in the same
+  conversation, but never as an oversized frame: the raw `noteAttachments.blob`
+  is AES-GCM-sealed once, split into 128 KiB ciphertext chunks, and replaced in
+  the row payload by its authenticated manifest. The holder offers manifests
+  after the final catch-up frame batch, one page at a time and only as many as
+  the peer will take at once; the peer asks for the page after the one it has
+  finished with, so a space with hundreds of images is walked rather than
+  offered once and refused. The peer asks only for the chunks it lacks, a page
+  at a time, and asks for the next page only once the one in flight has been
+  answered. Chunks are served at the connection's pace rather than written as
+  fast as they are read, so a large attachment cannot outrun the link and end
+  its own session. A holder that cannot supply a chunk it was asked for says so rather
+  than falling silent, and the receiver drops that transfer instead of waiting
+  on it for the life of the session. Each chunk is verified before it is stored,
+  and an interrupted transfer resumes from the persisted gap rather than
+  restarting. The receiver keeps the
+  thin frame journalled but unstamped in the inbox until the complete ciphertext
+  verifies and opens into the domain `Blob`. Dexie Cloud replicates the same
+  bounded ciphertext as `syncAttachmentChunks` rows, so cloud and WebRTC carry
+  one provider-neutral thin-frame contract.
+- **Rebuilding a scope.** A request with no starting point, or one reaching
+  behind this device's compaction cutoff, cannot be answered from history — the
+  frames are gone — so the scope is described as it stands now: one freshly
+  signed `put` frame per journalled row, indistinguishable from a journalled
+  frame, so the receiver needs no second way to apply it, plus the scope's
+  retained deletions as the frames their authors signed rather than replacements
+  minted here. Absence describes nothing, so a scope whose every row was deleted
+  answers with deletions rather than with silence. This is not the backup path,
+  which exports a snapshot for a human. A scope this device holds no key for is
+  not rebuilt: one it cannot seal for is one it cannot serve.
+- **Root-secret handover.** A device paired for the first time holds no key
+  material, so it could decrypt nothing it was sent. After confirmation — never
+  on connectivity alone — each device announces whether it holds a root, and the
+  holder seals its own for the one that lacks it: ECDH P-256 to the peer's
+  session ephemeral key, AES-256-GCM, with the transcript bound into the AAD so
+  a wrapper lifted from another exchange cannot be replayed. Which device sends
+  follows from who holds key material, not from the pairing role. The rotation
+  epoch travels beside the wrapper, since a receiver that guessed it would derive
+  a key that decrypts nothing and look exactly like a peer with nothing to send.
+  A device that already holds a root refuses an unasked-for one — its rows are
+  sealed under the key it has. Announcements repeat until the peer is heard,
+  because two people never confirm at the same instant and a channel drops what
+  arrives before anything is listening. Key material and catch-up share the one
+  channel, and both are read from the moment it opens rather than in turn: each
+  device waits for key material on a deadline of its own, so a peer whose
+  deadline passes first starts syncing while this one is still listening for
+  keys. Its opening manifest is held until catch-up reads it, rather than being
+  refused — sent once and never repeated, a refusal cost that direction of the
+  exchange for the whole session. Each protocol withholds only what certainly
+  belongs to the other, so a message belonging to neither still reaches both
+  decoders and is refused by each. The root is zeroed as soon as it is
+  stored, and the receiving device derives its ring exactly as a passphrase
+  unlock would; there is no separate paired-device key path.
+- **The device list, removal, and re-pairing.** Settings → Device sync lists
+  every device the account has paired with, revoked ones included and badged as
+  removed — a list that silently forgot a removal would leave "never paired"
+  and "paired and removed" indistinguishable. Removing a device marks its
+  trust record revoked (kept, never deleted): it can open no new authenticated
+  session and every frame it signs is refused, but nothing already copied to it
+  can be recalled, and the list says so beside the action. Removal is undone
+  only by pairing the device afresh: a completed, digit-confirmed exchange
+  reactivates the record if — and only if — the presented identity key equals
+  the stored one, and the dialog declares success only after that adoption has
+  been recorded. A known device id presenting a different key fails the pairing
+  with named copy (`trusted-key-mismatch`) and leaves the record untouched.
+- **Connection state.** Sessions are made by the pairing exchange and survive no
+  reload, so *not connected* is the resting state on every app start. Every row
+  states it — a blank row left a paired device looking ready to sync when
+  nothing could reach it — and every row not carrying offers **Reconnect**.
+  Only the app-wide notice is gated to a live loss. Each session publishes a `PeerLinkState`
+  (`connecting` / `connected` / `interrupted` / `closed`); `disconnected` and
+  `failed` collapse into `interrupted`, since with signalling only through the QR
+  exchange there is no ICE restart to attempt. The registry reports these to a
+  page-lifetime store (`peerLinkStatus`) holding `connecting` / `connected` /
+  `dropped` per device, where **`dropped` is reachable only from `connected`** —
+  so a pairing that never came up, and a session torn down locally, both leave
+  nothing behind. Liveness lives there rather than in the provider observable:
+  `useSyncStatus` reads `durableSync`, which P2P does not offer. A row shows its
+  state as a `StatusBadge` (*Not connected* at rest, glyphless; *Disconnected*
+  for a link lost mid-session); that loss also raises one app-wide notice (`NoticeDock` → `InlineBanner`, `role="status"`, out of flow,
+  no dialog, no focus taken). Its action opens the device list; the row offers
+  **Reconnect**, a fresh exchange — the transport is gone and no channel remains
+  to renegotiate over. The trust record persists and both devices already hold
+  the root secret, so **no second key handover** occurs.
+- **What a device may ask for.** A peer's manifest is filtered by whether this
+  device *could decrypt* a scope, which is not the same question as which scopes
+  it already holds. Stage 1 derives one content key for every scope, so a device
+  holding the account key can read any scope offered; deciding from what it
+  already had would leave a freshly paired device — holding none — asking for
+  nothing, and so never receiving the first scope that would let it ask.
+- **Channels are used only once open.** A device that creates a data channel
+  holds it in `connecting` while the connection forms, and writing then throws;
+  the answering device never sees that state, since its channel arrives open.
+  Catch-up and key transfer therefore wait for `open` rather than for the channel
+  to exist.
+- **Proven end to end.** `pair-sync.spec.ts` drives two browser contexts through
+  a real WebRTC pairing and asserts that writing held by one device appears on
+  the other, live and after a reload. `pair-sync-content.spec.ts` goes inside a
+  space: a brain-space note and the text typed into it cross to a canvas that is
+  already on screen, and text typed into a document reaches an editor the other
+  context already has open — with no navigation on the receiving side, which is
+  what separates a document that syncs from one that merely would on a revisit.
+  `attachments-pair-sync.spec.ts` adds an
+  image larger than two transfer chunks on one context and proves it renders on
+  the peer and survives reload. `peer-link-state.spec.ts` drives the real
+  registry, store and surfaces through every state around a lost link, faking
+  only the browser event (`window.peerLink`, dev/E2E builds only);
+  `pair-device-drop.spec.ts` pairs two contexts for real and closes one, proving
+  a genuine drop reaches the same place. Two physical devices on a network remain
+  slice 2A.9 and are not discharged by any of them.
+- **Live peer sync.** Catch-up answers "what did I miss?" when a connection
+  opens; work written *while* a peer is connected reaches it as it is journalled.
+  The P2P provider is named at boot beside Dexie Cloud and supplies a transport
+  per scope over the paired connection; a registry stands between it and pairing,
+  so the provider never depends on the dialog's lifetime. Only frames this device
+  authored are sent — one that arrived from a peer is already held there. The
+  message is the same `frames` message catch-up speaks, so a receiver verifies,
+  journals and materialises it by exactly the path everything else takes.
+- **An arrived document reaches the screen.** Materialising a frame updates a
+  row, and every surface but one refreshes itself from there. A document is the
+  exception: its editor renders from the CRDT log, which is local-only and which
+  no frame touches, so an arriving body used to stay invisible until the editor
+  was remounted by navigating away and back. Each document another device wrote
+  to is therefore put through the same gate a mount uses (§ 4.9.1): the arriving
+  body replaces what an open editor is showing at once, and a document no editor
+  holds has its log reseeded and other tabs told to remount onto it. A document
+  the gate found already in agreement is announced to nobody. Local work that
+  was never written to the row is kept first as a recoverable **pre-sync**
+  revision, and only then replaced — but a revision is minted only where there
+  is something to protect, since a body arrives on every pause in the other
+  person's typing and revisions replicate. This device's own frames are skipped:
+  it already shows what it typed. Convergence remains whole-document
+  last-writer-wins; merging concurrent edits needs the CRDT itself to cross the
+  peer link, which is still not wired.
+  A device accepts any channel its peer opens, which is how it receives work in a
+  scope it never writes to and so never asks for a channel for. Both directions
+  are covered by `pair-sync.spec.ts`. A transport is made once per scope and
+  kept, so it is only ever written to while it can carry something: a frame
+  journalled before the channel has finished connecting waits for it to open, and
+  a bearer that goes away is given up rather than written into — the channel
+  leaves its session, the link is dropped, and the next frame opens a fresh one.
+  Pairing a device again replaces whatever session was registered for it, which
+  is what lets a device carry live work again after a connection dropped. A frame
+  that misses the peer either way stays journalled, and catch-up carries it.
+- **Recorded limits.** Revision payloads are not chunked: an individual revision
+  that exceeds the carrier budget is skipped and reported, then offered again on
+  a later catch-up. Attachment chunk rows are removed transactionally when their
+  attachment is deleted, but orphan collection beyond that same-transaction
+  path is deferred. More than two devices is also not wired: the channel factory
+  takes the peer that is connected, and fanning a scope across several needs a
+  send that reaches all of them and a receipt credited to one. The pairing exchange
+  runs against real WebRTC between two browser profiles, driven end to end by
+  `pair-device.spec.ts`; it has not yet been verified between two physical devices
+  on a real network.
+
+*Covered by:* `qrSignallingAdapter.test.ts`, `pairingSession.test.ts`,
+`payloadValidation.test.ts`, `replayCache.test.ts`, `pairingCodec.test.ts`,
+`qrSequence.test.ts` (package); `deviceIdentityStore.test.ts`,
+`createPairingSignaller.test.ts`, `journalRetentionPreference.test.ts`,
+`pruneExpiredOperations.test.ts`, `journalRetention.test.ts`,
+`PairingCodeDisplay.test.tsx`, `PairingCodePager.test.tsx`,
+`PairDeviceDialog.test.tsx`, `PairDeviceSection.test.tsx`,
+`PairingRoleChoice.test.tsx`, `InitiatorPairingView.test.tsx`,
+`JoinerPairingView.test.tsx`, `pairingExchangeReducer.test.ts`,
+`JournalRetentionSelector.test.tsx`; and `pair-device.spec.ts`.
+Attachment framing, assembly and transfer are covered by
+`operationJournalMiddleware.test.ts`, `writerFullState.test.ts`,
+`writerOperationMaterializer.test.ts`, `attachmentChunkStore.test.ts`,
+`attachmentTransfer.test.ts`, `peerCatchUp.test.ts`, and
+`attachments-pair-sync.spec.ts`.
 
 ---
 
@@ -587,7 +970,7 @@ Subsections nest under their parent section folder. Docs whose `sectionId` doesn
 
 A disabled `↑ restore from file · soon` hint sits beside the snapshot button to telegraph the next step on this surface.
 
-**Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` did not require a Dexie version bump. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
+**Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` required no change to the schema spec at all. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
 
 **Key files.**
 
@@ -675,7 +1058,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
-- **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default** and invite-only; it is not part of the default experience.
+- **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default**; account creation is not supported, and it is not part of the default experience.
 - **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). The encrypted cloud-sync beta (§ 4.9.1) now replicates a user's own documents **across their devices**, reconciling pulled bodies into the editor at **whole-document last-writer-wins**. What is still not wired: **real-time** cross-device editing and **live cross-device presence** (a network CRDT transport), and multi-*writer* collaboration between different people.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).

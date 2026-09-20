@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { UserLogin } from 'dexie-cloud-addon';
-import type { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import type { KeyEscrowPresence } from 'writer-sync/core';
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
 import { devicePreviewState } from '@/lib/cloud/devicePreview';
 import { useDeviceLimitBlocked } from './useDeviceSlots';

@@ -8,7 +8,7 @@ import {
   type DeviceRecord,
 } from '@/lib/cloud/devicePolicy';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence } from 'writer-sync/core';
 
 /** The slice of `db.cloud` the blocked computation reads. */
 interface FakeCloud {

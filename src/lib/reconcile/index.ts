@@ -8,4 +8,9 @@
  */
 export { applyPulledBody } from './applyPulledBody';
 export { reconcileDocForMount } from './reconcileDocForMount';
-export type { Reconcilable, ReconcileResult } from './reconcile.types';
+export type {
+  MountReconcileAction,
+  Reconcilable,
+  ReconcileMountOptions,
+  ReconcileResult,
+} from './reconcile.types';

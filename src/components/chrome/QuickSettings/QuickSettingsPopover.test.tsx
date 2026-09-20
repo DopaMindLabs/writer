@@ -80,11 +80,11 @@ describe('QuickSettingsPopover', () => {
       expect(about).toHaveAttribute('href', '/about');
     });
 
-    it('offers a direct Account link to the account settings tab, regardless of the cloud-sync flag', () => {
+    it('offers a direct Profile link to the profile settings tab, regardless of the cloud-sync flag', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-      const item = screen.getByTestId('quick-settings-account');
-      expect(item).toHaveTextContent(/account/i);
-      expect(item).toHaveAttribute('href', expect.stringContaining('tab=account'));
+      const item = screen.getByTestId('quick-settings-profile');
+      expect(item).toHaveTextContent(/profile/i);
+      expect(item).toHaveAttribute('href', expect.stringContaining('tab=profile'));
     });
   });
 
@@ -115,7 +115,7 @@ describe('QuickSettingsPopover', () => {
         'quick-settings-floating-toolbar-toggle',
         'quick-settings-section-settings',
         'quick-settings-full-settings',
-        'quick-settings-account',
+        'quick-settings-profile',
         'quick-settings-section-appearance',
         'quick-settings-theme-light',
         'quick-settings-width-m',

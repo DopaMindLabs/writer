@@ -1,12 +1,13 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
-import { FIXED_TIME } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata } from '@/test/fixtures';
 import { useConnections, useConnectionsForNote } from './useConnections';
 
 describe('useConnections', () => {
   it('returns connections for the given space', async () => {
     await db.connections.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'c1',
         spaceId: 's1',
         fromNoteId: 'a',
@@ -14,6 +15,7 @@ describe('useConnections', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'c2',
         spaceId: 's1',
         fromNoteId: 'b',
@@ -40,6 +42,7 @@ describe('useConnectionsForNote', () => {
   beforeEach(async () => {
     await db.connections.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'in1',
         spaceId: 's1',
         fromNoteId: 'a',
@@ -47,6 +50,7 @@ describe('useConnectionsForNote', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'out1',
         spaceId: 's1',
         fromNoteId: 'target',

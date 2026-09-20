@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
+import { sampleMetadata } from '@/test/fixtures';
 import { useHasLocalSyncedData } from './useHasLocalSyncedData';
 
 describe('useHasLocalSyncedData', () => {
@@ -16,6 +17,7 @@ describe('useHasLocalSyncedData', () => {
     });
 
     await db.docs.add({
+      ...sampleMetadata('s'),
       id: 'd',
       spaceId: 's',
       sectionId: 'x',

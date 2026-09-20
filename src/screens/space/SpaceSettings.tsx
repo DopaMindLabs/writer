@@ -10,6 +10,7 @@ import { useBackups } from '@/hooks/useBackups';
 import { useDeleteSpace } from '@/hooks/useDeleteSpace';
 import { useRestoreBackup } from '@/hooks/useRestoreBackup';
 import { db } from '@/db/db';
+import { renameSpace, retagSpace } from '@/lib/space/spaceRepository';
 import type { Backup, Space } from '@/db/schema';
 import { NavShell } from '@/components/chrome/NavShell';
 import type { NavTabGroup } from '@/components/chrome/NavTabs';
@@ -171,23 +172,21 @@ const GeneralTab = ({ space }: { space: Space }) => {
   const [tag, setTag] = useState(space.tag);
 
   const commitName = async () => {
-    const next = name.trim();
-    if (!next) {
+    if (!name.trim()) {
       setName(space.name);
       return;
     }
-    if (next === space.name) return;
-    await db.spaces.update(space.id, { name: next, updatedAt: Date.now() });
+    if (name.trim() === space.name) return;
+    await renameSpace(space.id, name);
   };
 
   const commitTag = async () => {
-    const next = tag.trim();
-    if (!next) {
+    if (!tag.trim()) {
       setTag(space.tag);
       return;
     }
-    if (next === space.tag) return;
-    await db.spaces.update(space.id, { tag: next, updatedAt: Date.now() });
+    if (tag.trim() === space.tag) return;
+    await retagSpace(space.id, tag);
   };
 
   return (

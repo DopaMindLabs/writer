@@ -1,6 +1,7 @@
 import { db } from '@/db/db';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 import { MAX_IMAGE_BYTES, MAX_NOTE_IMAGES } from '@/data/note-attachments';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   addNoteImages,
   countNoteAttachments,
@@ -8,6 +9,7 @@ import {
 } from './note-attachments';
 
 const makeNote = (overrides: Partial<Note> = {}): Note => ({
+  ...sampleMetadata(),
   id: 'n1',
   spaceId: 's1',
   l: 0,

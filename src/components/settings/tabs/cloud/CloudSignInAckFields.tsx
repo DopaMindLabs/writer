@@ -22,7 +22,7 @@ export const CloudSignInAckFields = ({
   onConfirm,
 }: CloudSignInAckFieldsProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.ack.${name}`);
+  const k = (name: string) => t(`settings.cloud.ack.${name}`);
   return (
     <>
       <InlineBanner kind="error" data-testid="cloud-signin-ack-warning">

@@ -1,11 +1,15 @@
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
+import { asPrincipalId } from 'writer-sync/core';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   importCitations,
   parseBibtexFile,
   parseBibtexText,
   serializeCitationsToBibtex,
 } from './bibtex';
+
+const PRINCIPAL = asPrincipalId('me');
 
 const SAMPLE = `
 @article{smith2020,
@@ -32,7 +36,7 @@ const SAMPLE = `
 
 describe('parseBibtexText', () => {
   it('parses entries with mapped types', async () => {
-    const out = await parseBibtexText(SAMPLE, 's1');
+    const out = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     const byKey = Object.fromEntries(out.map((c) => [c.key, c]));
     expect(out).toHaveLength(4);
     expect(byKey.smith2020.type).toBe('article');
@@ -42,13 +46,13 @@ describe('parseBibtexText', () => {
   });
 
   it('extracts year as number from string fields', async () => {
-    const out = await parseBibtexText(SAMPLE, 's1');
+    const out = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     const smith = out.find((c) => c.key === 'smith2020');
     expect(smith?.year).toBe(2020);
   });
 
   it('joins multiple authors with commas', async () => {
-    const out = await parseBibtexText(SAMPLE, 's1');
+    const out = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     const smith = out.find((c) => c.key === 'smith2020');
     expect(smith?.authors).toBe('John Smith, Jane Doe');
   });
@@ -59,12 +63,12 @@ describe('parseBibtexText', () => {
   author = {Lobbezoo, Dorien JA and van Kampen, Roel JW and others},
   year = {2013}
 }`;
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out[0].authors).toBe('Dorien JA Lobbezoo, van Roel JW Kampen, et al.');
   });
 
   it('falls back to (untitled) and (unknown) for missing fields', async () => {
-    const out = await parseBibtexText(SAMPLE, 's1');
+    const out = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     const minimal = out.find((c) => c.key === 'minimal');
     expect(minimal?.title).toBe('(untitled)');
     expect(minimal?.authors).toBe('(unknown)');
@@ -72,12 +76,12 @@ describe('parseBibtexText', () => {
   });
 
   it('returns empty array on empty input', async () => {
-    const out = await parseBibtexText('', 's1');
+    const out = await parseBibtexText('', 's1', PRINCIPAL);
     expect(out).toEqual([]);
   });
 
   it('does not store the whole-file raw text on each citation', async () => {
-    const out = await parseBibtexText(SAMPLE, 's1');
+    const out = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     expect(out).toHaveLength(4);
     for (const c of out) {
       expect(c.raw).toBeUndefined();
@@ -93,7 +97,7 @@ describe('parseBibtexFile', () => {
       'in.bib',
       { type: 'application/x-bibtex' },
     );
-    const out = await parseBibtexFile(file, 's1');
+    const out = await parseBibtexFile(file, 's1', PRINCIPAL);
     expect(out).toHaveLength(1);
     expect(out[0].key).toBe('f1');
   });
@@ -102,7 +106,7 @@ describe('parseBibtexFile', () => {
     const file = new File([''], 'empty.bib', {
       type: 'application/x-bibtex',
     });
-    const out = await parseBibtexFile(file, 's1');
+    const out = await parseBibtexFile(file, 's1', PRINCIPAL);
     expect(out).toEqual([]);
   });
 });
@@ -110,6 +114,7 @@ describe('parseBibtexFile', () => {
 describe('serializeCitationsToBibtex', () => {
   it('round-trips a typical citation', () => {
     const c: Citation = {
+      ...sampleMetadata(),
       id: 'x1',
       spaceId: 's1',
       key: 'smith2020',
@@ -128,6 +133,7 @@ describe('serializeCitationsToBibtex', () => {
 
   it('maps internal types to bibtex types', () => {
     const make = (type: Citation['type']): Citation => ({
+      ...sampleMetadata(),
       id: type,
       spaceId: 's1',
       key: type,
@@ -149,6 +155,7 @@ describe('serializeCitationsToBibtex', () => {
 
   it('omits placeholder author/title and zero year', () => {
     const c: Citation = {
+      ...sampleMetadata(),
       id: 'x',
       spaceId: 's1',
       key: 'empty',
@@ -166,6 +173,7 @@ describe('serializeCitationsToBibtex', () => {
 
   it('escapes braces in field values', () => {
     const c: Citation = {
+      ...sampleMetadata(),
       id: 'x',
       spaceId: 's1',
       key: 'k',
@@ -187,13 +195,13 @@ describe('serializeCitationsToBibtex', () => {
 describe('parseBibtexText edge cases', () => {
   it('extracts a four-digit year from a string with extra text around it', async () => {
     const text = `@article{x, author = {A}, title = {T}, year = {published 1999 reprint}}`;
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out[0].year).toBe(1999);
   });
 
   it('falls back to year=0 when the year field has no four-digit substring', async () => {
     const text = `@article{x, author = {A}, title = {T}, year = {n.d.}}`;
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out[0].year).toBe(0);
   });
 
@@ -201,7 +209,7 @@ describe('parseBibtexText edge cases', () => {
     const text =
       '@inproceedings{p1, author = {A}, title = {T}, year = {2020}}\n' +
       '@conference{c1, author = {A}, title = {T}, year = {2020}}';
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out.find((c) => c.key === 'p1')?.type).toBe('article');
     expect(out.find((c) => c.key === 'c1')?.type).toBe('article');
   });
@@ -210,21 +218,21 @@ describe('parseBibtexText edge cases', () => {
     const text =
       '@inbook{b1, author = {A}, title = {T}, year = {2020}}\n' +
       '@booklet{bk1, author = {A}, title = {T}, year = {2020}}';
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out.find((c) => c.key === 'b1')?.type).toBe('chapter');
     expect(out.find((c) => c.key === 'bk1')?.type).toBe('book');
   });
 
   it('falls back to "misc" for unknown bibtex types', async () => {
     const text = '@unknownType{u1, author = {A}, title = {T}, year = {2020}}';
-    const out = await parseBibtexText(text, 's1');
+    const out = await parseBibtexText(text, 's1', PRINCIPAL);
     expect(out.find((c) => c.key === 'u1')?.type).toBe('misc');
   });
 });
 
 describe('importCitations', () => {
   it('adds all entries on first call and skips duplicates on second', async () => {
-    const cs = await parseBibtexText(SAMPLE, 's1');
+    const cs = await parseBibtexText(SAMPLE, 's1', PRINCIPAL);
     const first = await importCitations(cs);
     expect(first.added).toBe(4);
     expect(first.skipped).toBe(0);
@@ -242,7 +250,7 @@ describe('importCitations', () => {
 @article{same2021, author = {A}, title = {Second}, year = {2021}}
 @book{unique2021, author = {B}, title = {Other}, year = {2021}}
 `;
-    const cs = await parseBibtexText(dupes, 's1');
+    const cs = await parseBibtexText(dupes, 's1', PRINCIPAL);
     expect(cs).toHaveLength(3);
 
     const res = await importCitations(cs);
@@ -252,8 +260,8 @@ describe('importCitations', () => {
   });
 
   it('imports across multiple spaces and scopes duplicate detection per space', async () => {
-    const a = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's1');
-    const b = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's2');
+    const a = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's1', PRINCIPAL);
+    const b = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's2', PRINCIPAL);
     const res = await importCitations([...a, ...b]);
     expect(res.added).toBe(2);
     expect(res.skipped).toBe(0);

@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import type { DragEndEvent } from '@/components/libs/dnd';
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useSidebarDrag } from './useSidebarDrag';
 
 const { moveDocMock, reorderSectionMock } = vi.hoisted(() => ({
@@ -18,6 +19,7 @@ vi.mock('@/lib/sections', async (orig) => ({
 }));
 
 const section = (id: string, order: number): Section => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   parentSectionId: null,
@@ -25,6 +27,7 @@ const section = (id: string, order: number): Section => ({
   order,
 });
 const doc = (id: string, sectionId: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

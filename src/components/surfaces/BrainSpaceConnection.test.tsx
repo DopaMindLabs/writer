@@ -1,13 +1,14 @@
 import userEvent from '@testing-library/user-event';
 import { render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME, sampleNote } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata, sampleNote } from '@/test/fixtures';
 import type { Connection, Note } from '@/db/schema';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 
 const from: Note = { ...sampleNote, id: 'n1', l: 10, t: 10, w: 100, h: 60 };
 const to: Note = { ...sampleNote, id: 'n2', l: 240, t: 200, w: 120, h: 80 };
 const conn: Connection = {
+  ...sampleMetadata(),
   id: 'c1',
   spaceId: 's1',
   fromNoteId: 'n1',
