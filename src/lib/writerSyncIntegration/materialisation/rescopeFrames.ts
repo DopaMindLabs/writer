@@ -1,133 +1,100 @@
-import type { LoremDB } from '@/db/LoremDB';
-import type { AccessScopeId, DeviceId } from 'writer-sync/core';
-import type {
-  ScopeKeyResolver,
-  SyncKeyRing,
-} from 'writer-sync/crypto';
-import {
-  openOperationPayload,
-  sealOperationPayload,
-} from 'writer-sync/crypto';
-import { keyIdOf } from '@/lib/cloud/crypto/envelope';
 import { invariant } from '@/lib/invariant';
-import {
-  EMPTY_PAYLOAD_HASH,
-  hashPayload,
-} from 'writer-sync/operations';
-import type { EncryptedSyncFrame } from 'writer-sync/operations';
-import type { JournalIdentity } from './operationJournalMiddleware';
-import { signAuthoredFrames } from './writerOperationFactory';
+import { requireJournalledTable } from './frameAdmission';
+import { prepareScopeRebinding, requireScopeMoveKeys } from './prepareScopeRebinding';
+import { admitRebindingSnapshot } from './scopeRebindingAdmission';
+import { readRebindingSnapshot, scopeRebindingTables } from './scopeRebindingSnapshot';
+import { tombstoneOf } from './tombstone';
+import type {
+  PreparedScopeEntity, RebindingSnapshot, ScopeRebindingOptions, ScopeRebindingReceipt, ScopeTransition,
+} from './scopeRebinding.types';
 
-/**
- * Move every enqueued operation for one access scope into another.
- *
- * A frame's ciphertext is bound to its scope: the scope id is part of the
- * additional authenticated data, so a frame cannot simply be relabelled — doing
- * so would produce a frame no receiver can open, silently losing the operation.
- * Each frame is therefore opened under the source scope's key and resealed under
- * the destination's, keeping its operation id (so cross-provider deduplication
- * still recognises it) and its logical time (so convergence is unchanged).
- *
- * Resealing rebuilds signed fields, so the original signature cannot stand. The
- * moved frame is re-authored by this device — stamped with its device id and
- * signed with its identity key — the same way a full-state rebuild is.
- *
- * All-or-nothing: every frame is resealed before anything is written, and the
- * writes commit in one transaction. A scope transition that fails halfway would
- * leave operations split across two scopes, where a device holding either key
- * could read only part of the history.
- */
-
-/** The key rings either side of a scope transition. */
-interface ScopeKeyRings {
-  source: SyncKeyRing;
-  destination: SyncKeyRing;
+/** The prepared move no longer describes this device's accepted state. */
+export class ScopeRebindingChangedError extends Error {
+  constructor() {
+    super('The saved state changed during scope rebinding; prepare a fresh snapshot');
+    this.name = 'ScopeRebindingChangedError';
+  }
 }
 
-/**
- * Reseal one frame under `accessScopeId` as `deviceId`, preserving identity and
- * ordering. The result is unsigned; the caller signs the batch.
- */
-const rescopeFrame = async (options: {
-  frame: EncryptedSyncFrame;
-  rings: ScopeKeyRings;
-  accessScopeId: AccessScopeId;
-  deviceId: DeviceId;
-}): Promise<EncryptedSyncFrame> => {
-  const { frame, rings, accessScopeId, deviceId } = options;
-  const header = {
-    ...frame,
-    accessScopeId,
-    deviceId,
-    keyId: keyIdOf(rings.destination),
-    epoch: rings.destination.epoch,
-  };
-  if (frame.kind === 'delete') {
-    // A deletion carries no payload, so there is nothing to reseal — only the
-    // routing header moves.
-    return { ...header, payload: '', payloadHash: EMPTY_PAYLOAD_HASH };
+const commitEntity = async (options: {
+  move: ScopeTransition;
+  prepared: PreparedScopeEntity;
+}): Promise<void> => {
+  const { move: { db }, prepared: { frame, row, chunks } } = options;
+  const table = requireJournalledTable(db, frame.entityTable);
+  if (row) {
+    await table.put(row);
+    await db.syncTombstones.delete([frame.entityTable, frame.entityId]);
+  } else {
+    await table.delete(frame.entityId);
+    await db.syncTombstones.put(tombstoneOf(frame));
   }
-  const content = await openOperationPayload(rings.source, frame, frame.payload);
-  const payload = await sealOperationPayload(rings.destination, header, content);
-  return { ...header, payload, payloadHash: await hashPayload(payload) };
+  if (chunks.length > 0) {
+    // Shrinking an attachment can leave extra old indices. None may retain the
+    // source binding when the current ciphertext moves to another scope.
+    await db.syncAttachmentChunks.where('attachmentId').equals(frame.entityId).delete();
+    await db.syncAttachmentChunks.bulkPut(chunks);
+  }
+  await db.syncInbox.add({
+    operationId: frame.operationId, accessScopeId: frame.accessScopeId,
+    deviceId: frame.deviceId, logicalAt: frame.logicalAt,
+    entityTable: frame.entityTable, entityId: frame.entityId,
+    result: 'applied', receivedAt: frame.logicalAt.millis,
+  });
+};
+
+const commitRebinding = async (options: {
+  move: ScopeTransition;
+  snapshot: RebindingSnapshot;
+  prepared: readonly PreparedScopeEntity[];
+}): Promise<void> => {
+  const { move, snapshot, prepared } = options;
+  const { db, requestId, scopes } = move;
+  await db.transaction('rw', scopeRebindingTables(db), async () => {
+    const current = await readRebindingSnapshot(move);
+    if (JSON.stringify(current) !== JSON.stringify(snapshot)) throw new ScopeRebindingChangedError();
+    // Including syncInbox marks this as an explicit materialisation transaction:
+    // the middleware must not journal the already prepared mutations a second time.
+    for (const entity of prepared) await commitEntity({ move, prepared: entity });
+    await db.syncOperations.bulkAdd(prepared.map(({ frame }) => frame));
+    await db.syncScopeRebindings.bulkAdd([{
+      requestId, sourceScopeId: scopes.from, destinationScopeId: scopes.to,
+      operationIds: prepared.map(({ frame }) => frame.operationId),
+    }]);
+  });
+};
+
+const completedRequest = (
+  move: ScopeTransition,
+  receipt: ScopeRebindingReceipt | undefined,
+): boolean => {
+  if (!receipt) return false;
+  invariant(receipt.sourceScopeId === move.scopes.from && receipt.destinationScopeId === move.scopes.to,
+    'Scope move request id was already used for different scopes');
+  return true;
 };
 
 /**
- * Resolve the source and destination rings for a transition. Both must be
- * available: resealing needs to read the old payload and write the new one, so a
- * keyless (or partially keyed) device must refuse rather than move a frame it
- * cannot re-encrypt.
+ * Move this device's current rows and retained deletions to another access scope.
+ * History may be incomplete after compaction; it must never supply the content.
+ * Each entity gets one fresh signed operation, committed with its local state.
+ * Original frames remain immutable. An explicit request id makes retries durable,
+ * including empty moves; a deliberate later move must use a different request id.
+ * Concurrent state, journal or trust changes abort the whole prepared batch.
  */
-const ringsFor = (options: {
-  resolver: ScopeKeyResolver;
-  from: AccessScopeId;
-  to: AccessScopeId;
-}): ScopeKeyRings => {
-  const context = { table: 'syncOperations', primaryKey: '', operation: 'write' } as const;
-  const source = options.resolver.keyFor({
-    ...context,
-    accessScopeId: options.from,
-  });
-  const destination = options.resolver.keyFor({
-    ...context,
-    accessScopeId: options.to,
-  });
-  invariant(
-    source && destination,
-    'rescopeFrames: both the source and destination scope keys must be available',
-  );
-  return { source, destination };
-};
-
-/**
- * Re-encrypt every enqueued frame of `from` into `to`. Returns how many frames
- * moved. Frames already in the destination scope are left alone.
- */
-export const rescopeFrames = async (options: {
-  db: LoremDB;
-  resolver: ScopeKeyResolver;
-  identity: () => Promise<JournalIdentity>;
-  scopes: { from: AccessScopeId; to: AccessScopeId };
-}): Promise<number> => {
-  const { db, resolver, identity, scopes } = options;
+export const rescopeFrames = async (options: ScopeRebindingOptions): Promise<number> => {
+  const { db, scopes, requestId } = options;
+  invariant(requestId.trim().length > 0, 'Scope move requires a non-empty request id');
+  if (completedRequest(options, await db.syncScopeRebindings.get(requestId))) return 0;
   if (scopes.from === scopes.to) return 0;
-  const enqueued = await db.syncOperations
-    .where({ accessScopeId: scopes.from })
-    .toArray();
-  if (enqueued.length === 0) return 0;
-  const rings = ringsFor({ resolver, from: scopes.from, to: scopes.to });
-  const { deviceId, privateKey } = await identity();
-  // Every reseal and signature completes before the transaction opens: Web
-  // Crypto cannot run inside a live IndexedDB transaction, and a failure here
-  // must abort the whole transition rather than commit a partial one.
-  const rescoped = await Promise.all(
-    enqueued.map((frame) =>
-      rescopeFrame({ frame, rings, accessScopeId: scopes.to, deviceId }),
-    ),
-  );
-  const signed = await signAuthoredFrames(privateKey, rescoped);
-  await db.transaction('rw', db.syncOperations, async () => {
-    await db.syncOperations.bulkPut(signed);
-  });
-  return signed.length;
+  requireScopeMoveKeys(options);
+  const snapshot = await db.transaction('r', scopeRebindingTables(db),
+    () => readRebindingSnapshot(options));
+  if (completedRequest(options, snapshot.receipt)) return 0;
+  await admitRebindingSnapshot({ db, snapshot });
+  const states = snapshot.entities.filter((state) =>
+    (state.row?.accessScopeId ?? state.tombstone?.accessScopeId) === scopes.from);
+  const prepared = await prepareScopeRebinding({ move: options, states });
+  await commitRebinding({ move: options, snapshot, prepared });
+  return prepared.length;
 };

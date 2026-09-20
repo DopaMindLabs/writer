@@ -223,8 +223,29 @@ A frame relabelled into a scope the receiver did not expect.
 **Mitigation — delivered in Stage 1.** The scope id is inside the AAD, so
 relabelling invalidates the payload; and `verifyFrame({ expectedScope })` rejects
 a mismatch structurally, before decryption. Moving content legitimately between
-scopes goes through `rescopeFrames`, which opens under the source key, reseals
-under the destination and re-signs as the moving device, all or nothing.
+scopes goes through `rescopeFrames`, which moves current accepted rows and retained
+tombstones. It never gives surviving old history a fresh timestamp: per-origin
+compaction can retain an obsolete put or delete after dropping its successor.
+Current state already in another scope is excluded even after that move's history
+has been compacted. Both scope keys are required before reading rows, so keyless
+hidden content cannot be mistaken for a completed empty move.
+
+Fresh operation ids prevent prior inbox entries from suppressing the move. Logical
+times follow current state; scope and mutation metadata are sealed inside each put
+payload as well as bound into its header. Attachment bytes are resealed under the
+destination binding. Original frames remain immutable. Retained source and related
+history passes structure, hash, table-policy, trusted-signature and clock checks;
+provider-injected unsigned deletes cannot gain local authority. Potentially newer
+or tied unmaterialised frames block the move. Current tombstones require their
+retained signed frames, and contradictory live/deleted state is refused.
+
+Durable receipts keyed by caller-supplied request ids prevent retries from repeating
+completed moves, including empty moves and retries after a later move back. Before
+committing, Writer rechecks current versions and scopes, tombstones, related
+journal/inbox entries, persisted trust records and the receipt. A concurrent change
+aborts. Local rows, tombstones, frames, chunks, applied inbox records and receipt
+commit together or all roll back. The helper has no production caller. Local
+atomicity does not imply knowledge of unseen offline edits or atomic remote delivery.
 
 ### 5.8 Malicious attachment size or chunk count
 

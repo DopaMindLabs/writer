@@ -404,10 +404,50 @@ providers.
 ## 11. Scope rebinding
 
 A frame cannot be relabelled into another scope — the scope is in the AAD (§3).
-Moving content between scopes legitimately goes through `rescopeFrames.ts`, which
-opens each frame under the source key, reseals it under the destination and
-re-signs it as the moving device, all-or-nothing. Any Stage 2 flow that moves
-content between scopes uses it; none may edit `accessScopeId` in place.
+Writer's `rescopeFrames.ts` moves the current locally accepted rows and retained
+tombstones in the source scope. The journal is not a source of current content:
+per-origin compaction can retain an obsolete edit while removing its successor.
+A current row remains movable even if none of its original frames survive. A
+current tombstone requires its retained, verified delete frame. Entities whose
+saved state is already in another scope are excluded, including when the frames
+that moved them have been compacted.
+
+Each current entity gets one fresh destination operation signed by the moving
+device. A new operation id avoids prior inbox deduplication; its logical time
+follows the current state. Put payloads carry the destination `accessScopeId`, new
+`mutationId` and new `logicalUpdatedAt`, matching the header. Existing content and
+editorial attribution are preserved. Attachment bytes are resealed under the
+destination binding and carried in new ciphertext chunks. Deletes receive fresh
+headers and signatures without a payload. Original frames remain immutable.
+
+Both scope keys must be available before reading state: the encryption middleware
+hides keyless rows, which must never be mistaken for an empty scope. Retained
+source and related entity history passes structure, hash, journalled-table policy,
+trusted signature and clock checks before signing. A potentially newer or tied
+journal frame not yet considered by materialisation blocks the move; callers must
+materialise pending operations before retrying. Retained history can cause a
+refusal, but never supplies content to re-author. Invalid or contradictory current
+state also fails closed.
+
+The caller supplies a stable `requestId` for retries of one intended move. Local
+`syncScopeRebindings` receipts use that id as their primary key, recording source,
+destination and the created operation ids. Completed requests return zero without
+writing, even after journal compaction, reopening the database or a later move
+back. Empty moves also record completion, so retrying cannot sweep up rows added
+later. Reusing an id for different scopes is an error. Deliberate subsequent moves
+use new request ids; identical source and destination scopes are a no-op.
+
+Frame and attachment encryption and signing finish before one transaction rechecks
+saved rows and mutation ids, tombstones, related journal and inbox entries, trust
+records and the request receipt. A change raises `ScopeRebindingChangedError`; the
+caller may prepare again. Otherwise that same transaction updates local state and
+atomically writes the frames, attachment chunks, applied inbox records and receipt.
+Any write failure rolls everything back. Including `syncInbox` suppresses duplicate
+operation-journal middleware emission; ordinary row encryption still applies.
+
+This guarantees local atomicity against the state this device has accepted. It
+cannot know unreceived offline edits or make remote delivery atomic. The helper
+currently has no production caller or user-facing flow.
 
 ---
 

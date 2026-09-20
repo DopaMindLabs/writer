@@ -139,6 +139,7 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   localOnly('syncInbox'),
   localOnly('syncTombstones'),
   localOnly('syncProviderBindings'),
+  localOnly('syncScopeRebindings'),
   // Which peers this device has paired with. Local-only and never replicated:
   // trust is a property of *this* device's relationships, and syncing it would
   // let one compromised peer extend trust to every other device.

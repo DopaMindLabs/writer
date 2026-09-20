@@ -193,6 +193,7 @@ Lossless CRDT-level merge across devices is a recorded open decision for a futur
 | `syncConfigs` | `spaceId` | Folder-sync intervals | **No** | No |
 | `docInspectorConfigs` | `spaceId` | Inspector toggle state | **No** | No |
 | `cloudCrypto` | `id` | Passphrase-wrapped escrow (cloud only) | **Yes** | (is the envelope) |
+| `syncScopeRebindings` | `requestId` | Durable receipts for completed scope moves | **No** | No |
 
 **Schema invariant:** `STORES` in `src/db/stores.ts` is the single source of truth for
 index definitions. `tableRules.ts` derives which fields stay plaintext from it — a field
@@ -294,8 +295,18 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   writes (backfilled by the unlock re-seal), addon-internal transactions and
   `Table.clear()` are deliberately not journalled.
 - **Scope binds through the adapter, not the row.** A provider realm is bound to the
-  scope's frames plus a `syncProviderBindings` record; changing an operation's scope
-  re-encrypts it (`rescopeFrames.ts`), because the scope is part of the frame's AAD.
+  scope's frames plus a `syncProviderBindings` record. Access-scope rebinding
+  (`rescopeFrames.ts`) moves current saved rows and retained deletions, creating one
+  fresh signed operation per entity with a later logical time and matching payload
+  metadata. Compacted journal history never supplies content. Original frames stay
+  immutable, and attachment chunks are resealed for the destination. Retained
+  history passes signature, table-policy and clock checks; unresolved newer or tied
+  operations block the move. Local `syncScopeRebindings` receipts keyed by explicit
+  request ids prevent retries from replaying a completed move, even after compaction
+  or a subsequent move back. The transaction rechecks saved state, journal/inbox,
+  trust and receipt, then commits rows, tombstones, frames, chunks, inbox entries and
+  receipt atomically. A concurrent change aborts the prepared batch. The helper has
+  no production caller yet.
 - **Domain vs adapter metadata.** Domain rows carry only provider-neutral metadata
   (`accessScopeId`, `createdBy`, `updatedBy`, `mutationId`, `logicalUpdatedAt`);
   `realmId`/`owner` exist only on the adapter's persisted row type
