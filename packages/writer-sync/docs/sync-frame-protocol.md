@@ -405,9 +405,14 @@ providers.
 
 A frame cannot be relabelled into another scope — the scope is in the AAD (§3).
 Moving content between scopes legitimately goes through `rescopeFrames.ts`, which
-opens each frame under the source key, reseals it under the destination and
-re-signs it as the moving device, all-or-nothing. Any Stage 2 flow that moves
-content between scopes uses it; none may edit `accessScopeId` in place.
+opens each frame under the source key and re-authors it as a fresh, later
+operation under the destination key and moving device, all-or-nothing. The new
+identity is required because a receiver may already have recorded the source
+operation id in its inbox; reusing it would make that receiver discard the move
+while a fresh receiver accepted it. Put payload metadata moves to the destination
+scope and carries the new operation id and logical time. Any Stage 2 flow that
+moves content between scopes uses this path; none may edit `accessScopeId` in
+place.
 
 ---
 

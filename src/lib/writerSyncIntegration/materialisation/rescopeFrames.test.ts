@@ -14,7 +14,7 @@ import {
   openOperationPayload,
   verifyFrameSignature,
 } from 'writer-sync/crypto';
-import { verifyFrame } from 'writer-sync/operations';
+import { compareOperations, verifyFrame } from 'writer-sync/operations';
 import type { JournalIdentity } from './operationJournalMiddleware';
 import { rescopeFrames } from './rescopeFrames';
 import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
@@ -91,6 +91,8 @@ afterEach(async () => {
 describe('rescopeFrames', () => {
   it('re-encrypts a moved frame so the destination scope can open it', async () => {
     await enqueuePut(note());
+    const original = await db.syncOperations.get('op-n1-1');
+    if (!original) throw new Error('test setup: frame missing');
 
     expect(
       await rescopeFrames({
@@ -101,14 +103,10 @@ describe('rescopeFrames', () => {
       }),
     ).toBe(1);
 
-    const moved = await verifyFrame(
-      await db.syncOperations.get('op-n1-1'),
-      { expectedScope: 'space-b' },
-    );
-    // Identity and ordering survive the move, so deduplication and convergence
-    // still recognise the operation.
-    expect(moved.operationId).toBe('op-n1-1');
-    expect(moved.logicalAt).toEqual({ millis: 1000, counter: 0 });
+    const [moved] = await db.syncOperations.toArray();
+    await expect(verifyFrame(moved, { expectedScope: 'space-b' })).resolves.toBeDefined();
+    expect(moved.operationId).not.toBe(original.operationId);
+    expect(compareOperations(moved, original)).toBeGreaterThan(0);
     // The payload opens under the destination key — a relabelled envelope would
     // fail here, because the scope is bound into the AAD.
     const content = await openOperationPayload(
@@ -116,14 +114,21 @@ describe('rescopeFrames', () => {
       moved,
       moved.payload,
     );
-    expect(content).toMatchObject({ id: 'n1', body: 'secret body' });
+    expect(content).toMatchObject({
+      id: 'n1',
+      body: 'secret body',
+      accessScopeId: 'space-b',
+      mutationId: moved.operationId,
+      logicalUpdatedAt: moved.logicalAt,
+    });
   });
 
   it('re-authors a moved frame so its signature verifies against this device', async () => {
     await enqueuePut(note());
     await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
 
-    const moved = await verifyFrame(await db.syncOperations.get('op-n1-1'));
+    const [stored] = await db.syncOperations.toArray();
+    const moved = await verifyFrame(stored);
     // Resealing rebuilds five signed fields, so the original author's signature
     // cannot stand: the frame is this device's now, and signed as such.
     expect(moved.deviceId).toBe(THIS_DEVICE);
@@ -134,7 +139,8 @@ describe('rescopeFrames', () => {
     await enqueuePut(note());
     await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
 
-    const moved = await verifyFrame(await db.syncOperations.get('op-n1-1'));
+    const [stored] = await db.syncOperations.toArray();
+    const moved = await verifyFrame(stored);
     await expect(
       openOperationPayload(scopeKeys.get('space-a')!, moved, moved.payload),
     ).rejects.toThrow();
@@ -144,7 +150,7 @@ describe('rescopeFrames', () => {
     await enqueuePut(note());
     await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
 
-    const moved = await db.syncOperations.get('op-n1-1');
+    const [moved] = await db.syncOperations.toArray();
     expect(
       await applyInboundFrame({
         db,
@@ -154,6 +160,44 @@ describe('rescopeFrames', () => {
       }),
     ).toBe('applied');
     expect((await db.notes.get('n1'))?.body).toBe('secret body');
+  });
+
+  it('converges when one peer saw the original operation before the moved one', async () => {
+    const seenPeer = new LoremDB('rescope-frames-seen-peer');
+    const freshPeer = new LoremDB('rescope-frames-fresh-peer');
+    await Promise.all([seenPeer.open(), freshPeer.open()]);
+    try {
+      await enqueuePut(note());
+      const original = await db.syncOperations.get('op-n1-1');
+      if (!original) throw new Error('test setup: frame missing');
+      await applyInboundFrame({
+        db: seenPeer,
+        frame: original,
+        ring: scopeKeys.get('space-a')!,
+        verifySignature: acceptAnyAuthor,
+      });
+
+      await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
+      const [moved] = await db.syncOperations.toArray();
+      await applyInboundFrame({
+        db: seenPeer,
+        frame: moved,
+        ring: scopeKeys.get('space-b')!,
+        verifySignature: acceptAnyAuthor,
+      });
+      await applyInboundFrame({
+        db: freshPeer,
+        frame: moved,
+        ring: scopeKeys.get('space-b')!,
+        verifySignature: acceptAnyAuthor,
+      });
+
+      expect(await seenPeer.notes.get('n1')).toEqual(await freshPeer.notes.get('n1'));
+      expect((await seenPeer.notes.get('n1'))?.accessScopeId).toBe('space-b');
+      expect(await seenPeer.syncInbox.get(String(moved.operationId))).toBeDefined();
+    } finally {
+      await Promise.all([seenPeer.delete(), freshPeer.delete()]);
+    }
   });
 
   it('moves a delete frame by header alone', async () => {

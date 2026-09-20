@@ -1,5 +1,5 @@
 import type { LoremDB } from '@/db/LoremDB';
-import type { AccessScopeId, DeviceId } from 'writer-sync/core';
+import { asOperationId, type AccessScopeId, type DeviceId } from 'writer-sync/core';
 import type {
   ScopeKeyResolver,
   SyncKeyRing,
@@ -9,7 +9,9 @@ import {
   sealOperationPayload,
 } from 'writer-sync/crypto';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
+import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
+import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import {
   EMPTY_PAYLOAD_HASH,
   hashPayload,
@@ -25,8 +27,9 @@ import { signAuthoredFrames } from './writerOperationFactory';
  * additional authenticated data, so a frame cannot simply be relabelled — doing
  * so would produce a frame no receiver can open, silently losing the operation.
  * Each frame is therefore opened under the source scope's key and resealed under
- * the destination's, keeping its operation id (so cross-provider deduplication
- * still recognises it) and its logical time (so convergence is unchanged).
+ * the destination's as a fresh operation. A receiver may already have accepted
+ * the source operation, so reusing its deduplication identity would make the
+ * scope transition invisible on that receiver.
  *
  * Resealing rebuilds signed fields, so the original signature cannot stand. The
  * moved frame is re-authored by this device — stamped with its device id and
@@ -45,8 +48,8 @@ interface ScopeKeyRings {
 }
 
 /**
- * Reseal one frame under `accessScopeId` as `deviceId`, preserving identity and
- * ordering. The result is unsigned; the caller signs the batch.
+ * Reseal one frame under `accessScopeId` as a fresh operation by `deviceId`.
+ * The result is unsigned; the caller signs the batch.
  */
 const rescopeFrame = async (options: {
   frame: EncryptedSyncFrame;
@@ -55,10 +58,15 @@ const rescopeFrame = async (options: {
   deviceId: DeviceId;
 }): Promise<EncryptedSyncFrame> => {
   const { frame, rings, accessScopeId, deviceId } = options;
+  writerClock.observe(frame.logicalAt);
+  const operationId = asOperationId(newId());
+  const logicalAt = writerClock.now();
   const header = {
     ...frame,
+    operationId,
     accessScopeId,
     deviceId,
+    logicalAt,
     keyId: keyIdOf(rings.destination),
     epoch: rings.destination.epoch,
   };
@@ -68,7 +76,13 @@ const rescopeFrame = async (options: {
     return { ...header, payload: '', payloadHash: EMPTY_PAYLOAD_HASH };
   }
   const content = await openOperationPayload(rings.source, frame, frame.payload);
-  const payload = await sealOperationPayload(rings.destination, header, content);
+  const movedContent = {
+    ...content,
+    accessScopeId,
+    mutationId: operationId,
+    logicalUpdatedAt: logicalAt,
+  };
+  const payload = await sealOperationPayload(rings.destination, header, movedContent);
   return { ...header, payload, payloadHash: await hashPayload(payload) };
 };
 
@@ -127,6 +141,9 @@ export const rescopeFrames = async (options: {
   );
   const signed = await signAuthoredFrames(privateKey, rescoped);
   await db.transaction('rw', db.syncOperations, async () => {
+    await db.syncOperations.bulkDelete(
+      enqueued.map((frame) => String(frame.operationId)),
+    );
     await db.syncOperations.bulkPut(signed);
   });
   return signed.length;
