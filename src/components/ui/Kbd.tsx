@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { isApplePlatform } from '@/lib/shortcuts/platform';
+import { formatChord } from '@/lib/shortcuts/formatChord';
 
 export interface KbdProps {
   /**
@@ -11,25 +11,15 @@ export interface KbdProps {
   className?: string;
 }
 
-const tokenLabel = (token: string, apple: boolean): string => {
-  const key = token.toLowerCase();
-  if (key === 'mod') return apple ? '⌘' : 'Ctrl';
-  if (key === 'shift') return apple ? '⇧' : 'Shift';
-  if (key === 'alt') return apple ? '⌥' : 'Alt';
-  if (key === 'enter') return apple ? '⏎' : 'Enter';
-  return token.length === 1 ? token.toUpperCase() : token;
-};
-
 /**
  * A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`). The
  * modifier is derived from the running platform at render, so each user sees
  * the key they press. On Apple the glyphs sit adjacent (`⌘⇧M`); elsewhere the
- * words join with `+` (`Ctrl+Shift+M`).
+ * words join with `+` (`Ctrl+Shift+M`). Copy that needs the same text inside a
+ * sentence formats it with {@link formatChord} rather than embedding a glyph.
  */
 export const Kbd = ({ keys, className }: KbdProps) => {
-  const apple = isApplePlatform();
-  const tokens = keys.split('+').map((token) => tokenLabel(token, apple));
-  const display = apple ? tokens.join('') : tokens.join('+');
+  const display = formatChord(keys);
   return (
     <kbd
       className={cn(

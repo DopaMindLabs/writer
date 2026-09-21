@@ -32,8 +32,8 @@
     "enterFocus": "Ngena kumodi yokugxila",
     "normal": "Okuvamile",
     "focus": "Ukugxila",
-    "focusTitleNormal": "Okuvamile (⌘\\)",
-    "focusTitleFocus": "Ukugxila (⌘\\)",
+    "focusTitleNormal": "Okuvamile ({{shortcut}})",
+    "focusTitleFocus": "Ukugxila ({{shortcut}})",
     "findInDoc": "Thola kudokhumenti",
     "inspector": "Umhloli wedokhumenti",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Ukubhala",
     "themeLabel": "Itimu",
     "focusLabel": "Imodi yokugxila",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Ibha yamathuluzi entanta",
     "readingWidthLabel": "Ububanzi bokufunda",
     "readingWidthHint": "Isilinganiso ngalinye idokhumenti",
@@ -102,14 +101,12 @@
       "hcLight": "HC okukhanyayo",
       "hcDark": "HC okumnyama"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Yini okusha",
     "feedback": "Thumela impendulo…",
     "accessibility": "Ukufinyeleleka",
     "about": "Mayelana",
     "helpLink": "isikhungo sosizo →",
     "fullSettings": "zonke izilungiselelo →",
-    "fullSettingsKbd": "⌘,",
     "off": "Kuvaliwe",
     "on": "Kuvuliwe",
     "tourCheckmark": "kuphelile"
@@ -190,7 +187,6 @@
       "rename": "Qamba kabusha",
       "move": "Hambisa kusigaba…",
       "export": "Khipha leli dokhumenti…",
-      "exportKbd": "⌘E",
       "print": "Phrinta…",
       "wordCount": "Izibalo zokubala amagama",
       "trash": "Hambisa kudoti"

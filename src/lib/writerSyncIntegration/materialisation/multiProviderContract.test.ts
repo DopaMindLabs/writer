@@ -33,7 +33,7 @@ import {
   signAuthoredFrames,
 } from './writerOperationFactory';
 import { createWriterFrameVerifier } from './writerFrameVerifier';
-import { UntrustedFrameError, applyInboundFrame } from './writerOperationMaterializer';
+import { UntrustedFrameError, applyInboundFrame } from './writerOperationMaterialiser';
 
 /**
  * The provider contract: an operation frame is immutable and the receiver is

@@ -32,8 +32,8 @@
     "enterFocus": "Είσοδος σε κατάσταση εστίασης",
     "normal": "Κανονικο",
     "focus": "Εστιαση",
-    "focusTitleNormal": "Κανονικό (⌘\\)",
-    "focusTitleFocus": "Εστίαση (⌘\\)",
+    "focusTitleNormal": "Κανονικό ({{shortcut}})",
+    "focusTitleFocus": "Εστίαση ({{shortcut}})",
     "findInDoc": "Εύρεση στο έγγραφο",
     "inspector": "Επιθεωρητής εγγράφου",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Γραφή",
     "themeLabel": "Θέμα",
     "focusLabel": "Κατάσταση εστίασης",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Πλωτή γραμμή εργαλείων",
     "readingWidthLabel": "Πλάτος ανάγνωσης",
     "readingWidthHint": "Μέτρο ανά έγγραφο",
@@ -102,14 +101,12 @@
       "hcLight": "ΥΑ φωτεινό",
       "hcDark": "ΥΑ σκούρο"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Τι νέο υπάρχει",
     "feedback": "Αποστολή σχολίων…",
     "accessibility": "Προσβασιμότητα",
     "about": "Σχετικά",
     "helpLink": "κέντρο βοήθειας →",
     "fullSettings": "όλες οι ρυθμίσεις →",
-    "fullSettingsKbd": "⌘,",
     "off": "Ανενεργό",
     "on": "Ενεργό",
     "tourCheckmark": "ολοκληρώθηκε"
@@ -190,7 +187,6 @@
       "rename": "Μετονομασία",
       "move": "Μετακίνηση σε ενότητα…",
       "export": "Εξαγωγή αυτού του εγγράφου…",
-      "exportKbd": "⌘E",
       "print": "Εκτύπωση…",
       "wordCount": "Στατιστικά καταμέτρησης λέξεων",
       "trash": "Μετακίνηση στον κάδο"

@@ -32,8 +32,8 @@
     "enterFocus": "Fara í einbeitingarham",
     "normal": "Eðlilegt",
     "focus": "Einbeiting",
-    "focusTitleNormal": "Eðlilegt (⌘\\)",
-    "focusTitleFocus": "Einbeiting (⌘\\)",
+    "focusTitleNormal": "Eðlilegt ({{shortcut}})",
+    "focusTitleFocus": "Einbeiting ({{shortcut}})",
     "findInDoc": "Finna í skjali",
     "inspector": "Skjalskoðari",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Skrif",
     "themeLabel": "Þema",
     "focusLabel": "Einbeitingarhamur",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Fljótandi tækjastika",
     "readingWidthLabel": "Lesbreidd",
     "readingWidthHint": "Mál á skjal",
@@ -102,14 +101,12 @@
       "hcLight": "HB ljóst",
       "hcDark": "HB dökkt"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Hvað er nýtt",
     "feedback": "Senda ábendingu…",
     "accessibility": "Aðgengi",
     "about": "Um",
     "helpLink": "hjálparmiðstöð →",
     "fullSettings": "allar stillingar →",
-    "fullSettingsKbd": "⌘,",
     "off": "Af",
     "on": "Á",
     "tourCheckmark": "lokið"
@@ -190,7 +187,6 @@
       "rename": "Endurnefna",
       "move": "Færa í kafla…",
       "export": "Flytja þetta skjal út…",
-      "exportKbd": "⌘E",
       "print": "Prenta…",
       "wordCount": "Orðtalning",
       "trash": "Færa í ruslafötu"

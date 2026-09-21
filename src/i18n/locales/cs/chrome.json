@@ -32,8 +32,8 @@
     "enterFocus": "Vstoupit do režimu soustředění",
     "normal": "Normální",
     "focus": "Soustředění",
-    "focusTitleNormal": "Normální (⌘\\)",
-    "focusTitleFocus": "Soustředění (⌘\\)",
+    "focusTitleNormal": "Normální ({{shortcut}})",
+    "focusTitleFocus": "Soustředění ({{shortcut}})",
     "findInDoc": "Najít v dokumentu",
     "inspector": "Inspektor dokumentu",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Psaní",
     "themeLabel": "Motiv",
     "focusLabel": "Režim soustředění",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Plovoucí panel nástrojů",
     "readingWidthLabel": "Šířka čtení",
     "readingWidthHint": "Míra na dokument",
@@ -102,14 +101,12 @@
       "hcLight": "VK světlý",
       "hcDark": "VK tmavý"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Co je nového",
     "feedback": "Poslat zpětnou vazbu…",
     "accessibility": "Přístupnost",
     "about": "O aplikaci",
     "helpLink": "centrum nápovědy →",
     "fullSettings": "všechna nastavení →",
-    "fullSettingsKbd": "⌘,",
     "off": "Vypnuto",
     "on": "Zapnuto",
     "tourCheckmark": "dokončeno"
@@ -190,7 +187,6 @@
       "rename": "Přejmenovat",
       "move": "Přesunout do sekce…",
       "export": "Exportovat tento dokument…",
-      "exportKbd": "⌘E",
       "print": "Tisk…",
       "wordCount": "Statistiky počtu slov",
       "trash": "Přesunout do koše"

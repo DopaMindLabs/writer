@@ -6,6 +6,14 @@ import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { sampleMetadata } from '@/test/fixtures';
 
 describe('LoremDB schema', () => {
+  it('keys scope-move receipts by the explicit request id', async () => {
+    expect(db.syncScopeRebindings.schema.primKey.keyPath).toBe('requestId');
+    const receipt = { requestId: 'scope-move', sourceScopeId: 'a',
+      destinationScopeId: 'b', operationIds: [] };
+    await db.syncScopeRebindings.add(receipt);
+    expect(await db.syncScopeRebindings.get('scope-move')).toEqual(receipt);
+    await expect(db.syncScopeRebindings.add(receipt)).rejects.toThrow(/ConstraintError/);
+  });
   it('declares a single schema version', () => {
     // Writer is pre-release, so every table lives in one declaration rather
     // than behind a historical version. Dexie bumps the underlying IndexedDB
@@ -38,6 +46,7 @@ describe('LoremDB schema', () => {
         'syncInbox',
         'syncOperations',
         'syncProviderBindings',
+        'syncScopeRebindings',
         'syncTombstones',
         'syncs',
         'syncConfigs',

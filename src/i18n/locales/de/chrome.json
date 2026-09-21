@@ -32,8 +32,8 @@
     "enterFocus": "Fokusmodus aktivieren",
     "normal": "Normal",
     "focus": "Fokus",
-    "focusTitleNormal": "Normal (⌘\\)",
-    "focusTitleFocus": "Fokus (⌘\\)",
+    "focusTitleNormal": "Normal ({{shortcut}})",
+    "focusTitleFocus": "Fokus ({{shortcut}})",
     "findInDoc": "Im Dokument suchen",
     "inspector": "Dokument-Inspektor",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Schreiben",
     "themeLabel": "Thema",
     "focusLabel": "Fokusmodus",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Schwebende Symbolleiste",
     "readingWidthLabel": "Lesebreite",
     "readingWidthHint": "Pro Dokument",
@@ -102,14 +101,12 @@
       "hcLight": "HK hell",
       "hcDark": "HK dunkel"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Neuheiten",
     "feedback": "Feedback senden…",
     "accessibility": "Barrierefreiheit",
     "about": "Über",
     "helpLink": "Hilfe-Center →",
     "fullSettings": "Alle Einstellungen →",
-    "fullSettingsKbd": "⌘,",
     "off": "Aus",
     "on": "Ein",
     "tourCheckmark": "abgeschlossen"
@@ -190,7 +187,6 @@
       "rename": "Umbenennen",
       "move": "In Abschnitt verschieben…",
       "export": "Dieses Dokument exportieren…",
-      "exportKbd": "⌘E",
       "print": "Drucken…",
       "wordCount": "Wortzahl-Statistiken",
       "trash": "In Papierkorb verschieben"

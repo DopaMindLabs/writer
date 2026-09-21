@@ -1094,7 +1094,7 @@ describe('createPeerCatchUp', () => {
       'writer-sync/crypto'
     );
     const { makePutFrame, signAuthoredFrames } = await import(
-      './materialization/writerOperationFactory'
+      './materialisation/writerOperationFactory'
     );
     const cloudDb = new LoremDB(`peer-catch-up-cloud-${crypto.randomUUID()}`, {
       cloud: true,

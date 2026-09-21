@@ -32,8 +32,8 @@
     "enterFocus": "Wejdź w tryb skupienia",
     "normal": "Normalny",
     "focus": "Skupienie",
-    "focusTitleNormal": "Normalny (⌘\\)",
-    "focusTitleFocus": "Skupienie (⌘\\)",
+    "focusTitleNormal": "Normalny ({{shortcut}})",
+    "focusTitleFocus": "Skupienie ({{shortcut}})",
     "findInDoc": "Znajdź w dokumencie",
     "inspector": "Inspektor dokumentu",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Pisanie",
     "themeLabel": "Motyw",
     "focusLabel": "Tryb skupienia",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Pływający pasek",
     "readingWidthLabel": "Szerokość czytania",
     "readingWidthHint": "Miara na dokument",
@@ -102,14 +101,12 @@
       "hcLight": "WK jasny",
       "hcDark": "WK ciemny"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Co nowego",
     "feedback": "Wyślij opinię…",
     "accessibility": "Dostępność",
     "about": "O aplikacji",
     "helpLink": "centrum pomocy →",
     "fullSettings": "wszystkie ustawienia →",
-    "fullSettingsKbd": "⌘,",
     "off": "Wyłączone",
     "on": "Włączone",
     "tourCheckmark": "ukończono"
@@ -190,7 +187,6 @@
       "rename": "Zmień nazwę",
       "move": "Przenieś do sekcji…",
       "export": "Eksportuj ten dokument…",
-      "exportKbd": "⌘E",
       "print": "Drukuj…",
       "wordCount": "Statystyki słów",
       "trash": "Przenieś do kosza"

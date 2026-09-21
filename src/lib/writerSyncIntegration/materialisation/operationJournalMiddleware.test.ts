@@ -29,7 +29,7 @@ import {
 } from 'writer-sync/operations';
 import { createOperationJournalMiddleware } from './operationJournalMiddleware';
 import { makePutFrame } from './writerOperationFactory';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import { applyInboundFrame } from './writerOperationMaterialiser';
 
 /**
  * The outbound half of slice 1F: every synced-content write journals an

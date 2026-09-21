@@ -26,6 +26,7 @@ import { appLogger } from '@/lib/appLogger';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Button } from '@/components/ui/Button';
+import { Kbd } from '@/components/ui/Kbd';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { IconButton } from '@/components/ui/icon';
 import { Select } from '@/components/ui/Select';
@@ -522,10 +523,7 @@ const ActionsPane = () => {
         <ActionItem text={t('inspector.actions.rename')} />
         <ActionItem text={t('inspector.actions.move')} />
         <div className="my-1.5 h-px bg-rule" />
-        <ActionItem
-          text={t('inspector.actions.export')}
-          kbd={t('inspector.actions.exportKbd')}
-        />
+        <ActionItem text={t('inspector.actions.export')} keys="mod+e" />
         <ActionItem text={t('inspector.actions.print')} />
         <ActionItem text={t('inspector.actions.wordCount')} />
         <div className="my-1.5 h-px bg-rule" />
@@ -537,11 +535,12 @@ const ActionsPane = () => {
 
 interface ActionItemProps {
   text: string;
-  kbd?: string;
+  /** A platform-neutral chord for {@link Kbd}, e.g. `mod+e`. */
+  keys?: string;
   badge?: string;
 }
 
-const ActionItem = ({ text, kbd, badge }: ActionItemProps) => (
+const ActionItem = ({ text, keys, badge }: ActionItemProps) => (
   <div className="flex items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper hover:text-ink">
     <span className="flex-1">{text}</span>
     {badge && (
@@ -549,7 +548,7 @@ const ActionItem = ({ text, kbd, badge }: ActionItemProps) => (
         <span>{badge}</span>
       </Eyebrow>
     )}
-    {kbd && <span className="font-mono text-[10px] text-ink-4">{kbd}</span>}
+    {keys && <Kbd keys={keys} />}
   </div>
 );
 

@@ -32,8 +32,8 @@
     "enterFocus": "फ़ोकस मोड में प्रवेश करें",
     "normal": "सामान्य",
     "focus": "फ़ोकस",
-    "focusTitleNormal": "सामान्य (⌘\\)",
-    "focusTitleFocus": "फ़ोकस (⌘\\)",
+    "focusTitleNormal": "सामान्य ({{shortcut}})",
+    "focusTitleFocus": "फ़ोकस ({{shortcut}})",
     "findInDoc": "दस्तावेज़ में खोजें",
     "inspector": "दस्तावेज़ निरीक्षक",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "लेखन",
     "themeLabel": "थीम",
     "focusLabel": "फ़ोकस मोड",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "तैरता टूलबार",
     "readingWidthLabel": "पठन चौड़ाई",
     "readingWidthHint": "प्रति-दस्तावेज़ माप",
@@ -102,14 +101,12 @@
       "hcLight": "Hc हल्का",
       "hcDark": "Hc गहरा"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "नया क्या है",
     "feedback": "फीडबैक भेजें…",
     "accessibility": "सुगम्यता",
     "about": "के बारे में",
     "helpLink": "सहायता केंद्र →",
     "fullSettings": "सभी सेटिंग्स →",
-    "fullSettingsKbd": "⌘,",
     "off": "बंद",
     "on": "चालू",
     "tourCheckmark": "पूर्ण"
@@ -190,7 +187,6 @@
       "rename": "नाम बदलें",
       "move": "खंड में ले जाएँ…",
       "export": "यह दस्तावेज़ निर्यात करें…",
-      "exportKbd": "⌘E",
       "print": "प्रिंट करें…",
       "wordCount": "शब्द गणना आँकड़े",
       "trash": "ट्रैश में ले जाएँ"

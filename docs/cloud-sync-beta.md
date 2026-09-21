@@ -17,7 +17,7 @@ replicates is the **`syncOperations` journal** — immutable, already-encrypted 
 frames shared by every provider — plus the `cloudCrypto` escrow, the encrypted
 `accountDeviceIdentities` registry (§6.6) and its own control tables. The ten materialised content tables are device-local projections; inbound
 frames materialise through the shared inbox path
-(`src/lib/writerSync/materialization/frameIngestion.ts`), so the same operation
+(`src/lib/writerSync/materialisation/frameIngestion.ts`), so the same operation
 arriving through Dexie Cloud and any second provider applies exactly once. Dexie Cloud
 is one `SyncProvider` behind `src/lib/cloud/dexieCloudProvider.ts`; realm and member
 concepts never leave that adapter.
@@ -227,7 +227,7 @@ replicable.
 ### 4.1 The operation journal middleware (outbound chokepoint)
 
 `createOperationJournalMiddleware`
-(`src/lib/writerSync/materialization/operationJournalMiddleware.ts`) sits at DBCore level
+(`src/lib/writerSync/materialisation/operationJournalMiddleware.ts`) sits at DBCore level
 20, above the row-encryption middleware. Every add, put and delete on a journalled content
 table emits its encrypted `EncryptedSyncFrame` into `syncOperations` inside the same
 transaction as the domain write, so a write can never be separated from its frame and no
@@ -263,13 +263,32 @@ binding in `syncProviderBindings`; that binding is what `resolveBinding` answers
 no domain row carries `realmId` any more. Stamping a frame never touches its ciphertext —
 the realm is provider routing, not content.
 
-If an operation's **access scope** itself changes, relabelling is not enough: the scope is
-bound into the frame's AAD, so `rescopeFrames`
-(`src/lib/writerSync/materialization/rescopeFrames.ts`) opens each frame under the source
-scope's key and reseals it under the destination's, keeping its operation id (dedup) and
-logical time (convergence). Every frame is resealed before anything is written and the
-writes commit together, so a failed transition cannot leave a scope's history split across
-two keys.
+If an operation's **access scope** itself changes, relabelling is not enough: the
+scope is bound into the frame's AAD. `rescopeFrames`
+(`src/lib/writerSyncIntegration/materialisation/rescopeFrames.ts`) moves the source
+scope's current saved rows and retained deletions. It never rebuilds content from
+surviving journal history, because compaction may leave an old edit after dropping
+its successor. Current rows remain movable without their original frames; current
+tombstones require their retained signed delete frames. State already in another
+scope is excluded even after the move's frames have been compacted.
+
+Each entity receives one new operation id and a later logical time, with matching
+scope and mutation metadata inside its encrypted payload. The moving device signs
+the new frame; attachment chunks are resealed for the destination. Both keys must
+be available before reading state. Retained source and related history must pass
+hash, table-policy, signature and clock checks. Unapplied operations that might
+supersede current state block the move until materialisation has considered them.
+
+Callers provide a stable `requestId`. The local-only `syncScopeRebindings` table
+records that request, its scopes and new operation ids. Retries return zero,
+including after compaction or a later move back; new moves require new request ids.
+Empty moves also record completion. After preparation, one transaction rechecks
+current rows, tombstones, related journal/inbox entries, trust records and the
+receipt, then commits local state, frames, chunks, inbox records and receipt
+together. A concurrent change raises `ScopeRebindingChangedError`; any write
+failure rolls back the whole batch. Original frames stay unchanged. This is local
+atomicity over accepted state; unseen offline edits and remote delivery remain
+subject to normal sync convergence. The helper currently has no production caller.
 
 ## 5. Cross-device reconciliation (pulled bodies → the CRDT)
 

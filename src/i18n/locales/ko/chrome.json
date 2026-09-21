@@ -32,8 +32,8 @@
     "enterFocus": "포커스 모드 시작",
     "normal": "보통",
     "focus": "포커스",
-    "focusTitleNormal": "보통 (⌘\\)",
-    "focusTitleFocus": "포커스 (⌘\\)",
+    "focusTitleNormal": "보통 ({{shortcut}})",
+    "focusTitleFocus": "포커스 ({{shortcut}})",
     "findInDoc": "문서에서 찾기",
     "inspector": "문서 검사기",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "쓰기",
     "themeLabel": "테마",
     "focusLabel": "포커스 모드",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "플로팅 도구 모음",
     "readingWidthLabel": "읽기 너비",
     "readingWidthHint": "문서별 측정",
@@ -102,14 +101,12 @@
       "hcLight": "Hc 라이트",
       "hcDark": "Hc 다크"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "새 소식",
     "feedback": "피드백 보내기…",
     "accessibility": "접근성",
     "about": "정보",
     "helpLink": "도움말 센터 →",
     "fullSettings": "전체 설정 →",
-    "fullSettingsKbd": "⌘,",
     "off": "끔",
     "on": "켬",
     "tourCheckmark": "완료"
@@ -190,7 +187,6 @@
       "rename": "이름 변경",
       "move": "섹션으로 이동…",
       "export": "이 문서 내보내기…",
-      "exportKbd": "⌘E",
       "print": "인쇄…",
       "wordCount": "단어 수 통계",
       "trash": "휴지통으로 이동"

@@ -42,7 +42,7 @@ import {
   signAuthoredFrames,
 } from './writerOperationFactory';
 import { createWriterFrameVerifier } from './writerFrameVerifier';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import { applyInboundFrame } from './writerOperationMaterialiser';
 import { writerJournalIdentity } from './writerJournalDeps';
 import { runUnderSyncApplyLock } from '@/lib/reconcile';
 import { refreshInboundDocs } from './inboundDocRefresh';

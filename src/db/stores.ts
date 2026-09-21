@@ -14,6 +14,7 @@ export const STORES: Record<string, string> = {
   syncInbox: 'operationId, [entityTable+entityId]',
   syncTombstones: '[entityTable+entityId], accessScopeId',
   syncProviderBindings: '[scopeId+providerInstanceId], scopeId',
+  syncScopeRebindings: 'requestId',
   trustedDevices: 'deviceId, principalId',
   spaces: 'id, createdAt, updatedAt',
   sections:

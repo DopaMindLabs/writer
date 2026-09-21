@@ -527,7 +527,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
       data-state="closed"
       data-testid="focus-toggle"
       href="/s/s1/d/d1?focus=1"
-      title="Focus (⌘\\)"
+      title="Focus (Ctrl+\\)"
     >
       <svg
         aria-hidden="true"

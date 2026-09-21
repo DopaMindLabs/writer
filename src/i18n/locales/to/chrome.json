@@ -32,8 +32,8 @@
     "enterFocus": "Hū ki he founga fakatokangaʻi",
     "normal": "Fakafoʻofoʻou",
     "focus": "Fakatokangaʻi",
-    "focusTitleNormal": "Fakafoʻofoʻou (⌘\\)",
-    "focusTitleFocus": "Fakatokangaʻi (⌘\\)",
+    "focusTitleNormal": "Fakafoʻofoʻou ({{shortcut}})",
+    "focusTitleFocus": "Fakatokangaʻi ({{shortcut}})",
     "findInDoc": "Kumi ʻi he tohi",
     "inspector": "Fakatonutonu tohi",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Tohi",
     "themeLabel": "Kaveinga",
     "focusLabel": "Founga fakatokangaʻi",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Peniti meʻangāue tāpula",
     "readingWidthLabel": "Lahi ʻo e lau",
     "readingWidthHint": "Fakafuofua taki taha tohi",
@@ -102,14 +101,12 @@
       "hcLight": "HC maama",
       "hcDark": "HC fakapoʻuli"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Ko e hā ʻa e foʻou",
     "feedback": "ʻOmai fakamatala…",
     "accessibility": "Hū ki ai",
     "about": "Fekauʻaki",
     "helpLink": "senita tokoni →",
     "fullSettings": "fokotuʻutuʻu kotoa →",
-    "fullSettingsKbd": "⌘,",
     "off": "Tāpuni",
     "on": "Fakaʻata",
     "tourCheckmark": "ʻosi"
@@ -190,7 +187,6 @@
       "rename": "Toe fakahingoa",
       "move": "Hiki ki he konga…",
       "export": "ʻAve atu ʻa e tohi ko ʻeni…",
-      "exportKbd": "⌘E",
       "print": "Pulusi…",
       "wordCount": "Fakamatala lau ʻo e foʻi lea",
       "trash": "Hiki ki he ʻotu veve"

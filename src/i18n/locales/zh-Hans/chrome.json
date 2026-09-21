@@ -32,8 +32,8 @@
     "enterFocus": "进入专注模式",
     "normal": "正常",
     "focus": "专注",
-    "focusTitleNormal": "正常 (⌘\\)",
-    "focusTitleFocus": "专注 (⌘\\)",
+    "focusTitleNormal": "正常 ({{shortcut}})",
+    "focusTitleFocus": "专注 ({{shortcut}})",
     "findInDoc": "在文档中查找",
     "inspector": "文档检查器",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "写作",
     "themeLabel": "主题",
     "focusLabel": "专注模式",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "浮动工具栏",
     "readingWidthLabel": "阅读宽度",
     "readingWidthHint": "按文档度量",
@@ -102,14 +101,12 @@
       "hcLight": "Hc 浅色",
       "hcDark": "Hc 深色"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "新功能",
     "feedback": "发送反馈…",
     "accessibility": "辅助功能",
     "about": "关于",
     "helpLink": "帮助中心 →",
     "fullSettings": "全部设置 →",
-    "fullSettingsKbd": "⌘,",
     "off": "关",
     "on": "开",
     "tourCheckmark": "已完成"
@@ -190,7 +187,6 @@
       "rename": "重命名",
       "move": "移至章节…",
       "export": "导出此文档…",
-      "exportKbd": "⌘E",
       "print": "打印…",
       "wordCount": "字数统计",
       "trash": "移至回收站"
