@@ -194,6 +194,7 @@ Lossless CRDT-level merge across devices is a recorded open decision for a futur
 | `docInspectorConfigs` | `spaceId` | Inspector toggle state | **No** | No |
 | `cloudCrypto` | `id` | Passphrase-wrapped escrow (cloud only) | **Yes** | (is the envelope) |
 | `syncScopeRebindings` | `requestId` | Durable receipts for completed scope moves | **No** | No |
+| `syncPendingHistory` | `operationId` | Unverified history a standing deletion settles, kept while it stands | **No** | No |
 
 **Schema invariant:** `STORES` in `src/db/stores.ts` is the single source of truth for
 index definitions. `tableRules.ts` derives which fields stay plaintext from it — a field
@@ -300,6 +301,9 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   is withdrawn from the source by a signed delete and put in the destination by a
   later signed operation with matching payload metadata, so a device that reads only
   the source drops it; a retained deletion gets one fresh delete in the destination.
+  No tombstone holds the withdrawal, so compaction keeps it, once admitted, until
+  every peer holds it, and a rebuild of the source scope serves it to a peer back
+  after the window.
   A row stored in the source scope that the encryption middleware cannot open blocks
   the move, even when a key resolves for it. A move prepares one entity at a time and
   refuses, before reading any content, to carry more than `MAX_ATTACHMENT_BYTES` of

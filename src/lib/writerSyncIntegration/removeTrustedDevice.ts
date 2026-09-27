@@ -4,6 +4,11 @@ import type { LoremDB } from '@/db/LoremDB';
 import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { disconnectPeerSession } from './disconnectPeerSession';
+import {
+  keepPendingHistory,
+  releaseDeletions,
+  vouchForSettledHistory,
+} from './materialisation/releaseDeletions';
 import type { PeerSessionRegistry } from './peerSessionRegistry';
 
 /**
@@ -20,7 +25,8 @@ import type { PeerSessionRegistry } from './peerSessionRegistry';
  * tomorrow could still be holding what was deleted today; a device the user has
  * removed is a relationship they have ended.
  *
- * The removal and the release are one transaction across all three tables. They
+ * The removal and the release are one transaction across the registry, the
+ * journal, the tombstones and the inbox the release records its verdicts in. They
  * are two halves of one fact — that this device is no longer waited on — and
  * committing the first without the second would leave the deletion state pinned
  * by a device that no longer exists to release it, with nothing left that would
@@ -43,10 +49,14 @@ export const removeTrustedDevice = async (options: {
   // Read before the transaction opens: the principal is not this transaction's
   // to wait on, and the registry's own writes join it from inside.
   const principalId = await currentPrincipal();
+  // Signatures cannot be checked inside the transaction, and which deletions go
+  // is only known once the device is revoked in it: vouch for the history of
+  // every deletion now, and let the release keep what is still unchanged.
+  const vouched = await vouchForSettledHistory(db, await db.syncTombstones.toArray());
 
   await db.transaction(
     'rw',
-    [db.trustedDevices, db.syncOperations, db.syncTombstones],
+    [db.trustedDevices, db.syncOperations, db.syncTombstones, db.syncInbox, db.syncPendingHistory],
     async () => {
       await registry.revoke({ deviceId, at });
 
@@ -64,13 +74,8 @@ export const removeTrustedDevice = async (options: {
         // held for the device just removed is now held for no one.
         { withoutPeersIsUnanimous: true },
       );
-      if (releasable.length === 0) return;
-      await db.syncTombstones.bulkDelete(
-        releasable.map((tombstone) => [tombstone.entityTable, tombstone.entityId]),
-      );
-      await db.syncOperations.bulkDelete(
-        releasable.map((tombstone) => String(tombstone.operationId)),
-      );
+      await releaseDeletions(db, releasable, vouched);
+      await keepPendingHistory(db, vouched);
     },
   );
 

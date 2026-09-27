@@ -158,6 +158,34 @@ describe('createWriterFrameVerifier', () => {
 
     expect(await deviceIdentityStore.current()).toBeNull();
   });
+
+  it('tells a signature that may verify later from one that never will', async () => {
+    const peer = await generateDeviceIdentity();
+    const impostor = await generateDeviceIdentity();
+    const own = await deviceIdentityStore.load();
+    await trustPeer(peer.publicKey);
+
+    const { verdict } = createWriterFrameVerifier(db);
+
+    expect(await verdict(await signedBy(peer.privateKey, PEER))).toBe('verified');
+    // A known key refuses it, and a device id names one key.
+    expect(await verdict(await signedBy(impostor.privateKey, PEER))).toBe('refused');
+    expect(await verdict(await signedBy(impostor.privateKey, own.deviceId))).toBe('refused');
+    expect(await verdict(frameOf(PEER))).toBe('refused');
+    // No key for its author yet: a pairing or an account identity may still arrive.
+    expect(await verdict(await signedBy(impostor.privateKey, asDeviceId('device-unknown'))))
+      .toBe('unknown-author');
+  });
+
+  it('holds a revoked device\'s frame as awaiting its author, not refused', async () => {
+    const peer = await generateDeviceIdentity();
+    await trustPeer(peer.publicKey);
+    await createTrustedDeviceStore(db).revoke({ deviceId: PEER, at: 1_700_000_100_000 });
+
+    const { verdict } = createWriterFrameVerifier(db);
+
+    expect(await verdict(await signedBy(peer.privateKey, PEER))).toBe('unknown-author');
+  });
 });
 
 /**

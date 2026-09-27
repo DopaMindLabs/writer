@@ -14,6 +14,11 @@ describe('LoremDB schema', () => {
     expect(await db.syncScopeRebindings.get('scope-move')).toEqual(receipt);
     await expect(db.syncScopeRebindings.add(receipt)).rejects.toThrow(/ConstraintError/);
   });
+  it('keeps pending history by operation id, findable by entity', async () => {
+    expect(db.syncPendingHistory.schema.primKey.keyPath).toBe('operationId');
+    expect(db.syncPendingHistory.schema.idxByName['[entityTable+entityId]']).toBeDefined();
+  });
+
   it('declares a single schema version', () => {
     // Writer is pre-release, so every table lives in one declaration rather
     // than behind a historical version. Dexie bumps the underlying IndexedDB
@@ -46,6 +51,7 @@ describe('LoremDB schema', () => {
         'syncInbox',
         'syncOperations',
         'syncProviderBindings',
+        'syncPendingHistory',
         'syncScopeRebindings',
         'syncTombstones',
         'syncs',

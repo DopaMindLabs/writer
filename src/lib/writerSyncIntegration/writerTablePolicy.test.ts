@@ -113,6 +113,7 @@ describe('derived sets match the established behaviour', () => {
         'settings',
         'syncConfigs',
         'syncInbox',
+        'syncPendingHistory',
         'syncProviderBindings',
         'syncScopeRebindings',
         'syncTombstones',

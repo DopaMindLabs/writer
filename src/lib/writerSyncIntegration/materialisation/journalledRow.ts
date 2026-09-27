@@ -21,6 +21,11 @@ const isTimestamp = (value: unknown): value is { millis: number; counter: number
   typeof (value as { millis?: unknown }).millis === 'number' &&
   typeof (value as { counter?: unknown }).counter === 'number';
 
+/** Whether a row names its scope, which is routing metadata kept in the clear too. */
+export const hasAccessScope = (
+  row: UnknownRow,
+): row is UnknownRow & { accessScopeId: string } => typeof row.accessScopeId === 'string';
+
 export const isJournalledRow = (row: UnknownRow): row is JournalledRow =>
   typeof row.id === 'string' &&
   typeof row.accessScopeId === 'string' &&

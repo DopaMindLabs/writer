@@ -8,11 +8,21 @@ import { TrustedDeviceStatus, type OperationId } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { getJournalRetentionDays } from '@/lib/writerSyncIntegration/journalRetentionPreference';
 import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
+import { readableFrames } from './frameAdmission';
+import { owedWithdrawals } from './owedWithdrawals';
+import {
+  holdAgainstWindow,
+  keepPendingHistory,
+  releaseDeletions,
+  vouchForSettledHistory,
+} from './releaseDeletions';
 
 /**
  * Compact the operation journal: drop the frames every trusted peer already
  * holds, plus those that have aged out of the retention window, and retire the
- * tombstones every trusted peer has acknowledged.
+ * tombstones every trusted peer has acknowledged. A scope move's withdrawal has
+ * no tombstone to hold it, so it is never aged out: only every peer holding it
+ * lets it go.
  *
  * Runs at sync boot rather than on a timer: the journal only grows while sync is
  * running, and a device that never starts sync has nothing new to compact. The
@@ -47,23 +57,29 @@ export interface JournalCompaction {
 /** Drop the deletions that are finished with, and the frames they named. */
 const releasePairs = async (options: {
   db: LoremDB;
+  tombstones: readonly SyncTombstone[];
   releasable: readonly SyncTombstone[];
   compactable: readonly OperationId[];
-}): Promise<void> => {
-  const { db, releasable, compactable } = options;
-  if (releasable.length === 0 && compactable.length === 0) return;
-  await db.transaction('rw', [db.syncOperations, db.syncTombstones], async () => {
-    if (releasable.length > 0) {
-      await db.syncTombstones.bulkDelete(
-        releasable.map((tombstone) => [tombstone.entityTable, tombstone.entityId]),
-      );
-      await db.syncOperations.bulkDelete(
-        releasable.map((tombstone) => String(tombstone.operationId)),
-      );
-    }
-    if (compactable.length > 0) {
-      await db.syncOperations.bulkDelete(compactable.map((id) => String(id)));
-    }
+}): Promise<JournalCompaction> => {
+  const { db, tombstones, releasable, compactable } = options;
+  if (releasable.length === 0 && compactable.length === 0) {
+    return { operations: 0, tombstones: 0 };
+  }
+  // Every deletion's history, not only the releasable ones': the window may be
+  // about to take some of what a standing deletion has not settled yet.
+  const vouched = await vouchForSettledHistory(db, tombstones);
+  const tables = [db.syncOperations, db.syncTombstones, db.syncInbox, db.syncPendingHistory];
+  return db.transaction('rw', tables, async () => {
+    // Before any frame goes: the verdicts are read from what is still retained.
+    const retired = await releaseDeletions(db, releasable, vouched);
+    // Every deletion still standing keeps its frame, whatever the window says —
+    // one its history holds, one still waited on, one ingestion wrote meanwhile —
+    // and the history it has not settled that may yet be admitted.
+    const held = await holdAgainstWindow(db, vouched, new Set(compactable.map(String)));
+    const dropped = compactable.map(String).filter((id) => !held.has(id));
+    await db.syncOperations.bulkDelete(dropped);
+    await keepPendingHistory(db, vouched);
+    return { operations: dropped.length, tombstones: retired.length };
   });
 };
 
@@ -81,19 +97,22 @@ export const compactJournal = async (
   const releasable = releasableTombstones(tombstones, peers);
   const released = new Set(releasable.map((tombstone) => String(tombstone.operationId)));
 
-  const frames = await db.syncOperations.toArray();
+  // Only a row that decodes has an age and an order to judge. One that does not
+  // can never be admitted; it stays as inert as ingestion leaves it, since this
+  // device cannot tell what it was and dropping it would replicate the loss.
+  const frames = readableFrames(await db.syncOperations.toArray());
+  const withdrawals = await owedWithdrawals({ db, frames, tombstones });
   const compactable = compactableOperationIds(frames, {
     retention,
     peers,
     tombstones: tombstones.filter(
       (tombstone) => !released.has(String(tombstone.operationId)),
     ),
+    keptUntilHeld: withdrawals.map(({ operationId }) => operationId),
   });
 
   // One transaction for both halves: a tombstone released without its frame
   // leaves a deletion no rebuild can serve, and a frame dropped without its
   // tombstone leaves one nothing refuses.
-  await releasePairs({ db, releasable, compactable });
-
-  return { operations: compactable.length, tombstones: releasable.length };
+  return releasePairs({ db, tombstones, releasable, compactable });
 };

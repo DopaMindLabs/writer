@@ -4,7 +4,9 @@ import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncAttachmentChunk } from '@/db/schema';
 import { journalledTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
+import { readableFrames } from './frameAdmission';
 import { isJournalledRow, type JournalledRow } from './journalledRow';
+import { owedWithdrawals } from './owedWithdrawals';
 import { makePutFrame, signAuthoredFrames } from './writerOperationFactory';
 import type { JournalIdentity } from './operationJournalMiddleware';
 import { prepareFramePayload } from './attachmentFramePayload';
@@ -92,7 +94,9 @@ export class MissingRetainedDeleteError extends Error {
 }
 
 /**
- * The deletions this scope still owes a returning peer, as originally signed.
+ * The deletions this scope still owes a returning peer, as originally signed:
+ * every standing tombstone's, and every withdrawal of an entity a scope move
+ * took elsewhere, which no tombstone here records.
  *
  * Served from the journal rather than rebuilt: a deletion is attributed to the
  * device that made it, and manufacturing a replacement here would put this
@@ -106,19 +110,22 @@ const retainedDeletes = async (
   db: LoremDB,
   accessScopeId: AccessScopeId,
 ): Promise<EncryptedSyncFrame[]> => {
-  const tombstones = await db.syncTombstones
-    .where('accessScopeId')
-    .equals(accessScopeId)
-    .toArray();
-  return Promise.all(
-    tombstones.map(async ({ operationId }) => {
-      const frame = await db.syncOperations.get(String(operationId));
-      if (frame?.kind !== 'delete') {
-        throw new MissingRetainedDeleteError(String(operationId));
-      }
-      return frame;
-    }),
+  const tombstones = await db.syncTombstones.toArray();
+  const recorded = await Promise.all(
+    tombstones
+      .filter((tombstone) => tombstone.accessScopeId === accessScopeId)
+      .map(async ({ operationId }) => {
+        const frame = await db.syncOperations.get(String(operationId));
+        if (frame?.kind !== 'delete') {
+          throw new MissingRetainedDeleteError(String(operationId));
+        }
+        return frame;
+      }),
   );
+  const frames = readableFrames(
+    await db.syncOperations.where({ accessScopeId }).toArray(),
+  );
+  return [...recorded, ...(await owedWithdrawals({ db, frames, tombstones }))];
 };
 
 export const createWriterFullState =

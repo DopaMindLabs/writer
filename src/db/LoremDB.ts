@@ -73,6 +73,11 @@ export class LoremDB extends Dexie {
   syncProviderBindings!: Table<SyncProviderBinding, [string, string]>;
   /** Completed scope moves; local receipts survive operation compaction. */
   syncScopeRebindings!: Table<ScopeRebindingReceipt, string>;
+  /**
+   * Frames a standing deletion settles that could not be verified yet, kept
+   * apart from the journal so the deletion stays until they can be.
+   */
+  syncPendingHistory!: Table<EncryptedSyncFrame, string>;
   /** Peers this device has paired with — the authentication boundary. */
   trustedDevices!: Table<TrustedDeviceRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */

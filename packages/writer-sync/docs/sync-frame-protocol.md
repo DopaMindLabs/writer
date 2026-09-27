@@ -264,6 +264,41 @@ every session, for ever. What a device has seen only grows, so the manifests of
 two converged devices agree — same marks, same counts on both sides — and the
 exchange goes quiet.
 
+A host that releases a deletion (`releasableTombstones`) records, in the same
+transaction and before the tombstone and its delete frame go, an inbox entry for
+every retained operation of that entity at or before the deletion that the inbox
+has not recorded: the deletion `applied`, an older `put` `tombstoned`, an older
+`delete` `superseded`. Only a frame that passes materialisation's admission —
+structure, payload hash, table policy and a trusted signature, verified before the
+transaction and still, field for field, the retained frame inside it (a signature
+copied onto altered content is not the frame that was verified) — earns an entry. A
+verified frame the journal loses between the check and the transaction, as a
+compaction replicated from another device can do, still earns its entry from the
+copy verified, and one that may yet pass holds the deletion: a peer can replay
+either. A host keeps its own copy of such history while the deletion stands, apart
+from the replicated journal, so the hold outlasts the frame; the copy goes once it
+earns a verdict, can never be admitted, or has no deletion left to hold. Retained
+history is matched by content, not operation id: a row a provider writes under a
+copy's id neither stands in for the copy nor lets its deletion go. A deletion is released only once every such operation has one, or can never be
+admitted (malformed, altered, unsigned, signed with a key other than the one its
+author's device id is derived from, or naming a table peers do not own). A
+retained row is decoded before its order is read: one that does not decode has no
+order or age to judge, can never be admitted and is inert, so it neither holds a
+deletion nor earns an entry, and compaction leaves it where it is. A frame
+refused only because no key for its author is known yet, or for its clock, may
+verify later, when its author's identity arrives, and would then resurrect the entity if the deletion were already
+gone, so the deletion, its frame and that history stay until it verifies. The
+retention window keeps the same line under a deletion still standing: history
+admissible now is settled with an inbox entry as the window takes it, history that
+may yet be admitted stays, and history that never can goes as it is. A tombstone is
+retired only while it still names the deletion being released: a later deletion
+that ingestion wrote in the meantime stays, and every tombstone still standing keeps
+its frame. Operations a device authors itself are journalled without
+an inbox entry, and the tombstone is the only evidence that settles them; released
+alone, an older `put` would read as unapplied and resurrect the entity when next
+materialised. A later operation is left alone — it may legitimately restore the
+entity.
+
 > **Known gap carried into Stage 2A.** The journal grows without bound: Stage 1
 > never prunes `syncOperations`. `SyncTombstone.acknowledgedBy` is the seam for
 > acknowledgement-based compaction and is currently always `[]`. A two-device sync
@@ -418,7 +453,15 @@ device that reads only the source scope is never offered the destination put;
 without the withdrawal it would keep its copy, and its next edit would win
 convergence and move the row back. With it, that device removes the row and holds
 a tombstone, while a device that reads both scopes sees the later put win,
-whichever frame reaches it first. A retained tombstone gets one fresh delete in
+whichever frame reaches it first. No tombstone holds the withdrawal, since the entity
+lives on in the destination, so compaction never ages it out (`keptUntilHeld`):
+it leaves only once every peer holds it, and the frame each peer's acknowledgement
+names stays with it, since that is the only evidence the peer holds it. A rebuild of the source scope serves it
+beside the scope's tombstones, so a device that reads only the source and returns
+after the retention window still drops the row. Only a withdrawal that passes
+admission, or that this device accepted while its author was trusted and that
+still verifies against the author's recorded key, is kept and served this way: a
+delete a provider merely wrote ages out. A retained tombstone gets one fresh delete in
 the destination: devices that read the source already hold the deletion. New
 operation ids avoid prior inbox deduplication; logical times follow the current
 state. Put payloads carry the destination `accessScopeId`, new `mutationId` and
