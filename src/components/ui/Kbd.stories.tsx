@@ -22,3 +22,13 @@ export const Modifier: Story = { args: { keys: 'mod+s' } };
 export const WithShift: Story = { args: { keys: 'mod+shift+m' } };
 export const BareKey: Story = { args: { keys: '?' } };
 export const Comma: Story = { args: { keys: 'mod+,' } };
+
+/** Inside running prose, as a Help article renders a chord span. */
+export const Inline: Story = {
+  args: { keys: 'mod+\\', variant: 'inline' },
+  render: (args) => (
+    <p className="font-serif text-ink-2">
+      Press <Kbd {...args} /> to toggle focus mode.
+    </p>
+  ),
+};

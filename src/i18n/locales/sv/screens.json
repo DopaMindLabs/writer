@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Minska rörelse",
       "reduceMotionHint": "Hoppa över animerade övergångar mellan vyer.",
       "keyboardHintsLabel": "Visa tangentbordstips",
-      "keyboardHintsHint": "Visa ⌘-tangentbordsgenvägar i verktygstips och i hörnen av knappar.",
+      "keyboardHintsHint": "Visa {{modifier}}-tangentbordsgenvägar i verktygstips och i hörnen av knappar.",
       "startupLabel": "Öppna vid start",
       "startupHint": "Vad du ser när du startar appen.",
       "startupOptions": {

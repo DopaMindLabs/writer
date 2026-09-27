@@ -183,7 +183,7 @@
       "reduceMotionLabel": "Reduce motion",
       "reduceMotionHint": "Skip animated transitions between views.",
       "keyboardHintsLabel": "Show keyboard hints",
-      "keyboardHintsHint": "Display ⌘-key shortcuts in tooltips and the corner of buttons.",
+      "keyboardHintsHint": "Display {{modifier}}-key shortcuts in tooltips and the corner of buttons.",
       "startupLabel": "Open at startup",
       "startupHint": "What you see when you launch the app.",
       "startupOptions": {

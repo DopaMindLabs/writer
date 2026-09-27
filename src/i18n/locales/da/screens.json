@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Reducér bevægelse",
       "reduceMotionHint": "Spring animerede overgange mellem visninger over.",
       "keyboardHintsLabel": "Vis tastaturhints",
-      "keyboardHintsHint": "Vis ⌘-tastaturgenveje i tooltips og hjørnerne af knapper.",
+      "keyboardHintsHint": "Vis {{modifier}}-tastaturgenveje i tooltips og hjørnerne af knapper.",
       "startupLabel": "Åbn ved opstart",
       "startupHint": "Hvad du ser, når du starter appen.",
       "startupOptions": {

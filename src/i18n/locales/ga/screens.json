@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Laghdaigh gluaiseacht",
       "reduceMotionHint": "Ná taispeáin aistrithe beoite idir radhairc.",
       "keyboardHintsLabel": "Taispeáin leideanna méarchláir",
-      "keyboardHintsHint": "Taispeáin aicearraí ⌘-eochair i mboscaí leide agus i gcúinne na gcnaipí.",
+      "keyboardHintsHint": "Taispeáin aicearraí {{modifier}}-eochair i mboscaí leide agus i gcúinne na gcnaipí.",
       "startupLabel": "Oscail ag tosú",
       "startupHint": "An méid a fheiceann tú nuair a sheolann tú an aip.",
       "startupOptions": {

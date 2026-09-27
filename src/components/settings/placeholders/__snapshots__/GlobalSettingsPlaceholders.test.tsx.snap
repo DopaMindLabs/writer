@@ -83,7 +83,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           <div
             class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
           >
-            Display ⌘-key shortcuts in tooltips and the corner of buttons.
+            Display Ctrl-key shortcuts in tooltips and the corner of buttons.
           </div>
         </div>
         <div>

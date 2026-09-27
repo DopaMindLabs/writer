@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Fakasiʻisiʻi ngāue",
       "reduceMotionHint": "Fakamālohisisi ʻa e ngaahi liliu fakaangaʻi ʻi he vaʻa ʻo e ngaahi vaʻa.",
       "keyboardHintsLabel": "Fakahā ngaahi fakatohu ki",
-      "keyboardHintsHint": "Fakahā ngaahi hala ⌘-ki ʻi loto ʻo e ngaahi toliaki mo e ngaahi tuliki ʻo e ngaahi pihi.",
+      "keyboardHintsHint": "Fakahā ngaahi hala {{modifier}}-ki ʻi loto ʻo e ngaahi toliaki mo e ngaahi tuliki ʻo e ngaahi pihi.",
       "startupLabel": "Keli ʻi he kamata",
       "startupHint": "Ko e hā ʻoku ke mamata ai ʻi ho'o tukuange ʻo e lekōtia.",
       "startupOptions": {

@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Reduce mișcarea",
       "reduceMotionHint": "Omite tranzițiile animate între vederi.",
       "keyboardHintsLabel": "Afișează indicii tastatură",
-      "keyboardHintsHint": "Afișează scurtăturile ⌘ în tooltipuri și în colțul butoanelor.",
+      "keyboardHintsHint": "Afișează scurtăturile {{modifier}} în tooltipuri și în colțul butoanelor.",
       "startupLabel": "Deschide la pornire",
       "startupHint": "Ce vezi când lansezi aplicația.",
       "startupOptions": {

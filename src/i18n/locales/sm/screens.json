@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Fa'aitiitia gaoioi",
       "reduceMotionHint": "Lavea fa'aliliuina fa'aola i le va o va'aiga.",
       "keyboardHintsLabel": "Fa'aalia fa'asinomaga ki",
-      "keyboardHintsHint": "Fa'aalia ala ⌘-ki i totonu fa'asilasila ma tulafono o ki.",
+      "keyboardHintsHint": "Fa'aalia ala {{modifier}}-ki i totonu fa'asilasila ma tulafono o ki.",
       "startupLabel": "Tatala i le amataga",
       "startupHint": "Mea e te va'aia pe a amata le polokalame.",
       "startupOptions": {

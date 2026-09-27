@@ -7,6 +7,13 @@ import {
 } from './content';
 
 describe('help content loader', () => {
+  it('writes every English shortcut as a chord span, never a fixed platform key', () => {
+    const fixed = listHelpDocSlugs().filter((slug) =>
+      /[⌘⇧⌥]|Ctrl\//.test(getHelpDoc(slug, 'en')?.body ?? ''),
+    );
+    expect(fixed).toEqual([]);
+  });
+
   it('extracts the h1 as the title and excludes it from the body', () => {
     const doc = getHelpDoc('getting-started');
     expect(doc?.title).toBe('Getting started');

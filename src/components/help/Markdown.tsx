@@ -7,8 +7,10 @@ import {
   TypographyP,
 } from '@/components/ui/typography';
 import { BlockQuote } from '@/components/ui/block-quote';
+import { Kbd } from '@/components/ui/Kbd';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
+import { chordOf } from '@/lib/help/chordMarkup';
 import { slugify } from '@/lib/help/content';
 
 const LINK_CLASS =
@@ -116,11 +118,15 @@ const components: Components = {
   em: ({ children }) => <em className="italic">{children}</em>,
   blockquote: ({ children }) => <BlockQuote>{children}</BlockQuote>,
   hr: () => <hr className="my-8 border-rule" />,
-  code: ({ children }) => (
-    <code className="rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[0.85em] text-ink">
-      {children}
-    </code>
-  ),
+  code: ({ children }) => {
+    const keys = chordOf(toText(children));
+    if (keys !== null) return <Kbd keys={keys} variant="inline" />;
+    return (
+      <code className="rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[0.85em] text-ink">
+        {children}
+      </code>
+    );
+  },
   pre: ({ children }) => (
     <pre className="mt-4 overflow-x-auto rounded-md border border-rule bg-paper-2 p-4 font-mono text-[13px] text-ink">
       {children}

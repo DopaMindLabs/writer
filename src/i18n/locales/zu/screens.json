@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Nciphisa ukugijima",
       "reduceMotionHint": "Yeqa ukushintsha kwe-animated phakathi kwezibukeli.",
       "keyboardHintsLabel": "Bonisa izifundiso zekhomputha",
-      "keyboardHintsHint": "Bonisa izikhombisi ze-⌘-key ku-tooltips nakogonqweni lwamathuluzi.",
+      "keyboardHintsHint": "Bonisa izikhombisi ze-{{modifier}}-key ku-tooltips nakogonqweni lwamathuluzi.",
       "startupLabel": "Vula ekuqaleni",
       "startupHint": "Lokho okubona uma uqalisa uhlelo.",
       "startupOptions": {

@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Rage motsi",
       "reduceMotionHint": "Tsallake animations na canjin tsakanin ra'ayoyi.",
       "keyboardHintsLabel": "Nuna alamu na maɓallin",
-      "keyboardHintsHint": "Nuna gajeren hanyar ⌘-key a cikin tooltips da kusurwa na buttons.",
+      "keyboardHintsHint": "Nuna gajeren hanyar {{modifier}}-key a cikin tooltips da kusurwa na buttons.",
       "startupLabel": "Buɗewa a farawa",
       "startupHint": "Abin da kake gani yayin da ka kaddamar da app.",
       "startupOptions": {

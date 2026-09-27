@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Réduire le mouvement",
       "reduceMotionHint": "Passe les transitions animées entre vues.",
       "keyboardHintsLabel": "Afficher les indices clavier",
-      "keyboardHintsHint": "Affiche les raccourcis ⌘ dans les infobulles et coin des boutons.",
+      "keyboardHintsHint": "Affiche les raccourcis {{modifier}} dans les infobulles et coin des boutons.",
       "startupLabel": "Ouvrir au démarrage",
       "startupHint": "Ce que tu vois au lancement de l'app.",
       "startupOptions": {

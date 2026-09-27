@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Whakaitia neke",
       "reduceMotionHint": "Huri noa i ngā nekehanga i waenga i ngā tirohanga.",
       "keyboardHintsLabel": "Whakaatu tohu papapātuhi",
-      "keyboardHintsHint": "Whakaatu i ngā ara ⌘-kī i roto i ngā tūāhoa me ngā kokonga pātene.",
+      "keyboardHintsHint": "Whakaatu i ngā ara {{modifier}}-kī i roto i ngā tūāhoa me ngā kokonga pātene.",
       "startupLabel": "Tuwhera i te tīmatanga",
       "startupHint": "He aha tāu e kite ana i tō whakarite i te tono.",
       "startupOptions": {

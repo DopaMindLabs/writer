@@ -171,7 +171,7 @@
       "reduceMotionLabel": "减少动效",
       "reduceMotionHint": "跳过视图间的动画过渡。",
       "keyboardHintsLabel": "显示键盘提示",
-      "keyboardHintsHint": "在工具提示和按钮角落显示 ⌘ 键快捷键。",
+      "keyboardHintsHint": "在工具提示和按钮角落显示 {{modifier}} 键快捷键。",
       "startupLabel": "启动时打开",
       "startupHint": "启动应用时显示的界面。",
       "startupOptions": {

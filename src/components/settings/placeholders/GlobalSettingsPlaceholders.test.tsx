@@ -46,6 +46,21 @@ describe('GlobalSettingsPlaceholders', () => {
       expect(screen.getByText('⌘B')).toBeInTheDocument();
     });
 
+    it('names the running platform\'s modifier in the keyboard hints setting', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+      renderWithProviders(<Placeholders.GeneralPlaceholder />);
+      expect(screen.getByText('Display Ctrl-key shortcuts in tooltips and the corner of buttons.'))
+        .toBeInTheDocument();
+      expect(screen.queryByText(/⌘/)).not.toBeInTheDocument();
+    });
+
+    it('names the Command key in the keyboard hints setting on Apple platforms', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(true);
+      renderWithProviders(<Placeholders.GeneralPlaceholder />);
+      expect(screen.getByText('Display ⌘-key shortcuts in tooltips and the corner of buttons.'))
+        .toBeInTheDocument();
+    });
+
     it('keeps non-chord hints such as markdown prefixes literal', () => {
       vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
       renderWithProviders(<Placeholders.ShortcutsPlaceholder />);

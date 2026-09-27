@@ -24,7 +24,7 @@ so you can jump straight to the detail.
 ## Views & modes
 
 - **Write** — the default editing surface. [Learn more](views-and-modes#write)
-- **Focus mode** — hide the chrome with ⌘\\. [Learn more](views-and-modes#focus)
+- **Focus mode** — hide the chrome with `kbd:mod+\`. [Learn more](views-and-modes#focus)
 - **Read** — a clean, non-editable view. [Learn more](views-and-modes#read)
 - **Split** — two documents side by side. [Learn more](views-and-modes#split)
 - **Inspector** — outline, info, and history. [Learn more](views-and-modes#the-inspector)
@@ -65,7 +65,7 @@ so you can jump straight to the detail.
 
 ## Keyboard
 
-- **Quick Help (⌘K)** and **focus (⌘\\)**, plus editor and citation shortcuts. [Learn more](keyboard-shortcuts#universal)
+- **Quick Help** (`kbd:mod+k`) and **focus** (`kbd:mod+\`), plus editor and citation shortcuts. [Learn more](keyboard-shortcuts#universal)
 
 ## Your data
 

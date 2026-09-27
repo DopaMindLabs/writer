@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Μείωση κίνησης",
       "reduceMotionHint": "Παράλειψη κινούμενων μεταβάσεων μεταξύ προβολών.",
       "keyboardHintsLabel": "Εμφάνιση υποδείξεων πληκτρολογίου",
-      "keyboardHintsHint": "Εμφάνιση συντομεύσεων ⌘ σε tooltips και στη γωνία κουμπιών.",
+      "keyboardHintsHint": "Εμφάνιση συντομεύσεων {{modifier}} σε tooltips και στη γωνία κουμπιών.",
       "startupLabel": "Άνοιγμα κατά την εκκίνηση",
       "startupHint": "Τι βλέπεις όταν εκκινείς την εφαρμογή.",
       "startupOptions": {

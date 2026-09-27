@@ -1082,6 +1082,16 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 | Brain Space note | Escape (while editing) | Revert |
 | Brain Space note | Shift-click | Start / complete a connection |
 
+Shortcut hints show the running platform's keys: adjacent glyphs on Apple (`⌘\`), `+`-joined
+words elsewhere (`Ctrl+\`). This holds in the chrome, in settings copy that names the modifier
+(the **Show keyboard hints** description), and in Help Center articles, which write a
+shortcut as an inline `kbd:` code span holding a platform-neutral chord (`kbd:mod+\`); the
+article renderer shows it as a `Kbd`, and search excerpts show the same formatted text.
+
+*Covered by:* `ui/Kbd.test.tsx`, `help/Markdown.test.tsx`, `lib/help/search.test.ts`,
+`lib/help/content.test.ts`, `settings/placeholders/GlobalSettingsPlaceholders.test.tsx`,
+`e2e/help.spec.ts`.
+
 ---
 
 ## 7. Test coverage matrix

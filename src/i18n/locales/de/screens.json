@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Bewegung reduzieren",
       "reduceMotionHint": "Überspringt animierte Übergänge zwischen Ansichten.",
       "keyboardHintsLabel": "Tastaturhinweise zeigen",
-      "keyboardHintsHint": "Zeigt ⌘-Tastenkürzel in Tooltips und an Buttons.",
+      "keyboardHintsHint": "Zeigt {{modifier}}-Tastenkürzel in Tooltips und an Buttons.",
       "startupLabel": "Beim Start öffnen",
       "startupHint": "Was du siehst, wenn du die App startest.",
       "startupOptions": {

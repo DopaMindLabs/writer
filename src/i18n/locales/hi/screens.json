@@ -171,7 +171,7 @@
       "reduceMotionLabel": "गति कम करें",
       "reduceMotionHint": "व्यूज़ के बीच एनिमेटेड ट्रांज़िशन छोड़ें।",
       "keyboardHintsLabel": "कीबोर्ड संकेत दिखाएँ",
-      "keyboardHintsHint": "टूलटिप और बटन के कोने में ⌘-कुंजी शॉर्टकट प्रदर्शित करें।",
+      "keyboardHintsHint": "टूलटिप और बटन के कोने में {{modifier}}-कुंजी शॉर्टकट प्रदर्शित करें।",
       "startupLabel": "स्टार्टअप पर खोलें",
       "startupHint": "ऐप लॉन्च करने पर आप क्या देखते हैं।",
       "startupOptions": {

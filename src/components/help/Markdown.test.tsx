@@ -1,8 +1,39 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { renderWithProviders as render, screen } from '@/test/test-utils';
+import * as platform from '@/lib/shortcuts/platform';
 import { Markdown } from './Markdown';
 
+const onPlatform = (apple: boolean) =>
+  vi.spyOn(platform, 'isApplePlatform').mockReturnValue(apple);
+
 describe('Markdown', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('shows a chord span as the keys the reader presses off Apple platforms', () => {
+    onPlatform(false);
+    render(<Markdown>{'Press `kbd:mod+\\` to focus.'}</Markdown>);
+    const chord = screen.getByText('Ctrl+\\');
+    expect(chord.tagName).toBe('KBD');
+    expect(screen.queryByText(/kbd:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/⌘/)).not.toBeInTheDocument();
+  });
+
+  it('shows a chord span with Apple glyphs on Apple platforms', () => {
+    onPlatform(true);
+    render(<Markdown>{'Save with `kbd:mod+enter`.'}</Markdown>);
+    expect(screen.getByText('⌘⏎').tagName).toBe('KBD');
+  });
+
+  it('leaves ordinary inline code as code', () => {
+    onPlatform(false);
+    const { container } = render(<Markdown>{'Type `mod+k` or `kbd:` literally.'}</Markdown>);
+    const codes = [...container.querySelectorAll('code')].map((node) => node.textContent);
+    expect(codes).toEqual(['mod+k', 'kbd:']);
+    expect(container.querySelector('kbd')).toBeNull();
+  });
+
   it('renders level-2 headings with slugified ids for anchoring', () => {
     render(<Markdown>{'## Hello World\n\nA paragraph.'}</Markdown>);
     const heading = screen.getByRole('heading', { level: 2, name: 'Hello World' });

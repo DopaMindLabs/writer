@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Ogranicz animacje",
       "reduceMotionHint": "Pomiń animowane przejścia między widokami.",
       "keyboardHintsLabel": "Pokaż podpowiedzi klawiaturowe",
-      "keyboardHintsHint": "Wyświetlaj skróty klawiszowe ⌘ w podpowiedziach i w rogu przycisków.",
+      "keyboardHintsHint": "Wyświetlaj skróty klawiszowe {{modifier}} w podpowiedziach i w rogu przycisków.",
       "startupLabel": "Otwórz przy starcie",
       "startupHint": "Co widzisz po uruchomieniu aplikacji.",
       "startupOptions": {

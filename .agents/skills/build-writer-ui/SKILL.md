@@ -147,6 +147,8 @@ Use only the sections that help the reader complete or recover the task:
   protocol narration. State the action, result and reason directly.
 - Use British English. Keep code identifiers, slugs and established product names
   unchanged.
+- Write a keyboard shortcut as a chord span such as `` `kbd:mod+\` ``, never a fixed
+  key like ⌘ or Ctrl, so each reader sees the keys on their own computer.
 - End with two to four relevant links. Name the destination in the link text and
   say why it is useful.
 

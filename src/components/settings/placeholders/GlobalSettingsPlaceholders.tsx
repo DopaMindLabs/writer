@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { Kbd } from '@/components/ui/Kbd';
+import { formatChord } from '@/lib/shortcuts/formatChord';
 import { TypographyLabel } from '@/components/ui/typography';
 import {
   PlaceholderAccentDots,
@@ -36,7 +37,7 @@ export const GeneralPlaceholder = () => {
       </SettingRow>
       <SettingRow
         label={t('settings.general.keyboardHintsLabel')}
-        hint={t('settings.general.keyboardHintsHint')}
+        hint={t('settings.general.keyboardHintsHint', { modifier: formatChord('mod') })}
       >
         <PlaceholderToggle on />
       </SettingRow>

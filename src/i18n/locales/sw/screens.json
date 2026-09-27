@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Punguza mwendo",
       "reduceMotionHint": "Ruka mabadiliko ya mwendo kati ya maoni.",
       "keyboardHintsLabel": "Onyesha vidokezo vya kibodi",
-      "keyboardHintsHint": "Onyesha njia za mkato za ⌘-key katika tooltips na kona ya vifungo.",
+      "keyboardHintsHint": "Onyesha njia za mkato za {{modifier}}-key katika tooltips na kona ya vifungo.",
       "startupLabel": "Fungua wakati wa kuanza",
       "startupHint": "Unachokiona unapozindua programu.",
       "startupOptions": {
