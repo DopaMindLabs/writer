@@ -1,6 +1,9 @@
 import type { Table } from 'dexie';
 import type { LoremDB } from '@/db/LoremDB';
 import { policyFor } from '@/lib/writerSyncIntegration/writerTablePolicy';
+import { compareTimestamps } from 'writer-sync/core';
+import { verifyFrame, type EncryptedSyncFrame, type SyncInboxEntry } from 'writer-sync/operations';
+import { verifiesAgainstRecordedKey } from './writerFrameVerifier';
 
 /**
  * What an inbound frame must satisfy before any of this device's state is
@@ -50,4 +53,39 @@ export const requireJournalledTable = (
     throw new DisallowedOperationTableError(entityTable);
   }
   return db.table<Record<string, unknown>, string>(entityTable);
+};
+
+/** Whether an inbox entry records this frame's operation, author, entity, scope and time. */
+const recordsFrame = (entry: SyncInboxEntry, frame: EncryptedSyncFrame): boolean =>
+  String(entry.operationId) === String(frame.operationId) &&
+  String(entry.deviceId) === String(frame.deviceId) &&
+  entry.entityTable === frame.entityTable &&
+  entry.entityId === frame.entityId &&
+  entry.accessScopeId === frame.accessScopeId &&
+  compareTimestamps(entry.logicalAt, frame.logicalAt) === 0;
+
+/**
+ * The frame as this device accepted it earlier, or `null`. Its inbox entry, this
+ * device's own record of that admission, names the same operation by the same
+ * author for the same entity, scope and time, and its signature still verifies
+ * against the key on record for that author. Revoking the author since refuses
+ * what arrives from now on, not what was accepted already; a frame altered since
+ * fails the signature, whatever the entry says.
+ */
+export const acceptedEarlier = async (options: {
+  db: LoremDB;
+  candidate: EncryptedSyncFrame;
+  entry: SyncInboxEntry | undefined;
+}): Promise<EncryptedSyncFrame | null> => {
+  const { db, candidate, entry } = options;
+  if (entry === undefined) return null;
+  try {
+    const frame = await verifyFrame(candidate);
+    requireJournalledTable(db, frame.entityTable);
+    if (!recordsFrame(entry, frame)) return null;
+    return (await verifiesAgainstRecordedKey(db, frame)) ? frame : null;
+  } catch {
+    // Malformed, or aimed at a table peers do not own: no earlier admission covers it.
+    return null;
+  }
 };

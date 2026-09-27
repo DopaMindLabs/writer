@@ -4,7 +4,7 @@ import {
   assertAcceptableRemoteTime, compareTimestamps, type HybridLogicalTimestamp,
 } from 'writer-sync/core';
 import { verifyFrame } from 'writer-sync/operations';
-import { requireJournalledTable, UntrustedFrameError } from './frameAdmission';
+import { acceptedEarlier, requireJournalledTable, UntrustedFrameError } from './frameAdmission';
 import { createWriterFrameVerifier } from './writerFrameVerifier';
 import { scopeEntityKey } from './scopeRebindingSnapshot';
 import type { RebindingSnapshot, ScopeEntityState } from './scopeRebinding.types';
@@ -54,9 +54,13 @@ export const admitRebindingSnapshot = async (options: {
 }): Promise<void> => {
   const { db, snapshot } = options;
   const verifySignature = createWriterFrameVerifier(db);
+  const accepted = new Map(snapshot.inbox.map((entry) => [String(entry.operationId), entry]));
   for (const candidate of snapshot.history) {
     const frame = await verifyFrame(candidate);
     requireJournalledTable(db, frame.entityTable);
+    // Accepted while its author was trusted, and unaltered since.
+    const entry = accepted.get(String(frame.operationId));
+    if (await acceptedEarlier({ db, candidate: frame, entry })) continue;
     if (!(await verifySignature(frame))) throw new UntrustedFrameError(String(frame.deviceId));
     assertAcceptableRemoteTime(frame.logicalAt, () => Date.now());
   }

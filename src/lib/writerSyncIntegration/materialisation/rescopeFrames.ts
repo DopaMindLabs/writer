@@ -1,8 +1,13 @@
 import { invariant } from '@/lib/invariant';
+import type { EncryptedSyncFrame, SyncInboxEntry } from 'writer-sync/operations';
 import { requireJournalledTable } from './frameAdmission';
-import { prepareScopeRebinding, requireScopeMoveKeys } from './prepareScopeRebinding';
+import {
+  prepareScopeRebinding, requireReadableSource, requireScopeMoveKeys,
+} from './prepareScopeRebinding';
 import { admitRebindingSnapshot } from './scopeRebindingAdmission';
-import { readRebindingSnapshot, scopeRebindingTables } from './scopeRebindingSnapshot';
+import {
+  readRebindingSnapshot, scopeEntityKey, scopeRebindingTables,
+} from './scopeRebindingSnapshot';
 import { tombstoneOf } from './tombstone';
 import type {
   PreparedScopeEntity, RebindingSnapshot, ScopeRebindingOptions, ScopeRebindingReceipt, ScopeTransition,
@@ -16,11 +21,26 @@ export class ScopeRebindingChangedError extends Error {
   }
 }
 
+/** The inbox entry recording what this device did with an operation. */
+const receiptOf = (
+  frame: EncryptedSyncFrame,
+  result: SyncInboxEntry['result'],
+): SyncInboxEntry => ({
+  operationId: frame.operationId, accessScopeId: frame.accessScopeId,
+  deviceId: frame.deviceId, logicalAt: frame.logicalAt,
+  entityTable: frame.entityTable, entityId: frame.entityId,
+  result, receivedAt: frame.logicalAt.millis,
+});
+
+/** The frames the move authored for one entity, in the order they take effect. */
+const authoredFrames = ({ withdrawal, frame }: PreparedScopeEntity): EncryptedSyncFrame[] =>
+  withdrawal ? [withdrawal, frame] : [frame];
+
 const commitEntity = async (options: {
   move: ScopeTransition;
   prepared: PreparedScopeEntity;
 }): Promise<void> => {
-  const { move: { db }, prepared: { frame, row, chunks } } = options;
+  const { move: { db }, prepared: { frame, withdrawal, row, chunks } } = options;
   const table = requireJournalledTable(db, frame.entityTable);
   if (row) {
     await table.put(row);
@@ -35,11 +55,29 @@ const commitEntity = async (options: {
     await db.syncAttachmentChunks.where('attachmentId').equals(frame.entityId).delete();
     await db.syncAttachmentChunks.bulkPut(chunks);
   }
-  await db.syncInbox.add({
-    operationId: frame.operationId, accessScopeId: frame.accessScopeId,
-    deviceId: frame.deviceId, logicalAt: frame.logicalAt,
-    entityTable: frame.entityTable, entityId: frame.entityId,
-    result: 'applied', receivedAt: frame.logicalAt.millis,
+  // The withdrawal is overtaken here by the put that follows it.
+  await db.syncInbox.bulkAdd([
+    ...(withdrawal ? [receiptOf(withdrawal, 'superseded')] : []),
+    receiptOf(frame, 'applied'),
+  ]);
+};
+
+/**
+ * Receipts for the retained history of every moved entity. Admission verified
+ * each of these frames and the fresh operation supersedes them all. Without a
+ * receipt, one this device authored reads as unapplied once the move's own
+ * frame is compacted, and the next sweep would put the row back in its old scope.
+ */
+const settledHistory = (
+  snapshot: RebindingSnapshot,
+  prepared: readonly PreparedScopeEntity[],
+): SyncInboxEntry[] => {
+  const accepted = new Set(snapshot.inbox.map((entry) => String(entry.operationId)));
+  const deletedBy = new Map(prepared.map(({ frame, row }) => [scopeEntityKey(frame), row === null]));
+  return snapshot.history.flatMap((frame): SyncInboxEntry[] => {
+    const deleted = deletedBy.get(scopeEntityKey(frame));
+    if (deleted === undefined || accepted.has(String(frame.operationId))) return [];
+    return [receiptOf(frame, deleted && frame.kind === 'put' ? 'tombstoned' : 'superseded')];
   });
 };
 
@@ -56,10 +94,12 @@ const commitRebinding = async (options: {
     // Including syncInbox marks this as an explicit materialisation transaction:
     // the middleware must not journal the already prepared mutations a second time.
     for (const entity of prepared) await commitEntity({ move, prepared: entity });
-    await db.syncOperations.bulkAdd(prepared.map(({ frame }) => frame));
+    await db.syncInbox.bulkAdd(settledHistory(snapshot, prepared));
+    const authored = prepared.flatMap(authoredFrames);
+    await db.syncOperations.bulkAdd(authored);
     await db.syncScopeRebindings.bulkAdd([{
       requestId, sourceScopeId: scopes.from, destinationScopeId: scopes.to,
-      operationIds: prepared.map(({ frame }) => frame.operationId),
+      operationIds: authored.map(({ operationId }) => operationId),
     }]);
   });
 };
@@ -77,10 +117,12 @@ const completedRequest = (
 /**
  * Move this device's current rows and retained deletions to another access scope.
  * History may be incomplete after compaction; it must never supply the content.
- * Each entity gets one fresh signed operation, committed with its local state.
- * Original frames remain immutable. An explicit request id makes retries durable,
- * including empty moves; a deliberate later move must use a different request id.
- * Concurrent state, journal or trust changes abort the whole prepared batch.
+ * A current row gets a signed deletion in the source followed by a fresh signed
+ * put in the destination; a retained deletion gets one fresh signed deletion in
+ * the destination. Both commit with the local state. Original frames remain
+ * immutable. An explicit request id makes retries durable, including empty
+ * moves; a deliberate later move must use a different request id. Concurrent
+ * state, journal or trust changes abort the whole prepared batch.
  */
 export const rescopeFrames = async (options: ScopeRebindingOptions): Promise<number> => {
   const { db, scopes, requestId } = options;
@@ -91,6 +133,7 @@ export const rescopeFrames = async (options: ScopeRebindingOptions): Promise<num
   const snapshot = await db.transaction('r', scopeRebindingTables(db),
     () => readRebindingSnapshot(options));
   if (completedRequest(options, snapshot.receipt)) return 0;
+  requireReadableSource(snapshot);
   await admitRebindingSnapshot({ db, snapshot });
   const states = snapshot.entities.filter((state) =>
     (state.row?.accessScopeId ?? state.tombstone?.accessScopeId) === scopes.from);

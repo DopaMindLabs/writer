@@ -412,18 +412,38 @@ current tombstone requires its retained, verified delete frame. Entities whose
 saved state is already in another scope are excluded, including when the frames
 that moved them have been compacted.
 
-Each current entity gets one fresh destination operation signed by the moving
-device. A new operation id avoids prior inbox deduplication; its logical time
-follows the current state. Put payloads carry the destination `accessScopeId`, new
-`mutationId` and new `logicalUpdatedAt`, matching the header. Existing content and
-editorial attribution are preserved. Attachment bytes are resealed under the
-destination binding and carried in new ciphertext chunks. Deletes receive fresh
-headers and signatures without a payload. Original frames remain immutable.
+A current row gets two fresh operations signed by the moving device: a delete in
+the source scope, then a put in the destination scope at a later logical time. A
+device that reads only the source scope is never offered the destination put;
+without the withdrawal it would keep its copy, and its next edit would win
+convergence and move the row back. With it, that device removes the row and holds
+a tombstone, while a device that reads both scopes sees the later put win,
+whichever frame reaches it first. A retained tombstone gets one fresh delete in
+the destination: devices that read the source already hold the deletion. New
+operation ids avoid prior inbox deduplication; logical times follow the current
+state. Put payloads carry the destination `accessScopeId`, new `mutationId` and
+new `logicalUpdatedAt`, matching the header. Existing content and editorial
+attribution are preserved. Attachment bytes are resealed under the destination
+binding and carried in new ciphertext chunks. Deletes receive fresh headers and
+signatures without a payload. Original frames remain immutable.
 
-Both scope keys must be available before reading state: the encryption middleware
-hides keyless rows, which must never be mistaken for an empty scope. Retained
+Both scope keys must be available for every journalled content table before
+reading state: the encryption middleware hides rows it cannot open, a resolver may
+answer per table or per row, and hidden rows must never be mistaken for an empty
+scope. A cursor read passes the middleware by and sees each row's routing metadata
+in the clear, so the snapshot also records every row stored in the source scope
+that it could not read. Any such row refuses the move, whether no key resolves for
+it or the key that does fails to open it: the move cannot carry a row it cannot
+open. A move prepares one entity at a time and holds each attachment's new
+ciphertext until it commits, so it refuses, before reading any content, to carry
+more than `MAX_ATTACHMENT_BYTES` of attachments in total.
+Withdrawing a current row also needs the source write key. Retained
 source and related entity history passes structure, hash, journalled-table policy,
-trusted signature and clock checks before signing. A potentially newer or tied
+trusted signature and clock checks before signing; history this device accepted
+earlier, whose inbox entry records the same operation, author, entity, scope and
+time and whose signature still verifies against that author's recorded key, counts
+as admitted even if its author has been revoked since; one altered since fails the
+signature and refuses the move. A potentially newer or tied
 journal frame not yet considered by materialisation blocks the move; callers must
 materialise pending operations before retrying. Retained history can cause a
 refusal, but never supplies content to re-author. Invalid or contradictory current
@@ -441,7 +461,10 @@ Frame and attachment encryption and signing finish before one transaction rechec
 saved rows and mutation ids, tombstones, related journal and inbox entries, trust
 records and the request receipt. A change raises `ScopeRebindingChangedError`; the
 caller may prepare again. Otherwise that same transaction updates local state and
-atomically writes the frames, attachment chunks, applied inbox records and receipt.
+atomically writes the frames, attachment chunks, inbox records (each put applied,
+each withdrawal superseded by it) and receipt, and records every retained operation
+of a moved entity as settled, so compacting the
+move's own frame can never let the sweep put an older version back.
 Any write failure rolls everything back. Including `syncInbox` suppresses duplicate
 operation-journal middleware emission; ordinary row encryption still applies.
 

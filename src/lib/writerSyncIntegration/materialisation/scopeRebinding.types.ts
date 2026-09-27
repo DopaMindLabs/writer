@@ -33,8 +33,15 @@ export interface ScopeEntityState {
   readonly tombstone: SyncTombstone | undefined;
 }
 
+/** A row stored in the source scope that the encryption middleware kept from this device's read. */
+export interface HiddenScopeRow {
+  readonly entityTable: string;
+  readonly entityId: string;
+}
+
 export interface RebindingSnapshot {
   readonly entities: ScopeEntityState[];
+  readonly hidden: HiddenScopeRow[];
   readonly history: EncryptedSyncFrame[];
   readonly inbox: SyncInboxEntry[];
   readonly receipt: ScopeRebindingReceipt | undefined;
@@ -43,6 +50,8 @@ export interface RebindingSnapshot {
 
 export interface PreparedScopeEntity {
   readonly frame: EncryptedSyncFrame;
+  /** A current row's signed deletion from the source scope, sorted before `frame`. */
+  readonly withdrawal: EncryptedSyncFrame | null;
   readonly row: JournalledRow | null;
   readonly chunks: SyncAttachmentChunk[];
 }

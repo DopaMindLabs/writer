@@ -272,10 +272,16 @@ its successor. Current rows remain movable without their original frames; curren
 tombstones require their retained signed delete frames. State already in another
 scope is excluded even after the move's frames have been compacted.
 
-Each entity receives one new operation id and a later logical time, with matching
-scope and mutation metadata inside its encrypted payload. The moving device signs
-the new frame; attachment chunks are resealed for the destination. Both keys must
-be available before reading state. Retained source and related history must pass
+A current row is withdrawn from the source by a signed delete, then put in the
+destination under a new operation id at a later logical time, with matching scope
+and mutation metadata inside its encrypted payload; a device that reads only the
+source scope removes it instead of keeping a copy whose next edit would move it
+back. A retained deletion gets one fresh delete in the destination. The moving
+device signs the new frames; attachment chunks are resealed for the destination.
+Both keys must be available before reading state, and a row stored in the source scope that the
+middleware could not open blocks the move, even when a key resolves for it. A move
+prepares one entity at a time and refuses, before reading any content, to carry more
+than 100 MiB of attachments in total. Retained source and related history must pass
 hash, table-policy, signature and clock checks. Unapplied operations that might
 supersede current state block the move until materialisation has considered them.
 

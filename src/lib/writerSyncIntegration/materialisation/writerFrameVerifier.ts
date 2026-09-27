@@ -39,6 +39,32 @@ interface ResolvedTrust {
   key: CryptoKey | null;
 }
 
+/**
+ * Whether a frame's signature verifies against the key on record for its author,
+ * whatever the pairing's status now. Only for history this device accepted while
+ * its author was trusted: revoking a device refuses what arrives from it from
+ * then on, not what was accepted from it already, while a frame altered since
+ * still fails here.
+ */
+export const verifiesAgainstRecordedKey = async (
+  db: LoremDB,
+  frame: EncryptedSyncFrame,
+): Promise<boolean> => {
+  if (frame.signature.length === 0) return false;
+  const own = await deviceIdentityStore.current();
+  if (own !== null && String(frame.deviceId) === String(own.deviceId)) {
+    return verifyFrameSignature(own.keys.publicKey, frame);
+  }
+  const record = await createTrustedDeviceStore(db).find(frame.deviceId);
+  if (record === null) return false;
+  try {
+    return await verifyFrameSignature(await importDevicePublicKey(record.publicIdentityJwk), frame);
+  } catch {
+    // A malformed stored key vouches for nothing.
+    return false;
+  }
+};
+
 export const createWriterFrameVerifier = (db: LoremDB): FrameVerifier => {
   const paired = createTrustedDeviceStore(db);
   // The registry table exists only on a cloud-enabled database; a P2P-only

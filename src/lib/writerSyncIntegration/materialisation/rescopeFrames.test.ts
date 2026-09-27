@@ -329,7 +329,8 @@ describe('rescopeFrames', () => {
 
     expect(await db.syncOperations.get('op-n1-1')).toEqual(original);
     expect(await db.syncOperations.get('op-n2-1')).toEqual(destination);
-    expect(await db.syncOperations.count()).toBe(3);
+    // Plus the move's withdrawal from space-a and its put in space-b.
+    expect(await db.syncOperations.count()).toBe(4);
   });
 
   it.each(['before', 'after'] as const)(
@@ -638,6 +639,57 @@ describe('rescopeFrames', () => {
     expect(await db.syncOperations.toArray()).toEqual(before);
   });
 
+  it('moves a row whose history was accepted before its author was revoked', async () => {
+    await enqueuePut(note());
+    // Received from its author and materialised while that device was trusted.
+    await db.syncInbox.put({
+      operationId: asOperationId('op-n1-1'), accessScopeId: 'space-a', deviceId: DEVICE,
+      logicalAt: { millis: 1000, counter: 0 }, entityTable: 'notes', entityId: 'n1',
+      result: 'applied', receivedAt: 1000,
+    });
+    await createTrustedDeviceStore(db).revoke({ deviceId: DEVICE, at: Date.now() });
+
+    await expect(rescopeFrames({ requestId: 'move-a-b',
+      db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
+    })).resolves.toBe(1);
+    expect(await db.notes.get('n1')).toMatchObject({ accessScopeId: 'space-b' });
+  });
+
+  it('refuses a revoked author\'s accepted frame altered since it was accepted', async () => {
+    await enqueuePut(note());
+    await db.syncInbox.put({
+      operationId: asOperationId('op-n1-1'), accessScopeId: 'space-a', deviceId: DEVICE,
+      logicalAt: { millis: 1000, counter: 0 }, entityTable: 'notes', entityId: 'n1',
+      result: 'applied', receivedAt: 1000,
+    });
+    // A provider rewrites the retained frame: the same operation, author, entity,
+    // scope and time the receipt records, another signed field, the old signature.
+    const accepted = await verifyFrame(await db.syncOperations.get('op-n1-1'));
+    await db.syncOperations.put({ ...accepted, epoch: accepted.epoch + 1 });
+    await createTrustedDeviceStore(db).revoke({ deviceId: DEVICE, at: Date.now() });
+
+    await expect(rescopeFrames({ requestId: 'move-a-b',
+      db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
+    })).rejects.toThrow(/trusted identity/);
+    expect(await db.syncScopeRebindings.count()).toBe(0);
+    expect(await db.notes.get('n1')).toMatchObject({ accessScopeId: 'space-a' });
+  });
+
+  it('still refuses a revoked author\'s frame whose receipt names a different operation', async () => {
+    await enqueuePut(note());
+    // A receipt under the same id records another device's operation, not this frame.
+    await db.syncInbox.put({
+      operationId: asOperationId('op-n1-1'), accessScopeId: 'space-a', deviceId: asDeviceId('device-c'),
+      logicalAt: { millis: 1000, counter: 0 }, entityTable: 'notes', entityId: 'n1',
+      result: 'applied', receivedAt: 1000,
+    });
+    await createTrustedDeviceStore(db).revoke({ deviceId: DEVICE, at: Date.now() });
+
+    await expect(rescopeFrames({ requestId: 'move-a-b',
+      db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
+    })).rejects.toThrow(/trusted identity/);
+  });
+
   it('retains repeat protection after destination history has been compacted', async () => {
     await enqueuePut(note());
     await rescopeFrames({ requestId: 'move-a-b', db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
@@ -651,7 +703,8 @@ describe('rescopeFrames', () => {
       db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
     })).toBe(0);
     expect(await db.syncScopeRebindings.count()).toBe(1);
-    expect(await db.syncOperations.count()).toBe(1);
+    // The original and the withdrawal remain in space-a; nothing new was authored.
+    expect(await db.syncOperations.count()).toBe(2);
     expect((await db.notes.get('n1'))?.accessScopeId).toBe('space-b');
   });
 
@@ -666,7 +719,8 @@ describe('rescopeFrames', () => {
     expect(await rescopeFrames({ requestId: 'move-again',
       db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
     })).toBe(1);
-    expect(await db.syncOperations.count()).toBe(4);
+    // The original, then a withdrawal and a put for each of the three moves.
+    expect(await db.syncOperations.count()).toBe(7);
     expect(await db.syncScopeRebindings.count()).toBe(3);
   });
 
@@ -686,7 +740,8 @@ describe('rescopeFrames', () => {
       expect(await rescopeFrames({ requestId: 'move-a-b',
         db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' },
       })).toBe(0);
-      expect(await db.syncOperations.count()).toBe(2);
+      // One move's withdrawal and put, beside the original.
+      expect(await db.syncOperations.count()).toBe(3);
       expect(await db.syncScopeRebindings.count()).toBe(1);
     } finally {
       other.close();
@@ -706,7 +761,7 @@ describe('rescopeFrames', () => {
       expect(await rescopeFrames({ requestId: 'move-a-b', db, resolver,
         identity: signingIdentity, scopes: { from: 'space-a', to: 'space-b' } })).toBe(0);
       expect(signingIdentity).not.toHaveBeenCalled();
-      expect(await db.syncOperations.count()).toBe(2);
+      expect(await db.syncOperations.count()).toBe(3);
       expect(await db.syncScopeRebindings.count()).toBe(1);
     } finally {
       other.close();

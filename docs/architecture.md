@@ -296,11 +296,18 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   `Table.clear()` are deliberately not journalled.
 - **Scope binds through the adapter, not the row.** A provider realm is bound to the
   scope's frames plus a `syncProviderBindings` record. Access-scope rebinding
-  (`rescopeFrames.ts`) moves current saved rows and retained deletions, creating one
-  fresh signed operation per entity with a later logical time and matching payload
-  metadata. Compacted journal history never supplies content. Original frames stay
+  (`rescopeFrames.ts`) moves current saved rows and retained deletions. A current row
+  is withdrawn from the source by a signed delete and put in the destination by a
+  later signed operation with matching payload metadata, so a device that reads only
+  the source drops it; a retained deletion gets one fresh delete in the destination.
+  A row stored in the source scope that the encryption middleware cannot open blocks
+  the move, even when a key resolves for it. A move prepares one entity at a time and
+  refuses, before reading any content, to carry more than `MAX_ATTACHMENT_BYTES` of
+  attachments in total. Compacted journal history never supplies content. Original frames stay
   immutable, and attachment chunks are resealed for the destination. Retained
-  history passes signature, table-policy and clock checks; unresolved newer or tied
+  history passes signature, table-policy and clock checks, or matches an inbox entry
+  from when it was accepted and still verifies against its author's recorded key,
+  even if that author was revoked since; unresolved newer or tied
   operations block the move. Local `syncScopeRebindings` receipts keyed by explicit
   request ids prevent retries from replaying a completed move, even after compaction
   or a subsequent move back. The transaction rechecks saved state, journal/inbox,

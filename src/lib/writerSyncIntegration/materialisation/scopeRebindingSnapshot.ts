@@ -5,7 +5,9 @@ import { journalledTables } from '@/lib/writerSyncIntegration/writerTablePolicy'
 import { decodeFrame } from 'writer-sync/operations';
 import { requireJournalledTable } from './frameAdmission';
 import { isJournalledRow } from './journalledRow';
-import type { RebindingSnapshot, ScopeEntityState, ScopeTransition } from './scopeRebinding.types';
+import type {
+  HiddenScopeRow, RebindingSnapshot, ScopeEntityState, ScopeTransition,
+} from './scopeRebinding.types';
 
 export const scopeEntityKey = (entity: Pick<ScopeEntityState, 'entityTable' | 'entityId'>): string =>
   JSON.stringify([entity.entityTable, entity.entityId]);
@@ -17,23 +19,36 @@ export const scopeRebindingTables = (db: LoremDB): string[] => [
   ...(hasAccountIdentityTable(db) ? ['accountDeviceIdentities'] : []),
 ];
 
-/** Domain rows are the authority for content even after their frames are compacted. */
+/**
+ * Domain rows are the authority for content even after their frames are
+ * compacted. A cursor read passes the encryption middleware by and sees each row
+ * as stored, its routing metadata in the clear, so a source row it finds that
+ * the rows do not include is stored here but hidden from this read.
+ */
 const readRows = async (options: {
   transition: ScopeTransition;
   keys: ReadonlyMap<string, [string, string]>;
-}): Promise<ScopeEntityState[]> => {
+}): Promise<{ rows: ScopeEntityState[]; hidden: HiddenScopeRow[] }> => {
   const { transition: { db, scopes }, keys } = options;
   const rows: ScopeEntityState[] = [];
+  const hidden: HiddenScopeRow[] = [];
   for (const entityTable of journalledTables()) {
-    for (const row of await requireJournalledTable(db, entityTable).toArray()) {
+    const table = requireJournalledTable(db, entityTable);
+    const visible = await table.toArray();
+    for (const row of visible) {
       const key = JSON.stringify([entityTable, row.id]);
       if (row.accessScopeId !== scopes.from && !keys.has(key)) continue;
       invariant(isJournalledRow(row), () => `${entityTable} has invalid scope-move metadata`);
       invariant(row.id.length > 0 && row.mutationId.length > 0, 'Invalid scope-move identity');
       rows.push({ entityTable, entityId: row.id, row, tombstone: undefined });
     }
+    const read = new Set(visible.map((row) => row.id));
+    const unread = await table
+      .filter((stored) => stored.accessScopeId === scopes.from && !read.has(stored.id))
+      .primaryKeys();
+    hidden.push(...unread.map((entityId) => ({ entityTable, entityId })));
   }
-  return rows;
+  return { rows, hidden };
 };
 
 /** Read only inside a transaction covering scopeRebindingTables. */
@@ -49,7 +64,7 @@ export const readRebindingSnapshot = async (
     requireJournalledTable(db, entity.entityTable);
     keys.set(scopeEntityKey(entity), [entity.entityTable, entity.entityId]);
   }
-  const saved = await readRows({ transition, keys });
+  const { rows: saved, hidden } = await readRows({ transition, keys });
   for (const state of saved) keys.set(scopeEntityKey(state), [state.entityTable, state.entityId]);
   const rows = new Map(saved.map((state) => [scopeEntityKey(state), state.row]));
   const deleted = new Map(tombstones.map((t) => [scopeEntityKey(t), t]));
@@ -68,5 +83,8 @@ export const readRebindingSnapshot = async (
     await db.trustedDevices.toArray(),
     hasAccountIdentityTable(db) ? await db.accountDeviceIdentities.toArray() : [],
   ]);
-  return { entities, history, inbox, trust, receipt: await db.syncScopeRebindings.get(requestId) };
+  return {
+    entities, hidden, history, inbox, trust,
+    receipt: await db.syncScopeRebindings.get(requestId),
+  };
 };
