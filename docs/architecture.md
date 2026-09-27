@@ -308,7 +308,9 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   the move, even when a key resolves for it. A move prepares one entity at a time and
   refuses, before reading any content, to carry more than `MAX_ATTACHMENT_BYTES` of
   attachments in total. Compacted journal history never supplies content. Original frames stay
-  immutable, and attachment chunks are resealed for the destination. Retained
+  immutable, and attachment chunks are resealed for the destination; the chunk store
+  holds only an attachment's latest ciphertext, so the retained source put settles as
+  superseded without it. Retained
   history passes signature, table-policy and clock checks, or matches an inbox entry
   from when it was accepted and still verifies against its author's recorded key,
   even if that author was revoked since; unresolved newer or tied

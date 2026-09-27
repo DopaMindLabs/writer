@@ -1,21 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteState, type Note, type NoteAttachment } from '@/db/schema';
+import {
+  NoteKind, NoteState, type Note, type NoteAttachment, type SyncAttachmentChunk,
+} from '@/db/schema';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
+import * as ids from '@/lib/ids';
 import { sampleMetadata } from '@/test/fixtures';
 import { asDeviceId, asOperationId, TrustedDeviceStatus } from 'writer-sync/core';
 import {
-  generateDeviceIdentity, publicJwkOf, verifyFrameSignature,
+  fromBase64, generateDeviceIdentity, publicJwkOf, toBase64Url, verifyFrameSignature,
   type DeviceIdentityKeys, type ScopeKeyContext, type ScopeKeyResolver, type SyncKeyRing,
 } from 'writer-sync/crypto';
 import {
-  compareOperations, MAX_ATTACHMENT_BYTES, TRANSFER_CHUNK_BYTES, verifyFrame,
-  type EncryptedSyncFrame,
+  buildChunkManifest, CATCH_UP_PROTOCOL_VERSION, compareOperations, MAX_ATTACHMENT_BYTES,
+  TRANSFER_CHUNK_BYTES, verifyFrame, type CatchUpMessage, type EncryptedSyncFrame,
 } from 'writer-sync/operations';
+import { createAttachmentChunkStore } from '@/lib/writerSyncIntegration/attachmentChunkStore';
 import { createTrustedDeviceStore } from '@/lib/writerSyncIntegration/trustedDeviceStore';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import * as payloads from './attachmentFramePayload';
+import * as admission from './frameAdmission';
 import { createOperationJournalMiddleware } from './operationJournalMiddleware';
 import { ScopeRebindingTooLargeError } from './prepareScopeRebinding';
 import { rescopeFrames } from './rescopeFrames';
@@ -344,6 +349,19 @@ describe('a moved row on devices that read one scope or both', () => {
     expect(await peer.syncTombstones.count()).toBe(0);
   });
 
+  it('keeps the row on a device reading both when the withdrawal arrives after the put was compacted', async () => {
+    const authored = await movedOnto(peer);
+    const put = authored.find(({ accessScopeId }) => accessScopeId === 'b')!;
+    const withdrawal = authored.find(({ accessScopeId }) => accessScopeId === 'a')!;
+    expect(await applyOn(peer, put)).toBe('applied');
+    // Every peer acknowledged the destination put, so compaction dropped it.
+    await peer.syncOperations.delete(String(put.operationId));
+
+    expect(await applyOn(peer, withdrawal)).toBe('superseded');
+    expect((await peer.notes.get('n1'))?.accessScopeId).toBe('b');
+    expect(await peer.syncTombstones.count()).toBe(0);
+  });
+
   it('keeps the row on the moving device, with the withdrawal already settled', async () => {
     await db.notes.put(note());
     expect(await rescopeFrames(move())).toBe(1);
@@ -352,5 +370,152 @@ describe('a moved row on devices that read one scope or both', () => {
     expect(await db.syncInbox.get(String(withdrawal!.operationId))).toMatchObject({ result: 'superseded' });
     expect(await db.syncTombstones.count()).toBe(0);
     expect((await db.notes.get('n1'))?.accessScopeId).toBe('b');
+  });
+});
+
+describe('a moved attachment on the devices that sync it', () => {
+  const verifySignature = (candidate: EncryptedSyncFrame) =>
+    verifyFrameSignature(keys.publicKey, candidate);
+  const applyOn = (target: LoremDB, frame: EncryptedSyncFrame) => applyInboundFrame({
+    db: target, frame, ring: rings.get(frame.accessScopeId)!, verifySignature,
+  });
+
+  /**
+   * What a catch-up does once its frames are across: the holder offers its
+   * chunk set and the receiver asks for whatever it does not already hold.
+   * Returns the indices the receiver asked for.
+   */
+  const deliverChunks = async (
+    target: LoremDB,
+    chunks: readonly SyncAttachmentChunk[],
+  ): Promise<number[]> => {
+    const pieces = [...chunks].sort((a, b) => a.index - b.index).map((chunk) => fromBase64(chunk.bytes));
+    const content = new Uint8Array(pieces.reduce((total, piece) => total + piece.length, 0));
+    pieces.reduce((offset, piece) => {
+      content.set(piece, offset);
+      return offset + piece.length;
+    }, 0);
+    const attachmentId = chunks[0].attachmentId;
+    const manifest = await buildChunkManifest({ attachmentId, content, chunkBytes: TRANSFER_CHUNK_BYTES });
+    const sent: CatchUpMessage[] = [];
+    const transfer = createAttachmentChunkStore(target).create({ send: (message) => { sent.push(message); } });
+    await transfer.receive({
+      v: CATCH_UP_PROTOCOL_VERSION, kind: 'attachment-offer', cursor: 0, manifests: [manifest],
+    });
+    const requested = sent.flatMap((message) =>
+      message.kind === 'attachment-request' ? message.indices : []);
+    for (const index of requested) {
+      await transfer.receive({
+        v: CATCH_UP_PROTOCOL_VERSION, kind: 'attachment-chunk',
+        chunk: { attachmentId, index, bytes: toBase64Url(pieces[index]) },
+      });
+    }
+    return requested;
+  };
+
+  beforeEach(async () => {
+    // Chunk labelling trusts only operations this device admits.
+    await createTrustedDeviceStore(peer).trust({
+      deviceId: DEVICE, publicIdentityJwk: await publicJwkOf(keys.publicKey),
+      principalId: sampleMetadata().createdBy, status: TrustedDeviceStatus.Active,
+      addedAt: 1000, lastSessionAt: 1000, displayName: 'Moving device', acknowledgedOperations: {},
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('labels arriving chunks by an admitted operation, never a forged later one', async () => {
+    const row = attachment();
+    await db.noteAttachments.put(row);
+    expect(await rescopeFrames(move())).toBe(1);
+    const moved = (await db.syncOperations.where({ accessScopeId: 'b' }).first())!;
+    await peer.syncOperations.put(moved);
+    // A provider writes an unsigned frame claiming a later operation in another scope.
+    await peer.syncOperations.put({
+      ...moved, operationId: asOperationId('forged'), accessScopeId: 'x', signature: '',
+      logicalAt: { millis: moved.logicalAt.millis + 1, counter: 0 },
+    });
+
+    const offered = await db.syncAttachmentChunks.toArray();
+    await deliverChunks(peer, offered);
+
+    const held = await peer.syncAttachmentChunks.toArray();
+    expect(new Set(held.map((chunk) => chunk.accessScopeId))).toEqual(new Set(['b']));
+    expect(held.map((chunk) => chunk.bytes)).toEqual(offered.map((chunk) => chunk.bytes));
+  });
+
+  it('admits the attachment\'s operations once per offer, not once per chunk', async () => {
+    const row = attachment();
+    await db.noteAttachments.put(row);
+    const frames = await db.syncOperations.toArray();
+    await peer.syncOperations.bulkPut(frames);
+    const offered = await db.syncAttachmentChunks.toArray();
+    expect(offered.length).toBeGreaterThan(1);
+    const admissions = vi.spyOn(admission, 'admittedFrame');
+
+    expect(await deliverChunks(peer, offered)).toHaveLength(offered.length);
+
+    expect(admissions).toHaveBeenCalledTimes(frames.length);
+    const held = await peer.syncAttachmentChunks.toArray();
+    expect(held.map((chunk) => chunk.accessScopeId)).toEqual(offered.map(() => 'a'));
+  });
+
+  it('settles the retained source frame at the move, without the ciphertext it named', async () => {
+    const row = attachment();
+    await db.noteAttachments.put(row);
+    const source = await db.syncOperations.get(String(row.mutationId));
+    expect(await rescopeFrames(move())).toBe(1);
+
+    // Authored here, so only the move's receipt keeps the sweep from retrying it.
+    expect(await db.syncInbox.get(String(row.mutationId))).toMatchObject({ result: 'superseded' });
+    expect(await applyOn(db, source!)).toBe('superseded');
+    expect((await db.noteAttachments.get(row.id))?.accessScopeId).toBe('b');
+  });
+
+  it('materialises the moved attachment on a device catching up both histories', async () => {
+    // Sorts the move's frame ids before the source's, as journal key order would read them.
+    let authored = 0;
+    vi.spyOn(ids, 'newId').mockImplementation(() => `0-moved-${authored++}`);
+    const row = attachment();
+    await db.noteAttachments.put(row);
+    expect(await rescopeFrames(move())).toBe(1);
+    const frames = await db.syncOperations.toArray();
+
+    // A catch-up journals every reply frame before it offers attachments.
+    await peer.syncOperations.bulkPut(frames);
+    await deliverChunks(peer, await db.syncAttachmentChunks.toArray());
+    const results = new Map<string, string>();
+    for (const frame of frames) {
+      results.set(`${frame.accessScopeId} ${frame.kind}`, await applyOn(peer, frame));
+    }
+
+    expect(results).toEqual(new Map([
+      ['a delete', 'superseded'], ['b put', 'applied'], ['a put', 'superseded'],
+    ]));
+    const received = await peer.noteAttachments.get(row.id);
+    expect(received?.accessScopeId).toBe('b');
+    expect(await received?.blob.arrayBuffer()).toEqual(await row.blob.arrayBuffer());
+  });
+
+  it('fetches the moved ciphertext on a device that already held the source attachment', async () => {
+    const row = attachment();
+    await db.noteAttachments.put(row);
+    const source = (await db.syncOperations.get(String(row.mutationId)))!;
+    await peer.syncOperations.put(source);
+    await deliverChunks(peer, await db.syncAttachmentChunks.toArray());
+    expect(await applyOn(peer, source)).toBe('applied');
+
+    expect(await rescopeFrames(move())).toBe(1);
+    const moved = (await db.syncOperations.where({ accessScopeId: 'b' }).first())!;
+    await peer.syncOperations.put(moved);
+
+    // Held under the source scope, the old chunks are not the moved content.
+    expect(await deliverChunks(peer, await db.syncAttachmentChunks.toArray())).toEqual([0, 1]);
+    expect(await applyOn(peer, moved)).toBe('applied');
+    const received = await peer.noteAttachments.get(row.id);
+    expect(received?.accessScopeId).toBe('b');
+    expect(await received?.blob.arrayBuffer()).toEqual(await row.blob.arrayBuffer());
   });
 });

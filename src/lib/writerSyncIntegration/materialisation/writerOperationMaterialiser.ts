@@ -1,13 +1,15 @@
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import { openOperationPayload } from 'writer-sync/crypto';
-import { assertAcceptableRemoteTime } from 'writer-sync/core';
+import { assertAcceptableRemoteTime, compareTimestamps } from 'writer-sync/core';
 import { compareOperations, supersedes } from 'writer-sync/operations';
 import { verifyFrame } from 'writer-sync/operations';
 import type { MaterialiseResult } from 'writer-sync/operations';
-import type { EncryptedSyncFrame } from 'writer-sync/operations';
+import type { EncryptedSyncFrame, SyncTombstone } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
+import { chunkedBlobFieldFor } from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { materialiseAttachmentFrame } from './attachmentFrameMaterialiser';
+import { hasLogicalTime } from './journalledRow';
 import { tombstoneOf } from './tombstone';
 import {
   UntrustedFrameError,
@@ -35,6 +37,8 @@ export { DisallowedOperationTableError, UntrustedFrameError } from './frameAdmis
  *   device id — never provider arrival order), for deletions as much as puts;
  * - deletes create tombstones, and a stale put can never resurrect a
  *   tombstoned entity;
+ * - a put that has already lost is settled without its attachment content,
+ *   which the chunk store stops holding once a later operation replaces it;
  * - the logical time of an accepted operation merges into this device's clock,
  *   so local edits are stamped after everything the device has seen;
  * - applying an inbound operation never emits a new local operation (writes go
@@ -53,17 +57,35 @@ const journalWinner = async (
   return rivals.sort(compareOperations).at(-1);
 };
 
+/**
+ * Whether a strictly later put has already been applied here. Its frame may be
+ * journalled, or compacted away once every peer held it, leaving only the saved
+ * row's logical time. That time is kept in the clear, and a cursor read passes
+ * the encryption middleware by, so no content is decrypted to learn it. An
+ * exact tie is left to the journal: the row does not record its author.
+ */
+const laterPutApplied = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+}): Promise<boolean> => {
+  const { db, frame, table } = options;
+  const winner = await journalWinner(db, frame);
+  if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') return true;
+  const saved = await table.where(':id').equals(frame.entityId).filter(hasLogicalTime).first();
+  return saved !== undefined && compareTimestamps(saved.logicalUpdatedAt, frame.logicalAt) > 0;
+};
+
 const applyDelete = async (options: {
   db: LoremDB;
   frame: EncryptedSyncFrame;
   table: JournalledTable;
 }): Promise<MaterialiseResult> => {
   const { db, frame, table } = options;
-  const winner = await journalWinner(db, frame);
-  if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
-    // A strictly later put is already journalled locally; this deletion lost.
-    // Removing the row here would let provider arrival order discard newer
-    // content — the same rule `applyPut` applies in the other direction.
+  if (await laterPutApplied(options)) {
+    // This deletion lost. Removing the row here would let provider arrival
+    // order discard newer content — the same rule `applyPut` applies in the
+    // other direction.
     return 'superseded';
   }
   const tombstone = tombstoneOf(frame);
@@ -77,29 +99,119 @@ const applyDelete = async (options: {
   return 'applied';
 };
 
-const applyPut = async (options: {
+/**
+ * A put whose content was skipped because it was losing, found winning once its
+ * transaction opened: a rival or deletion went in between.
+ */
+class LosingPutWonError extends Error {
+  constructor(entityId: string) {
+    super(`The put for ${entityId} won after its content was skipped`);
+    this.name = 'LosingPutWonError';
+  }
+}
+
+interface PutVerdict {
+  result: MaterialiseResult;
+  /** The deletion a winning put overturns, if there is one. */
+  tombstone: SyncTombstone | undefined;
+}
+
+/** What a put would do to local state, decided before its content is needed. */
+const putVerdict = async (options: {
   db: LoremDB;
   frame: EncryptedSyncFrame;
   table: JournalledTable;
-  row: Record<string, unknown>;
-}): Promise<MaterialiseResult> => {
-  const { db, frame, table, row } = options;
+}): Promise<PutVerdict> => {
+  const { db, frame } = options;
   const tombstone = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   if (tombstone && !supersedes(frame, { ...frame, ...tombstone })) {
     // The deletion is later (or ties) — the put is stale and must not
     // resurrect the entity.
-    return 'tombstoned';
+    return { result: 'tombstoned', tombstone };
   }
-  const winner = await journalWinner(db, frame);
-  if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
-    // A strictly later put is already journalled locally; this one lost.
-    return 'superseded';
-  }
+  // A strictly later put has already been applied; this one lost.
+  if (await laterPutApplied(options)) return { result: 'superseded', tombstone };
+  return { result: 'applied', tombstone };
+};
+
+const applyPut = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+  row: Record<string, unknown> | null;
+}): Promise<MaterialiseResult> => {
+  const { db, frame, table, row } = options;
+  const { result, tombstone } = await putVerdict({ db, frame, table });
+  if (result !== 'applied') return result;
+  // Content is assembled only for a put expected to win; the caller assembles
+  // it for one that was losing then and wins now.
+  if (row === null) throw new LosingPutWonError(frame.entityId);
   if (tombstone) {
     await db.syncTombstones.delete([frame.entityTable, frame.entityId]);
   }
   await table.put(row);
   return 'applied';
+};
+
+/**
+ * The row a put would write. An attachment's ciphertext travels apart from its
+ * frame, and the chunk store holds only the entity's latest: a scope move, for
+ * one, reseals it under the destination. A put already overtaken by a later
+ * operation or a deletion writes nothing, so it is settled without the
+ * ciphertext it named rather than waiting for chunks no device still holds.
+ */
+const contentFor = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+  ring: SyncKeyRing;
+  row: Record<string, unknown>;
+  /** False once the put has been found winning after all: assemble regardless. */
+  skipLosing: boolean;
+}): Promise<Record<string, unknown> | null> => {
+  const { frame, skipLosing } = options;
+  const chunked = chunkedBlobFieldFor(frame.entityTable) !== undefined;
+  if (chunked && skipLosing && (await putVerdict(options)).result !== 'applied') return null;
+  return materialiseAttachmentFrame(options);
+};
+
+/**
+ * Journal, apply and stamp one admitted frame in one transaction. An accepted
+ * operation id replays as its recorded result without touching state.
+ */
+const commitFrame = (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+  row: Record<string, unknown> | null;
+}): Promise<MaterialiseResult> => {
+  const { db, frame, table, row } = options;
+  return db.transaction(
+    'rw',
+    [table, db.syncOperations, db.syncInbox, db.syncTombstones],
+    async () => {
+      const prior = await db.syncInbox.get(String(frame.operationId));
+      if (prior) return prior.result;
+      // The received ciphertext is journalled verbatim — immutable, never
+      // re-encrypted — so this device can serve it onward to other providers.
+      await db.syncOperations.put(frame);
+      const result =
+        frame.kind === 'delete'
+          ? await applyDelete({ db, frame, table })
+          : await applyPut({ db, frame, table, row });
+      await db.syncInbox.put({
+        operationId: frame.operationId,
+        accessScopeId: frame.accessScopeId,
+        deviceId: frame.deviceId,
+        logicalAt: frame.logicalAt,
+        entityTable: frame.entityTable,
+        entityId: frame.entityId,
+        result,
+        receivedAt: frame.logicalAt.millis,
+      });
+      return result;
+    },
+  );
 };
 
 /**
@@ -145,37 +257,21 @@ export const applyInboundFrame = async (options: {
   assertAcceptableRemoteTime(frame.logicalAt, options.now ?? (() => Date.now()));
   const opened =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
-  const row =
-    opened === null
-      ? null
-      : await materialiseAttachmentFrame({ db, frame, ring, row: opened });
 
-  const result = await db.transaction(
-    'rw',
-    [table, db.syncOperations, db.syncInbox, db.syncTombstones],
-    async () => {
-      const prior = await db.syncInbox.get(String(frame.operationId));
-      if (prior) return prior.result;
-      // The received ciphertext is journalled verbatim — immutable, never
-      // re-encrypted — so this device can serve it onward to other providers.
-      await db.syncOperations.put(frame);
-      const result =
-        frame.kind === 'delete'
-          ? await applyDelete({ db, frame, table })
-          : await applyPut({ db, frame, table, row: row ?? {} });
-      await db.syncInbox.put({
-        operationId: frame.operationId,
-        accessScopeId: frame.accessScopeId,
-        deviceId: frame.deviceId,
-        logicalAt: frame.logicalAt,
-        entityTable: frame.entityTable,
-        entityId: frame.entityId,
-        result,
-        receivedAt: frame.logicalAt.millis,
-      });
-      return result;
-    },
-  );
+  const commit = async (skipLosing: boolean): Promise<MaterialiseResult> =>
+    commitFrame({
+      db, frame, table,
+      row: opened === null ? null : await contentFor({ db, frame, table, ring, row: opened, skipLosing }),
+    });
+  let result: MaterialiseResult;
+  try {
+    result = await commit(true);
+  } catch (error) {
+    if (!(error instanceof LosingPutWonError)) throw error;
+    // Losing when its content was skipped, winning when its transaction opened:
+    // nothing else would call again for it, so assemble the content now.
+    result = await commit(false);
+  }
   // The frame's logical time joins this device's clock, so the next local edit
   // is stamped after every operation this device has accepted — a device whose
   // wall clock lags would otherwise keep losing conflicts it should win.

@@ -22,6 +22,7 @@ import {
 } from 'writer-sync/crypto';
 import {
   buildChunkManifest,
+  createAttachmentTransfer,
   TRANSFER_CHUNK_BYTES,
   type CatchUpMessage,
 } from 'writer-sync/operations';
@@ -32,6 +33,12 @@ import {
 } from './materialisation/writerOperationFactory';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { createAttachmentChunkStore } from './attachmentChunkStore';
+
+// The real transfer, watched: a test can then reach the ports this store hands it.
+vi.mock('writer-sync/operations', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('writer-sync/operations')>();
+  return { ...actual, createAttachmentTransfer: vi.fn(actual.createAttachmentTransfer) };
+});
 
 const DEVICE_REMOTE = asDeviceId('remote-device');
 
@@ -82,7 +89,20 @@ const thinFrame = async () => {
   });
   // The sweep this store triggers attributes a frame before applying it.
   const [signed] = await signAuthoredFrames(remote.privateKey, [frame]);
-  return { frame: signed, chunks: prepared.chunks, ring };
+  return { frame: signed, chunks: prepared.chunks, ring, row: prepared.row };
+};
+
+/** The sealed attachment the chunks carry, joined back together. */
+const ciphertextOf = (chunks: readonly { bytes: string }[]): Uint8Array => {
+  const parts = chunks.map((chunk) =>
+    Uint8Array.from(atob(chunk.bytes), (character) => character.charCodeAt(0)));
+  const content = new Uint8Array(parts.reduce((total, part) => total + part.length, 0));
+  let offset = 0;
+  for (const part of parts) {
+    content.set(part, offset);
+    offset += part.length;
+  }
+  return content;
 };
 
 beforeEach(async () => {
@@ -163,20 +183,9 @@ describe('createAttachmentChunkStore', () => {
     const adapter = createAttachmentChunkStore(db);
     const sent: CatchUpMessage[] = [];
     const transfer = adapter.create({ send: (message) => { sent.push(message); } });
-    const content = new Uint8Array(
-      chunks.reduce((total, chunk) => total + atob(chunk.bytes).length, 0),
-    );
-    let offset = 0;
-    for (const chunk of chunks) {
-      const raw = Uint8Array.from(atob(chunk.bytes), (character) =>
-        character.charCodeAt(0),
-      );
-      content.set(raw, offset);
-      offset += raw.length;
-    }
     const manifest = await buildChunkManifest({
       attachmentId: 'a1',
-      content,
+      content: ciphertextOf(chunks),
       chunkBytes: TRANSFER_CHUNK_BYTES,
     });
 
@@ -225,6 +234,42 @@ describe('createAttachmentChunkStore', () => {
       chunkCount: 2,
     });
     expect(await adapter.manifestsForScopes(['other-scope'])).toEqual([]);
+  });
+
+  it('keeps nothing from an offer that settles with every chunk already held', async () => {
+    const { frame, chunks, ring, row } = await thinFrame();
+    await db.syncOperations.put(frame);
+    await db.syncAttachmentChunks.bulkPut(chunks);
+    const manifest = await buildChunkManifest({
+      attachmentId: 'a1',
+      content: ciphertextOf(chunks),
+      chunkBytes: TRANSFER_CHUNK_BYTES,
+    });
+    const sent: CatchUpMessage[] = [];
+    const transfer = createAttachmentChunkStore(db).create({
+      send: (message) => { sent.push(message); },
+    });
+    const ports = vi.mocked(createAttachmentTransfer).mock.lastCall?.[0];
+
+    // Offered again and again, as a long-lived link names what both devices hold.
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 1, manifests: [manifest] });
+    expect(sent).toEqual([
+      { v: 1, kind: 'attachment-offer-next', cursor: 1 },
+      { v: 1, kind: 'attachment-offer-next', cursor: 2 },
+    ]);
+
+    // A later operation moves the attachment. A chunk saved now is labelled from
+    // that operation, not from an offer that settled before it.
+    const [moved] = await signAuthoredFrames(remote.privateKey, [await makePutFrame({
+      ring, deviceId: DEVICE_REMOTE, entityTable: 'noteAttachments',
+      row: { ...row, accessScopeId: 's2', mutationId: asOperationId('op-a2'),
+        logicalUpdatedAt: { millis: 2000, counter: 0 } },
+    })]);
+    await db.syncOperations.put(moved);
+    await ports?.saveChunk?.({ attachmentId: 'a1', index: 0, bytes: new Uint8Array([1]) });
+
+    expect((await db.syncAttachmentChunks.get(['a1', 0]))?.accessScopeId).toBe('s2');
   });
 
   it('skips an attachment whose chunks cannot form a manifest, keeping the rest', async () => {

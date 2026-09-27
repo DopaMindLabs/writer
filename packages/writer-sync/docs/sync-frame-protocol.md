@@ -217,6 +217,10 @@ Rules the materialiser enforces (`writerOperationMaterialiser.ts`):
 - Deletions are ordered against the journal winner exactly as puts are: a delete
   that loses to a strictly later journalled `put` returns `superseded` and does
   **not** remove the row.
+- The saved row keeps its logical time after compaction drops the frame that
+  wrote it. A put or delete older than that time returns `superseded`, so a frame
+  arriving late cannot overwrite or remove newer content the journal no longer
+  holds. An exact tie is left to the journal: the row does not record its author.
 - A delete records a tombstone, and the **latest** deletion is kept — an older
   delete arriving afterwards must not rewrite the tombstone a later put is
   compared against.
@@ -402,6 +406,9 @@ everything past its in-flight ceiling and those attachments are never mentioned
 again. Each page carries a `cursor` into the holder's catalogue, and the
 receiver answers with `attachment-offer-next` once every manifest in the page is
 complete, already held or refused, which is what walks a catalogue of any size.
+Each settled offer is reported to the host through the optional `onSettled` port,
+whatever became of it, so state a host keeps per offer lasts only as long as the
+offer.
 
 The cursor is session state on both sides, and only one value is legal at a
 time: the receiver takes a page only at the cursor after the last one it
@@ -423,7 +430,10 @@ asking after every chunk would have the holder serve indices it is already
 serving. Chunks are served against the transport's `sendWhenReady`, so the
 holder moves at the bearer's pace — a legal request of 256 chunks answered in
 one pass would overrun the outbox in front of the channel and fail a session
-neither peer misused. A holder that cannot supply an index it was asked for says so with an
+neither peer misused. A transfer serves only what it offered, as it offered it: a
+chunk whose ciphertext was replaced after the offer (a scope move reseals it for
+another scope) is reported unavailable rather than sent, and a request for an
+attachment it never offered is left to whichever transfer on the link did. A holder that cannot supply an index it was asked for says so with an
 `attachment-unavailable` message rather than falling silent — the receiver is
 waiting on that page, so silence stalls the transfer for the life of the
 session. The transfer is then dropped rather than left pending, so a later offer
@@ -453,7 +463,8 @@ device that reads only the source scope is never offered the destination put;
 without the withdrawal it would keep its copy, and its next edit would win
 convergence and move the row back. With it, that device removes the row and holds
 a tombstone, while a device that reads both scopes sees the later put win,
-whichever frame reaches it first. No tombstone holds the withdrawal, since the entity
+whichever frame reaches it first, even when the destination put was compacted
+before the withdrawal arrived. No tombstone holds the withdrawal, since the entity
 lives on in the destination, so compaction never ages it out (`keptUntilHeld`):
 it leaves only once every peer holds it, and the frame each peer's acknowledgement
 names stays with it, since that is the only evidence the peer holds it. A rebuild of the source scope serves it
@@ -468,7 +479,31 @@ state. Put payloads carry the destination `accessScopeId`, new `mutationId` and
 new `logicalUpdatedAt`, matching the header. Existing content and editorial
 attribution are preserved. Attachment bytes are resealed under the destination
 binding and carried in new ciphertext chunks. Deletes receive fresh headers and
-signatures without a payload. Original frames remain immutable.
+signatures without a payload. Original frames remain immutable. A live link
+offers an attachment only with a put in its own scope, and only while the chunk
+set and the saved row are in that scope too, so the withdrawal crosses the source
+link without the ciphertext that moved away.
+
+A device keeps one chunk set per attachment: the ciphertext of the attachment's
+latest operation in convergence order, labelled with that operation's scope.
+Materialisation decides whether a put still wins before it assembles attachment
+content, so the retained source frame settles as `superseded` without the
+ciphertext the move replaced; a put found winning after all once its transaction
+opens has its content assembled and applied in the same call. A receiving device labels arriving chunks with the
+scope of the attachment's latest admitted operation — never by journal key order,
+and never by a frame that fails admission — and chunks held under another scope do
+not count as held, so a device that
+already had the source attachment fetches the moved ciphertext. A transfer binds
+each offered attachment to that operation once, when it considers the offer, and
+labels every chunk it saves from the binding rather than reading and verifying the
+history per chunk; an operation journalled mid-transfer is picked up by the next
+offer. The binding is released when its offer settles, including an offer whose
+chunks were all held and that started no transfer. A catch-up reply
+journals its frames before it offers attachments, so the moved frame is known when
+its chunks arrive. Chunks are still identified by attachment id and index alone:
+a device that has journalled the move without yet receiving the moved ciphertext
+can accept a pre-move chunk set from a peer that has not seen the move, and holds
+the wrong ciphertext until the transfer identifies chunk sets by content hash.
 
 Both scope keys must be available for every journalled content table before
 reading state: the encryption middleware hides rows it cannot open, a resolver may

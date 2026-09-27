@@ -277,8 +277,10 @@ destination under a new operation id at a later logical time, with matching scop
 and mutation metadata inside its encrypted payload; a device that reads only the
 source scope removes it instead of keeping a copy whose next edit would move it
 back. A retained deletion gets one fresh delete in the destination. The moving
-device signs the new frames; attachment chunks are resealed for the destination.
-Both keys must be available before reading state, and a row stored in the source scope that the
+device signs the new frames; attachment chunks are resealed for the destination, replacing the
+source ciphertext, and the retained source put settles as superseded without it
+(see `sync-frame-protocol.md` §11). Both keys must
+be available before reading state, and a row stored in the source scope that the
 middleware could not open blocks the move, even when a key resolves for it. A move
 prepares one entity at a time and refuses, before reading any content, to carry more
 than 100 MiB of attachments in total. Retained source and related history must pass
