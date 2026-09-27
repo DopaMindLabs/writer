@@ -41,6 +41,7 @@ const harness = (options: {
   const saved: { attachmentId: string; content: Uint8Array }[] = [];
   const savedChunks: { attachmentId: string; index: number; bytes: Uint8Array }[] = [];
   const rejected: { attachmentId: string; reason: unknown }[] = [];
+  const settled: string[] = [];
 
   const ports: AttachmentTransferPorts = {
     heldChunkIndices: async (attachmentId) =>
@@ -59,9 +60,12 @@ const harness = (options: {
     },
     send: (message) => sent.push(message),
     onRejected: (attachmentId, reason) => rejected.push({ attachmentId, reason }),
+    onSettled: (attachmentId) => settled.push(attachmentId),
   };
 
-  return { transfer: createAttachmentTransfer(ports), sent, saved, savedChunks, rejected };
+  return {
+    transfer: createAttachmentTransfer(ports), sent, saved, savedChunks, rejected, settled,
+  };
 };
 
 const chunkMessage = (options: {
@@ -213,7 +217,7 @@ describe('createAttachmentTransfer receiving an offer', () => {
   });
 
   it('declines an offer beyond the in-flight ceiling instead of queueing it', async () => {
-    const { transfer, sent, rejected } = harness();
+    const { transfer, sent, rejected, settled } = harness();
     const manifests = await Promise.all(
       Array.from({ length: MAX_INFLIGHT_ATTACHMENTS + 1 }, (_unused, index) =>
         manifestFor(`att-${String(index)}`, contentOf(24)),
@@ -226,13 +230,46 @@ describe('createAttachmentTransfer receiving an offer', () => {
     expect(sent).toHaveLength(MAX_INFLIGHT_ATTACHMENTS);
     expect(rejected).toHaveLength(1);
     expect(rejected[0]?.attachmentId).toBe(`att-${String(MAX_INFLIGHT_ATTACHMENTS)}`);
+    expect(settled).toEqual([`att-${String(MAX_INFLIGHT_ATTACHMENTS)}`]);
+  });
+
+  it('reports each offer settled once, whatever became of it', async () => {
+    const content = contentOf(2 * CHUNK);
+    const held = await manifestFor('held', content);
+    const fetched = await manifestFor('fetched', content);
+    const refused = await manifestFor('refused', content);
+    const stalled = await manifestFor('stalled', content);
+    const { transfer, settled } = harness({
+      held: (attachmentId) => new Set(attachmentId === 'held' ? [0, 1] : []),
+    });
+
+    await transfer.receive({
+      v: 1, kind: 'attachment-offer', cursor: 0, manifests: [held, fetched, refused, stalled],
+    });
+    // Already held: settled the moment it is offered, with no transfer to end it.
+    expect(settled).toEqual(['held']);
+    for (const index of [0, 1]) {
+      await transfer.receive(
+        chunkMessage({ attachmentId: 'fetched', index, bytes: chunkOf(content, index) }),
+      );
+    }
+    await transfer.receive(
+      chunkMessage({ attachmentId: 'refused', index: 0, bytes: new Uint8Array(CHUNK).fill(9) }),
+    );
+    await transfer.receive({
+      v: 1, kind: 'attachment-unavailable', attachmentId: 'stalled', indices: [0],
+    });
+
+    expect(settled).toEqual(['held', 'fetched', 'refused', 'stalled']);
   });
 });
 
 describe('createAttachmentTransfer serving a request', () => {
   it('sends each requested chunk', async () => {
     const content = contentOf(24);
+    const manifest = await manifestFor('att-1', content);
     const { transfer, sent } = harness({ serve: content });
+    transfer.offer([manifest]);
 
     await transfer.receive({
       v: 1,
@@ -242,13 +279,16 @@ describe('createAttachmentTransfer serving a request', () => {
     });
 
     expect(sent).toEqual([
+      { v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] },
       chunkMessage({ attachmentId: 'att-1', index: 0, bytes: chunkOf(content, 0) }),
       chunkMessage({ attachmentId: 'att-1', index: 2, bytes: chunkOf(content, 2) }),
     ]);
   });
 
   it('says which chunks it does not hold rather than answering with silence', async () => {
+    const manifest = await manifestFor('att-1', contentOf(24));
     const { transfer, sent } = harness();
+    transfer.offer([manifest]);
 
     await transfer.receive({
       v: 1,
@@ -260,6 +300,7 @@ describe('createAttachmentTransfer serving a request', () => {
     // The asking device waits on the page it requested before asking for the
     // next, so an unserved index it is never told about stalls the transfer.
     expect(sent).toEqual([
+      { v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] },
       { v: 1, kind: 'attachment-unavailable', attachmentId: 'att-1', indices: [0] },
     ]);
   });
@@ -657,9 +698,45 @@ describe('paging', () => {
     expect(sent.some((message) => message.kind === 'attachment-request')).toBe(true);
   });
 
+  it('leaves a request for an attachment it never offered to whichever transfer did', async () => {
+    // Another transfer on the same link may have offered it: a refusal from
+    // this one would end a transfer the other is serving.
+    const { transfer, sent } = harness({ serve: contentOf(24) });
+
+    await transfer.receive({
+      v: 1,
+      kind: 'attachment-request',
+      attachmentId: 'att-1',
+      indices: [0],
+    });
+
+    expect(sent).toEqual([]);
+  });
+
+  it('reports chunks replaced since they were offered as unavailable rather than sending them', async () => {
+    // Offered, then the held ciphertext replaced: a scope move reseals it for
+    // another scope, which the link that offered it must not carry.
+    const offered = contentOf(24);
+    const { transfer, sent } = harness({ serve: offered.map((byte) => byte ^ 0xff) });
+    transfer.offer([await manifestFor('att-1', offered)]);
+
+    await transfer.receive({
+      v: 1,
+      kind: 'attachment-request',
+      attachmentId: 'att-1',
+      indices: [0, 1],
+    });
+
+    expect(sent.filter((message) => message.kind === 'attachment-chunk')).toEqual([]);
+    expect(sent).toContainEqual({
+      v: 1, kind: 'attachment-unavailable', attachmentId: 'att-1', indices: [0, 1],
+    });
+  });
+
   it('tells a peer which chunks it asked for that cannot be served', async () => {
     const content = contentOf(2 * CHUNK);
     const { transfer, sent } = harness({ serve: content });
+    transfer.offer([await manifestFor('a1', content)]);
 
     await transfer.receive({
       v: 1,

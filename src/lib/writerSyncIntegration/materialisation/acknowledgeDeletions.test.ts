@@ -111,6 +111,13 @@ beforeEach(async () => {
   });
   await db.syncOperations.put(deletion);
   await db.syncTombstones.put(tombstoneFor(deletion));
+  // Received and materialised, as a peer's deletion is: the inbox holds its verdict.
+  await db.syncInbox.put({
+    operationId: deletion.operationId, accessScopeId: deletion.accessScopeId,
+    deviceId: deletion.deviceId, logicalAt: deletion.logicalAt,
+    entityTable: deletion.entityTable, entityId: deletion.entityId,
+    result: 'applied', receivedAt: deletion.logicalAt.millis,
+  });
 });
 
 afterEach(async () => {

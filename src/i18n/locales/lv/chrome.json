@@ -32,8 +32,8 @@
     "enterFocus": "Ieslēgt fokusa režīmu",
     "normal": "Normāls",
     "focus": "Fokuss",
-    "focusTitleNormal": "Normāls (⌘\\)",
-    "focusTitleFocus": "Fokuss (⌘\\)",
+    "focusTitleNormal": "Normāls ({{shortcut}})",
+    "focusTitleFocus": "Fokuss ({{shortcut}})",
     "findInDoc": "Atrast dokumentā",
     "inspector": "Dokumenta inspektors",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Rakstīšana",
     "themeLabel": "Tēma",
     "focusLabel": "Fokusa režīms",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Peldošā rīkjosla",
     "readingWidthLabel": "Lasīšanas platums",
     "readingWidthHint": "Mērs vienam dokumentam",
@@ -102,14 +101,12 @@
       "hcLight": "AK gaiša",
       "hcDark": "AK tumša"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Jaunumi",
     "feedback": "Sūtīt atsauksmes…",
     "accessibility": "Pieejamība",
     "about": "Par",
     "helpLink": "palīdzības centrs →",
     "fullSettings": "visi iestatījumi →",
-    "fullSettingsKbd": "⌘,",
     "off": "Izsl",
     "on": "Iesl",
     "tourCheckmark": "pabeigts"
@@ -190,7 +187,6 @@
       "rename": "Pārdēvēt",
       "move": "Pārvietot uz sadaļu…",
       "export": "Eksportēt šo dokumentu…",
-      "exportKbd": "⌘E",
       "print": "Drukāt…",
       "wordCount": "Vārdu skaita statistika",
       "trash": "Pārvietot uz miskasti"

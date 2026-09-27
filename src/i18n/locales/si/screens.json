@@ -171,7 +171,7 @@
       "reduceMotionLabel": "චලනය අඩු කරන්න",
       "reduceMotionHint": "දසුන් අතර සජීවිකරණ සංක්‍රාන්තීන් මඟ හරින්න.",
       "keyboardHintsLabel": "යතුරු පුවරු ඉඟි පෙන්වන්න",
-      "keyboardHintsHint": "මෙවලම් ඉඟි සහ බොත්තම් කෙළවරේ ⌘-යතුරු කෙටිමං දිස් කරන්න.",
+      "keyboardHintsHint": "මෙවලම් ඉඟි සහ බොත්තම් කෙළවරේ {{modifier}}-යතුරු කෙටිමං දිස් කරන්න.",
       "startupLabel": "ආරම්භයේදී විවෘත කරන්න",
       "startupHint": "යෙදුම දියත් කිරීමේදී ඔබ දකිනු ලබන්නේ කුමක්ද.",
       "startupOptions": {

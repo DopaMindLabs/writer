@@ -1,6 +1,7 @@
 import { fromBase64Url, toBase64Url } from '../crypto/base64url';
 import type { AttachmentChunkManifest } from './operation.types';
 import {
+  ChunkIntegrityError,
   assembleChunks,
   missingChunkIndices,
   verifyChunk,
@@ -81,6 +82,13 @@ export interface AttachmentTransferPorts {
   send: (message: CatchUpMessage) => void;
   /** Diagnostics for a refused offer or chunk. */
   onRejected?: (attachmentId: string, reason: unknown) => void;
+  /**
+   * An offer this device considered is finished with: fetched, already held,
+   * refused or abandoned. Every outcome reaches it, including one that started
+   * no transfer, so per-offer state a host set up in `heldChunkIndices` is
+   * released here rather than kept for the life of the session.
+   */
+  onSettled?: (attachmentId: string) => void;
 }
 
 export interface AttachmentTransfer {
@@ -152,6 +160,8 @@ interface TransferContext {
   expectedOfferCursor: number;
   /** What this device has to offer, and how far the peer has read it. */
   catalogue: readonly AttachmentChunkManifest[];
+  /** The manifest each attachment was last offered with: all a request is served. */
+  offered: Map<string, AttachmentChunkManifest>;
   /**
    * The cursor the peer must answer the page in flight with, or `null` when
    * this device is not waiting to be asked for anything.
@@ -162,6 +172,7 @@ interface TransferContext {
 /** Settles one offer and advances when every offer on the page has settled. */
 const settle = (context: TransferContext, attachmentId: string): void => {
   const { page, ports } = context;
+  ports.onSettled?.(attachmentId);
   if (page === null) return;
   page.outstanding.delete(attachmentId);
   if (page.outstanding.size > 0) return;
@@ -259,12 +270,42 @@ const takeOfferNext = (context: TransferContext, cursor: number): void => {
   offerPage(context, cursor);
 };
 
-/** Sends requested chunks and explicitly reports unavailable indices. */
+/**
+ * One chunk exactly as it was offered, or `undefined`. The store may have
+ * replaced the ciphertext since — a scope move reseals it for another scope —
+ * and a link carries only what it offered, never what took its place.
+ */
+const offeredChunk = async (options: {
+  ports: AttachmentTransferPorts;
+  manifest: AttachmentChunkManifest;
+  index: number;
+}): Promise<Uint8Array | undefined> => {
+  const { ports, manifest, index } = options;
+  const bytes = await ports.readChunk({ attachmentId: manifest.attachmentId, index });
+  if (bytes === undefined) return undefined;
+  try {
+    await verifyChunk({ manifest, index, bytes });
+  } catch (error) {
+    if (error instanceof ChunkIntegrityError) return undefined;
+    throw error;
+  }
+  return bytes;
+};
+
+/**
+ * Sends requested chunks of an attachment this transfer offered, and explicitly
+ * reports the indices it cannot serve as offered. A request for anything it
+ * never offered is not its to answer: another transfer on the same link may
+ * have offered it, and a refusal from this one would end that transfer.
+ */
 const serve = async (
-  ports: AttachmentTransferPorts,
+  context: TransferContext,
   attachmentId: string,
   indices: readonly number[],
 ): Promise<void> => {
+  const { ports } = context;
+  const manifest = context.offered.get(attachmentId);
+  if (manifest === undefined) return;
   const unavailable: number[] = [];
   // One chunk at a time, each awaiting the bearer. A page may legally hold 256
   // of them, which is more than any outbox should be asked to swallow at once:
@@ -276,7 +317,7 @@ const serve = async (
       return Promise.resolve();
     });
   for (const index of indices.slice(0, MAX_REQUESTED_CHUNKS)) {
-    const bytes = await ports.readChunk({ attachmentId, index });
+    const bytes = await offeredChunk({ ports, manifest, index });
     if (bytes === undefined) {
       unavailable.push(index);
       continue;
@@ -380,6 +421,7 @@ export const createAttachmentTransfer = (
     page: null,
     expectedOfferCursor: 0,
     catalogue: [],
+    offered: new Map(),
     awaitingCursor: null,
   };
 
@@ -398,6 +440,7 @@ export const createAttachmentTransfer = (
       // entries simply wait; the peer's next ask serves them.
       const start = context.catalogue.length;
       context.catalogue = [...context.catalogue, ...manifests];
+      for (const manifest of manifests) context.offered.set(manifest.attachmentId, manifest);
       if (context.awaitingCursor === null) offerPage(context, start);
     },
 
@@ -409,7 +452,7 @@ export const createAttachmentTransfer = (
           takeOfferNext(context, message.cursor);
           return;
         case 'attachment-request':
-          return serve(ports, message.attachmentId, message.indices);
+          return serve(context, message.attachmentId, message.indices);
         case 'attachment-chunk':
           return take(context, message.chunk);
         case 'attachment-unavailable':

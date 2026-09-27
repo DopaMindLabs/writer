@@ -34,12 +34,52 @@ import {
  */
 export type FrameVerifier = (frame: EncryptedSyncFrame) => Promise<boolean>;
 
+/**
+ * What became of a frame's signature. A device id is derived from its key
+ * (`deviceIdFor`), so the key a trust source names for an id is the only one
+ * that will ever verify that id's frames: a signature it refuses never passes,
+ * whereas an author with no key here yet may gain one when a pairing or an
+ * account identity arrives.
+ */
+export type SignatureVerdict = 'verified' | 'unknown-author' | 'refused';
+
+/** A {@link FrameVerifier} that can also say why a signature did not verify. */
+export interface WriterFrameVerifier extends FrameVerifier {
+  readonly verdict: (frame: EncryptedSyncFrame) => Promise<SignatureVerdict>;
+}
+
 /** What one device id resolved to across the trust sources; `null` = refuse. */
 interface ResolvedTrust {
   key: CryptoKey | null;
 }
 
-export const createWriterFrameVerifier = (db: LoremDB): FrameVerifier => {
+/**
+ * Whether a frame's signature verifies against the key on record for its author,
+ * whatever the pairing's status now. Only for history this device accepted while
+ * its author was trusted: revoking a device refuses what arrives from it from
+ * then on, not what was accepted from it already, while a frame altered since
+ * still fails here.
+ */
+export const verifiesAgainstRecordedKey = async (
+  db: LoremDB,
+  frame: EncryptedSyncFrame,
+): Promise<boolean> => {
+  if (frame.signature.length === 0) return false;
+  const own = await deviceIdentityStore.current();
+  if (own !== null && String(frame.deviceId) === String(own.deviceId)) {
+    return verifyFrameSignature(own.keys.publicKey, frame);
+  }
+  const record = await createTrustedDeviceStore(db).find(frame.deviceId);
+  if (record === null) return false;
+  try {
+    return await verifyFrameSignature(await importDevicePublicKey(record.publicIdentityJwk), frame);
+  } catch {
+    // A malformed stored key vouches for nothing.
+    return false;
+  }
+};
+
+export const createWriterFrameVerifier = (db: LoremDB): WriterFrameVerifier => {
   const paired = createTrustedDeviceStore(db);
   // The registry table exists only on a cloud-enabled database; a P2P-only
   // Writer simply has no account source.
@@ -87,18 +127,23 @@ export const createWriterFrameVerifier = (db: LoremDB): FrameVerifier => {
     return resolved;
   };
 
-  return async (frame) => {
+  const verdict = async (frame: EncryptedSyncFrame): Promise<SignatureVerdict> => {
     // An unsigned frame is refused here rather than allowed to throw: Stage 1
     // wrote empty signatures, so this is reachable with ordinary old data.
-    if (frame.signature.length === 0) return false;
+    if (frame.signature.length === 0) return 'refused';
     // Asked for, never created: a device that has authored nothing has no
     // identity to compare against, and reading one must not mint it.
     const own = await deviceIdentityStore.current();
-    if (own !== null && String(frame.deviceId) === String(own.deviceId)) {
-      return verifyFrameSignature(own.keys.publicKey, frame);
-    }
-    const trust = await trustFor(frame.deviceId);
-    if (trust.key === null) return false;
-    return verifyFrameSignature(trust.key, frame);
+    const trusted =
+      own !== null && String(frame.deviceId) === String(own.deviceId)
+        ? own.keys.publicKey
+        : (await trustFor(frame.deviceId)).key;
+    if (trusted === null) return 'unknown-author';
+    return (await verifyFrameSignature(trusted, frame)) ? 'verified' : 'refused';
   };
+
+  return Object.assign(
+    async (frame: EncryptedSyncFrame) => (await verdict(frame)) === 'verified',
+    { verdict },
+  );
 };

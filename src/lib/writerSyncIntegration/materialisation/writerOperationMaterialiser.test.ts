@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import {
   NoteKind,
@@ -42,7 +42,7 @@ import {
 import {
   AttachmentChunksPendingError,
   applyInboundFrame,
-} from './writerOperationMaterializer';
+} from './writerOperationMaterialiser';
 
 /**
  * The slice 1E acceptance gate: two in-memory Writer databases exchange plain
@@ -315,6 +315,39 @@ describe('two-database operation convergence (hermetic)', () => {
     expect((await dbB.notes.get('n1'))?.body).toBe('newer');
   });
 
+  it.each([
+    ['delete', (at: { millis: number; counter: number }) => ({
+      ...makeDeleteFrame({ ring, deviceId: DEVICE_A, entityTable: 'notes', entityId: 'n1', accessScopeId: 's1' }),
+      logicalAt: at,
+    })],
+    ['put', (at: { millis: number; counter: number }) => makePutFrame({
+      ring, deviceId: DEVICE_A, entityTable: 'notes',
+      row: note({ body: 'stale', mutationId: asOperationId('op-n1-2'), logicalUpdatedAt: at }),
+    })],
+  ])('keeps newer content when a stale %s arrives after the newer frame was compacted', async (_kind, stale) => {
+    await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: note() });
+    await shipAll(dbA, dbB);
+    const newer = note({
+      body: 'newer',
+      mutationId: asOperationId('op-n1-3'),
+      logicalUpdatedAt: { millis: 3000, counter: 0 },
+    });
+    await journalledPut({ db: dbB, ring, deviceId: DEVICE_B, entityTable: 'notes', row: newer });
+    // Every peer acknowledged the newer put, so compaction dropped its frame;
+    // the saved row still records when it was written.
+    await dbB.syncOperations.delete(String(newer.mutationId));
+
+    const result = await applyInboundFrame({
+      db: dbB,
+      frame: JSON.parse(JSON.stringify(await stale({ millis: 2000, counter: 0 }))),
+      ring, verifySignature: acceptAnyAuthor,
+    });
+
+    expect(result).toBe('superseded');
+    expect((await dbB.notes.get('n1'))?.body).toBe('newer');
+    expect(await dbB.syncTombstones.count()).toBe(0);
+  });
+
   it('keeps the later of two deletes as the tombstone', async () => {
     await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: note() });
     await shipAll(dbA, dbB);
@@ -406,6 +439,42 @@ describe('two-database operation convergence (hermetic)', () => {
     expect(await applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor })).toBe('applied');
     expect(await dbB.syncInbox.count()).toBe(1);
     expect(await dbB.noteAttachments.get('a1')).toBeDefined();
+  });
+
+  it('settles an overtaken attachment put without the ciphertext it named', async () => {
+    const { frame } = await chunkedAttachmentFrame();
+    // Chunk rows hold the latest content only, so an overtaken put's are gone.
+    const { row } = await prepareFramePayload({
+      entityTable: 'noteAttachments', ring,
+      row: { ...attachment(), mutationId: asOperationId('op-a1-later'),
+        logicalUpdatedAt: { millis: 2000, counter: 0 } },
+    });
+    await dbB.syncOperations.put(await makePutFrame({
+      ring, deviceId: DEVICE_B, entityTable: 'noteAttachments', row,
+    }));
+
+    expect(await applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor }))
+      .toBe('superseded');
+    expect(await dbB.syncInbox.get(String(frame.operationId))).toMatchObject({ result: 'superseded' });
+    expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
+  });
+
+  it('assembles its content at once when an attachment put stops losing before it commits', async () => {
+    const { frame, chunks } = await chunkedAttachmentFrame();
+    await dbB.syncAttachmentChunks.bulkPut(chunks);
+    // Read once before the commit: a deletion that is gone by the time it opens.
+    vi.spyOn(dbB.syncTombstones, 'get').mockResolvedValueOnce({
+      entityTable: 'noteAttachments', entityId: 'a1', accessScopeId: 's1',
+      operationId: asOperationId('op-delete-later'), deviceId: DEVICE_B,
+      logicalAt: { millis: 5000, counter: 0 }, acknowledgedBy: [],
+    });
+
+    // Nothing else will call again: the sweep moves on, and compaction never sweeps.
+    expect(await applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor }))
+      .toBe('applied');
+    expect(await dbB.syncInbox.get(String(frame.operationId))).toMatchObject({ result: 'applied' });
+    expect(new Uint8Array(await (await dbB.noteAttachments.get('a1'))!.blob.arrayBuffer()))
+      .toEqual(attachmentBytes());
   });
 
   it('refuses a tampered attachment chunk without materialising or stamping it', async () => {

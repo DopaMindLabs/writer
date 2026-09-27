@@ -412,6 +412,7 @@ or stored.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `keys` | string | — | A platform-neutral chord (`mod`/`shift`/`alt`/`enter` + keys, `+`-joined). |
+| `variant` | `'hint' \| 'inline'` | `'hint'` | `hint` is the meta voice beside a control; `inline` sits in running prose (mono at `0.85em`, `ink`), as a Help article renders a `kbd:` chord span. |
 
 Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ctrlKey`
 (§11); `Kbd` is its display companion.

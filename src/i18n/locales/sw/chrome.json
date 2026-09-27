@@ -32,8 +32,8 @@
     "enterFocus": "Ingia kwenye hali ya umakini",
     "normal": "Kawaida",
     "focus": "Umakini",
-    "focusTitleNormal": "Kawaida (⌘\\)",
-    "focusTitleFocus": "Umakini (⌘\\)",
+    "focusTitleNormal": "Kawaida ({{shortcut}})",
+    "focusTitleFocus": "Umakini ({{shortcut}})",
     "findInDoc": "Tafuta katika hati",
     "inspector": "Mkaguzi wa hati",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Uandishi",
     "themeLabel": "Mandhari",
     "focusLabel": "Hali ya umakini",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Upau wa vifaa unaoelea",
     "readingWidthLabel": "Upana wa kusoma",
     "readingWidthHint": "Kipimo kwa hati",
@@ -102,14 +101,12 @@
       "hcLight": "HC mwanga",
       "hcDark": "HC giza"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Habari mpya",
     "feedback": "Tuma maoni…",
     "accessibility": "Upatikanaji",
     "about": "Kuhusu",
     "helpLink": "kituo cha msaada →",
     "fullSettings": "mipangilio yote →",
-    "fullSettingsKbd": "⌘,",
     "off": "Imezimwa",
     "on": "Imewashwa",
     "tourCheckmark": "imekamilika"
@@ -190,7 +187,6 @@
       "rename": "Pa jina jipya",
       "move": "Hamishia kwenye sehemu…",
       "export": "Hamisha hati hii…",
-      "exportKbd": "⌘E",
       "print": "Chapa…",
       "wordCount": "Takwimu za kuhesabu maneno",
       "trash": "Hamishia kwenye takataka"

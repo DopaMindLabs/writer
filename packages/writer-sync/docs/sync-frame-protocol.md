@@ -27,7 +27,7 @@ cannot apply twice.
 This is what lets Stage 2A add a peer-to-peer provider without touching the data
 path: frames are already immutable, already encrypted, already deduplicated, and
 `applyInboundFrame` is provider-agnostic. The multi-provider contract suite
-(`src/lib/writerSyncIntegration/materialization/multiProviderContract.test.ts`)
+(`src/lib/writerSyncIntegration/materialisation/multiProviderContract.test.ts`)
 proves the same frame arriving by two routes materialises once, in either order.
 
 ```
@@ -211,12 +211,16 @@ order. **Provider arrival order carries no meaning.** Two devices given the same
 set of operations reach the same state whatever order the transports delivered
 them in.
 
-Rules the materialiser enforces (`writerOperationMaterializer.ts`):
+Rules the materialiser enforces (`writerOperationMaterialiser.ts`):
 
 - Every material change mints a **fresh** operation id and logical time.
 - Deletions are ordered against the journal winner exactly as puts are: a delete
   that loses to a strictly later journalled `put` returns `superseded` and does
   **not** remove the row.
+- The saved row keeps its logical time after compaction drops the frame that
+  wrote it. A put or delete older than that time returns `superseded`, so a frame
+  arriving late cannot overwrite or remove newer content the journal no longer
+  holds. An exact tie is left to the journal: the row does not record its author.
 - A delete records a tombstone, and the **latest** deletion is kept — an older
   delete arriving afterwards must not rewrite the tombstone a later put is
   compared against.
@@ -263,6 +267,41 @@ whole origins, so a peer would re-author the scope as fresh full-state frames on
 every session, for ever. What a device has seen only grows, so the manifests of
 two converged devices agree — same marks, same counts on both sides — and the
 exchange goes quiet.
+
+A host that releases a deletion (`releasableTombstones`) records, in the same
+transaction and before the tombstone and its delete frame go, an inbox entry for
+every retained operation of that entity at or before the deletion that the inbox
+has not recorded: the deletion `applied`, an older `put` `tombstoned`, an older
+`delete` `superseded`. Only a frame that passes materialisation's admission —
+structure, payload hash, table policy and a trusted signature, verified before the
+transaction and still, field for field, the retained frame inside it (a signature
+copied onto altered content is not the frame that was verified) — earns an entry. A
+verified frame the journal loses between the check and the transaction, as a
+compaction replicated from another device can do, still earns its entry from the
+copy verified, and one that may yet pass holds the deletion: a peer can replay
+either. A host keeps its own copy of such history while the deletion stands, apart
+from the replicated journal, so the hold outlasts the frame; the copy goes once it
+earns a verdict, can never be admitted, or has no deletion left to hold. Retained
+history is matched by content, not operation id: a row a provider writes under a
+copy's id neither stands in for the copy nor lets its deletion go. A deletion is released only once every such operation has one, or can never be
+admitted (malformed, altered, unsigned, signed with a key other than the one its
+author's device id is derived from, or naming a table peers do not own). A
+retained row is decoded before its order is read: one that does not decode has no
+order or age to judge, can never be admitted and is inert, so it neither holds a
+deletion nor earns an entry, and compaction leaves it where it is. A frame
+refused only because no key for its author is known yet, or for its clock, may
+verify later, when its author's identity arrives, and would then resurrect the entity if the deletion were already
+gone, so the deletion, its frame and that history stay until it verifies. The
+retention window keeps the same line under a deletion still standing: history
+admissible now is settled with an inbox entry as the window takes it, history that
+may yet be admitted stays, and history that never can goes as it is. A tombstone is
+retired only while it still names the deletion being released: a later deletion
+that ingestion wrote in the meantime stays, and every tombstone still standing keeps
+its frame. Operations a device authors itself are journalled without
+an inbox entry, and the tombstone is the only evidence that settles them; released
+alone, an older `put` would read as unapplied and resurrect the entity when next
+materialised. A later operation is left alone — it may legitimately restore the
+entity.
 
 > **Known gap carried into Stage 2A.** The journal grows without bound: Stage 1
 > never prunes `syncOperations`. `SyncTombstone.acknowledgedBy` is the seam for
@@ -367,6 +406,9 @@ everything past its in-flight ceiling and those attachments are never mentioned
 again. Each page carries a `cursor` into the holder's catalogue, and the
 receiver answers with `attachment-offer-next` once every manifest in the page is
 complete, already held or refused, which is what walks a catalogue of any size.
+Each settled offer is reported to the host through the optional `onSettled` port,
+whatever became of it, so state a host keeps per offer lasts only as long as the
+offer.
 
 The cursor is session state on both sides, and only one value is legal at a
 time: the receiver takes a page only at the cursor after the last one it
@@ -388,7 +430,10 @@ asking after every chunk would have the holder serve indices it is already
 serving. Chunks are served against the transport's `sendWhenReady`, so the
 holder moves at the bearer's pace — a legal request of 256 chunks answered in
 one pass would overrun the outbox in front of the channel and fail a session
-neither peer misused. A holder that cannot supply an index it was asked for says so with an
+neither peer misused. A transfer serves only what it offered, as it offered it: a
+chunk whose ciphertext was replaced after the offer (a scope move reseals it for
+another scope) is reported unavailable rather than sent, and a request for an
+attachment it never offered is left to whichever transfer on the link did. A holder that cannot supply an index it was asked for says so with an
 `attachment-unavailable` message rather than falling silent — the receiver is
 waiting on that page, so silence stalls the transfer for the life of the
 session. The transfer is then dropped rather than left pending, so a later offer
@@ -404,10 +449,106 @@ providers.
 ## 11. Scope rebinding
 
 A frame cannot be relabelled into another scope — the scope is in the AAD (§3).
-Moving content between scopes legitimately goes through `rescopeFrames.ts`, which
-opens each frame under the source key and reseals it under the destination,
-all-or-nothing. Any Stage 2 flow that moves content between scopes uses it; none
-may edit `accessScopeId` in place.
+Writer's `rescopeFrames.ts` moves the current locally accepted rows and retained
+tombstones in the source scope. The journal is not a source of current content:
+per-origin compaction can retain an obsolete edit while removing its successor.
+A current row remains movable even if none of its original frames survive. A
+current tombstone requires its retained, verified delete frame. Entities whose
+saved state is already in another scope are excluded, including when the frames
+that moved them have been compacted.
+
+A current row gets two fresh operations signed by the moving device: a delete in
+the source scope, then a put in the destination scope at a later logical time. A
+device that reads only the source scope is never offered the destination put;
+without the withdrawal it would keep its copy, and its next edit would win
+convergence and move the row back. With it, that device removes the row and holds
+a tombstone, while a device that reads both scopes sees the later put win,
+whichever frame reaches it first, even when the destination put was compacted
+before the withdrawal arrived. No tombstone holds the withdrawal, since the entity
+lives on in the destination, so compaction never ages it out (`keptUntilHeld`):
+it leaves only once every peer holds it, and the frame each peer's acknowledgement
+names stays with it, since that is the only evidence the peer holds it. A rebuild of the source scope serves it
+beside the scope's tombstones, so a device that reads only the source and returns
+after the retention window still drops the row. Only a withdrawal that passes
+admission, or that this device accepted while its author was trusted and that
+still verifies against the author's recorded key, is kept and served this way: a
+delete a provider merely wrote ages out. A retained tombstone gets one fresh delete in
+the destination: devices that read the source already hold the deletion. New
+operation ids avoid prior inbox deduplication; logical times follow the current
+state. Put payloads carry the destination `accessScopeId`, new `mutationId` and
+new `logicalUpdatedAt`, matching the header. Existing content and editorial
+attribution are preserved. Attachment bytes are resealed under the destination
+binding and carried in new ciphertext chunks. Deletes receive fresh headers and
+signatures without a payload. Original frames remain immutable. A live link
+offers an attachment only with a put in its own scope, and only while the chunk
+set and the saved row are in that scope too, so the withdrawal crosses the source
+link without the ciphertext that moved away.
+
+A device keeps one chunk set per attachment: the ciphertext of the attachment's
+latest operation in convergence order, labelled with that operation's scope.
+Materialisation decides whether a put still wins before it assembles attachment
+content, so the retained source frame settles as `superseded` without the
+ciphertext the move replaced; a put found winning after all once its transaction
+opens has its content assembled and applied in the same call. A receiving device labels arriving chunks with the
+scope of the attachment's latest admitted operation — never by journal key order,
+and never by a frame that fails admission — and chunks held under another scope do
+not count as held, so a device that
+already had the source attachment fetches the moved ciphertext. A transfer binds
+each offered attachment to that operation once, when it considers the offer, and
+labels every chunk it saves from the binding rather than reading and verifying the
+history per chunk; an operation journalled mid-transfer is picked up by the next
+offer. The binding is released when its offer settles, including an offer whose
+chunks were all held and that started no transfer. A catch-up reply
+journals its frames before it offers attachments, so the moved frame is known when
+its chunks arrive. Chunks are still identified by attachment id and index alone:
+a device that has journalled the move without yet receiving the moved ciphertext
+can accept a pre-move chunk set from a peer that has not seen the move, and holds
+the wrong ciphertext until the transfer identifies chunk sets by content hash.
+
+Both scope keys must be available for every journalled content table before
+reading state: the encryption middleware hides rows it cannot open, a resolver may
+answer per table or per row, and hidden rows must never be mistaken for an empty
+scope. A cursor read passes the middleware by and sees each row's routing metadata
+in the clear, so the snapshot also records every row stored in the source scope
+that it could not read. Any such row refuses the move, whether no key resolves for
+it or the key that does fails to open it: the move cannot carry a row it cannot
+open. A move prepares one entity at a time and holds each attachment's new
+ciphertext until it commits, so it refuses, before reading any content, to carry
+more than `MAX_ATTACHMENT_BYTES` of attachments in total.
+Withdrawing a current row also needs the source write key. Retained
+source and related entity history passes structure, hash, journalled-table policy,
+trusted signature and clock checks before signing; history this device accepted
+earlier, whose inbox entry records the same operation, author, entity, scope and
+time and whose signature still verifies against that author's recorded key, counts
+as admitted even if its author has been revoked since; one altered since fails the
+signature and refuses the move. A potentially newer or tied
+journal frame not yet considered by materialisation blocks the move; callers must
+materialise pending operations before retrying. Retained history can cause a
+refusal, but never supplies content to re-author. Invalid or contradictory current
+state also fails closed.
+
+The caller supplies a stable `requestId` for retries of one intended move. Local
+`syncScopeRebindings` receipts use that id as their primary key, recording source,
+destination and the created operation ids. Completed requests return zero without
+writing, even after journal compaction, reopening the database or a later move
+back. Empty moves also record completion, so retrying cannot sweep up rows added
+later. Reusing an id for different scopes is an error. Deliberate subsequent moves
+use new request ids; identical source and destination scopes are a no-op.
+
+Frame and attachment encryption and signing finish before one transaction rechecks
+saved rows and mutation ids, tombstones, related journal and inbox entries, trust
+records and the request receipt. A change raises `ScopeRebindingChangedError`; the
+caller may prepare again. Otherwise that same transaction updates local state and
+atomically writes the frames, attachment chunks, inbox records (each put applied,
+each withdrawal superseded by it) and receipt, and records every retained operation
+of a moved entity as settled, so compacting the
+move's own frame can never let the sweep put an older version back.
+Any write failure rolls everything back. Including `syncInbox` suppresses duplicate
+operation-journal middleware emission; ordinary row encryption still applies.
+
+This guarantees local atomicity against the state this device has accepted. It
+cannot know unreceived offline edits or make remote delivery atomic. The helper
+currently has no production caller or user-facing flow.
 
 ---
 

@@ -110,7 +110,7 @@ const chunkMap = async (options: {
  * transfer remains retryable by the ordinary ingestion sweep. The inbox is
  * deliberately untouched until the complete ciphertext verifies and opens.
  */
-export const materializeAttachmentFrame = async (options: {
+export const materialiseAttachmentFrame = async (options: {
   db: LoremDB;
   frame: EncryptedSyncFrame;
   ring: SyncKeyRing;

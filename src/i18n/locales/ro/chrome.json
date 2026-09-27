@@ -32,8 +32,8 @@
     "enterFocus": "Intră în modul focus",
     "normal": "Normal",
     "focus": "Focus",
-    "focusTitleNormal": "Normal (⌘\\)",
-    "focusTitleFocus": "Focus (⌘\\)",
+    "focusTitleNormal": "Normal ({{shortcut}})",
+    "focusTitleFocus": "Focus ({{shortcut}})",
     "findInDoc": "Caută în document",
     "inspector": "Inspector document",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Scriere",
     "themeLabel": "Temă",
     "focusLabel": "Mod focus",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Bară plutitoare",
     "readingWidthLabel": "Lățime citire",
     "readingWidthHint": "Măsură per document",
@@ -102,14 +101,12 @@
       "hcLight": "CR luminos",
       "hcDark": "CR întunecat"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Noutăți",
     "feedback": "Trimite feedback…",
     "accessibility": "Accesibilitate",
     "about": "Despre",
     "helpLink": "centru de ajutor →",
     "fullSettings": "toate setările →",
-    "fullSettingsKbd": "⌘,",
     "off": "Dezactivat",
     "on": "Activat",
     "tourCheckmark": "finalizat"
@@ -190,7 +187,6 @@
       "rename": "Redenumește",
       "move": "Mută în secțiune…",
       "export": "Exportă acest document…",
-      "exportKbd": "⌘E",
       "print": "Tipărește…",
       "wordCount": "Statistici de numărare",
       "trash": "Mută la coșul de gunoi"

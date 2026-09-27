@@ -32,8 +32,8 @@
     "enterFocus": "Įjungti fokuso režimą",
     "normal": "Normalus",
     "focus": "Fokusas",
-    "focusTitleNormal": "Normalus (⌘\\)",
-    "focusTitleFocus": "Fokusas (⌘\\)",
+    "focusTitleNormal": "Normalus ({{shortcut}})",
+    "focusTitleFocus": "Fokusas ({{shortcut}})",
     "findInDoc": "Rasti dokumente",
     "inspector": "Dokumento inspektorius",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Rašymas",
     "themeLabel": "Tema",
     "focusLabel": "Fokuso režimas",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Slankioji įrankių juosta",
     "readingWidthLabel": "Skaitymo plotis",
     "readingWidthHint": "Matas dokumentui",
@@ -102,14 +101,12 @@
       "hcLight": "DK šviesi",
       "hcDark": "DK tamsi"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Kas naujo",
     "feedback": "Siųsti atsiliepimą…",
     "accessibility": "Pritaikymas",
     "about": "Apie",
     "helpLink": "pagalbos centras →",
     "fullSettings": "visi nustatymai →",
-    "fullSettingsKbd": "⌘,",
     "off": "Išjungta",
     "on": "Įjungta",
     "tourCheckmark": "baigta"
@@ -190,7 +187,6 @@
       "rename": "Pervadinti",
       "move": "Perkelti į skyrių…",
       "export": "Eksportuoti šį dokumentą…",
-      "exportKbd": "⌘E",
       "print": "Spausdinti…",
       "wordCount": "Žodžių skaičiavimo statistika",
       "trash": "Perkelti į šiukšliadėžę"

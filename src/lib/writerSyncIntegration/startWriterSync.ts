@@ -3,10 +3,10 @@ import { db } from '@/db/db';
 import { appLogger } from '@/lib/appLogger';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
 import { P2P_PROVIDER_ID } from './writerSyncConfiguration';
-import { startFrameIngestion } from './materialization/frameIngestion';
+import { startFrameIngestion } from './materialisation/frameIngestion';
 import { startLivePeerSync } from './livePeerSync';
-import { writerJournalIdentity } from './materialization/writerJournalDeps';
-import { compactJournal } from './materialization/compactJournal';
+import { writerJournalIdentity } from './materialisation/writerJournalDeps';
+import { compactJournal } from './materialisation/compactJournal';
 import { hydrateDeviceKeys } from './hydrateDeviceKeys';
 
 /**

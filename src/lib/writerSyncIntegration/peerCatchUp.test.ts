@@ -10,7 +10,7 @@ import {
   TRANSFER_CHUNK_BYTES,
   type CatchUpMessage,
 } from 'writer-sync/operations';
-import { toBase64Url } from 'writer-sync/crypto';
+import { generateDeviceIdentity, publicJwkOf, signFrame, toBase64Url } from 'writer-sync/crypto';
 import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
@@ -24,6 +24,8 @@ import {
   type RootTransferMessage,
 } from 'writer-sync/pairing';
 import { createPeerCatchUp } from './peerCatchUp';
+import { makePutFrame } from './materialisation/writerOperationFactory';
+import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { TRANSFER_DEADLINE_MILLIS } from './rootSecretHandover';
 import { peerLinkStatus } from './peerLinkStatus';
 import { peerSessions } from './peerSessionRegistry';
@@ -1094,7 +1096,7 @@ describe('createPeerCatchUp', () => {
       'writer-sync/crypto'
     );
     const { makePutFrame, signAuthoredFrames } = await import(
-      './materialization/writerOperationFactory'
+      './materialisation/writerOperationFactory'
     );
     const cloudDb = new LoremDB(`peer-catch-up-cloud-${crypto.randomUUID()}`, {
       cloud: true,
@@ -1373,21 +1375,22 @@ describe('createPeerCatchUp', () => {
       content,
       chunkBytes: TRANSFER_CHUNK_BYTES,
     });
-    await db.syncOperations.put({
-      v: 1,
-      operationId: asOperationId('op-a1'),
-      accessScopeId: 's1',
-      entityTable: 'noteAttachments',
-      entityId: 'a1',
-      kind: 'put',
-      deviceId: PEER,
-      logicalAt: { millis: 1000, counter: 0 },
-      keyId: 'key-1',
-      epoch: 1,
-      payloadHash: 'hash',
-      payload: 'sealed',
-      signature: 'signed',
+    // Chunks are filed under the attachment's latest admitted operation, so the
+    // frame they belong to is a real one from the paired peer.
+    const peerKeys = await generateDeviceIdentity();
+    await createTrustedDeviceStore(db).trust({
+      deviceId: PEER, publicIdentityJwk: await publicJwkOf(peerKeys.publicKey),
+      principalId: asPrincipalId('me'), status: TrustedDeviceStatus.Active,
+      addedAt: 1000, lastSessionAt: 1000, displayName: 'Peer', acknowledgedOperations: {},
     });
+    const frame = await makePutFrame({
+      ring: await deriveKeyRing(generateRootSecret(), 1), deviceId: PEER, entityTable: 'noteAttachments',
+      row: {
+        id: 'a1', accessScopeId: 's1', createdBy: asPrincipalId('me'), updatedBy: asPrincipalId('me'),
+        mutationId: asOperationId('op-a1'), logicalUpdatedAt: { millis: 1000, counter: 0 },
+      },
+    });
+    await db.syncOperations.put({ ...frame, signature: await signFrame(peerKeys.privateKey, frame) });
 
     const firstWire = fakeChannel();
     const firstSession = fakeSession(firstWire.channel);

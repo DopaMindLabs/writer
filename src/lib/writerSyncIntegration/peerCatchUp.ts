@@ -32,12 +32,12 @@ import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { peerSessions } from './peerSessionRegistry';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { currentPrincipal } from './writerEntityMetadata';
-import { recordPeerAcknowledgement } from './materialization/acknowledgeDeletions';
-import { createWriterOperationStore } from './materialization/writerOperationStore';
-import { seenOperations } from './materialization/seenOperations';
-import { createWriterFullState } from './materialization/writerFullState';
-import { writerJournalDeps } from './materialization/writerJournalDeps';
-import { sweepUnappliedFrames } from './materialization/frameIngestion';
+import { recordPeerAcknowledgement } from './materialisation/acknowledgeDeletions';
+import { createWriterOperationStore } from './materialisation/writerOperationStore';
+import { seenOperations } from './materialisation/seenOperations';
+import { createWriterFullState } from './materialisation/writerFullState';
+import { writerJournalDeps } from './materialisation/writerJournalDeps';
+import { sweepUnappliedFrames } from './materialisation/frameIngestion';
 import { createAttachmentChunkStore } from './attachmentChunkStore';
 
 /**

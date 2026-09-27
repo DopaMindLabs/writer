@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Minnka hreyfingu",
       "reduceMotionHint": "Sleppa lifandi umskiptum á milli yfirlita.",
       "keyboardHintsLabel": "Sýna lyklaborðs vísbendingar",
-      "keyboardHintsHint": "Sýna ⌘-lykla flýtileiðir í ábendingum og horni hnappa.",
+      "keyboardHintsHint": "Sýna {{modifier}}-lykla flýtileiðir í ábendingum og horni hnappa.",
       "startupLabel": "Opna við ræsingu",
       "startupHint": "Það sem þú sérð þegar þú ræsir forritið.",
       "startupOptions": {

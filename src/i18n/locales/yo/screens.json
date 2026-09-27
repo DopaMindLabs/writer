@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Dín ìgbéradà kù",
       "reduceMotionHint": "Fo àwọn animation ìyípadà láàárín àwọn ìwòran.",
       "keyboardHintsLabel": "Ṣe àfihàn àwọn ìmọ̀ràn bọ́tìnnì",
-      "keyboardHintsHint": "Ṣe àfihàn àwọn ọ̀nà àpéèṣe ⌘-key nínú àwọn tooltip àti igun àwọn bọ́tìnnì.",
+      "keyboardHintsHint": "Ṣe àfihàn àwọn ọ̀nà àpéèṣe {{modifier}}-key nínú àwọn tooltip àti igun àwọn bọ́tìnnì.",
       "startupLabel": "Ṣí nígbà ìbẹ̀rẹ̀",
       "startupHint": "Ohun tó ń farahàn nígbà tí o ṣí ètò.",
       "startupOptions": {

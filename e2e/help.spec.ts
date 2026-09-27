@@ -1,5 +1,13 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
 import { reseedAndGoHome } from './_helpers';
+
+/** Report `platform` to the app, the way `isApplePlatform` reads it. */
+const reportPlatform = (page: Page, platform: string) =>
+  page.addInitScript((value) => {
+    Object.defineProperty(navigator, 'platform', { get: () => value });
+    Object.defineProperty(navigator, 'userAgentData', { get: () => ({ platform: value }) });
+  }, platform);
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -103,3 +111,19 @@ test('renders fenced code, external links and slug-suffixed headings in articles
   await expect(heading).toHaveAttribute('id', 'inline-code');
   await expect(heading).not.toContainText('{#');
 });
+
+for (const { platform, focus, foreign } of [
+  { platform: 'Linux', focus: 'Ctrl+\\', foreign: '⌘' },
+  { platform: 'macOS', focus: '⌘\\', foreign: 'Ctrl+' },
+]) {
+  test(`shows article shortcuts as the keys pressed on ${platform}`, async ({ page }) => {
+    await reportPlatform(page, platform);
+    await page.goto('/#/help/keyboard-shortcuts');
+    // Init scripts run on a full load; the hash route alone does not reload.
+    await page.reload();
+    const article = page.getByTestId('help-article');
+    await expect(article.getByText(focus, { exact: true }).first()).toBeVisible();
+    await expect(article).not.toContainText(foreign);
+    await expect(article).not.toContainText('kbd:');
+  });
+}

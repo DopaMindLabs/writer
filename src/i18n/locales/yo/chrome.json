@@ -32,8 +32,8 @@
     "enterFocus": "Wọ ipo ìfọkànsí",
     "normal": "Dédé",
     "focus": "Ìfọkànsí",
-    "focusTitleNormal": "Dédé (⌘\\)",
-    "focusTitleFocus": "Ìfọkànsí (⌘\\)",
+    "focusTitleNormal": "Dédé ({{shortcut}})",
+    "focusTitleFocus": "Ìfọkànsí ({{shortcut}})",
     "findInDoc": "Wá nínú doko",
     "inspector": "Olùyẹ̀wò doko",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Kíkọ",
     "themeLabel": "Ìṣàlàyé",
     "focusLabel": "Ipo ìfọkànsí",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Pẹpẹ irinṣẹ́ tó ń léfòó",
     "readingWidthLabel": "Ìbúrúkú kíkà",
     "readingWidthHint": "Ìwọ̀n fún doko kọ̀ọ̀kan",
@@ -102,14 +101,12 @@
       "hcLight": "HC ìmọ́lẹ̀",
       "hcDark": "HC òkùnkùn"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Ohun tuntun",
     "feedback": "Fi èrò ránṣẹ́…",
     "accessibility": "Ìráyé",
     "about": "Nípa",
     "helpLink": "ilé-ìṣẹ́ ìrànlọ́wọ́ →",
     "fullSettings": "gbogbo àwọn ètò →",
-    "fullSettingsKbd": "⌘,",
     "off": "Pa",
     "on": "Tan",
     "tourCheckmark": "tí parí"
@@ -190,7 +187,6 @@
       "rename": "Tún sọ orúkọ",
       "move": "Lọ sí apá…",
       "export": "Kó doko yìí jáde…",
-      "exportKbd": "⌘E",
       "print": "Tẹ̀…",
       "wordCount": "Ìṣirò ọ̀rọ̀",
       "trash": "Lọ sí pótì àlàfí"

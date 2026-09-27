@@ -28,6 +28,7 @@ import type {
 } from 'writer-sync/operations';
 import type { SyncProviderBinding, TrustedDeviceRecord } from 'writer-sync/core';
 import type { AccountDeviceIdentity } from '@/lib/writerSyncIntegration/accountDeviceIdentity.types';
+import type { ScopeRebindingReceipt } from '@/lib/writerSyncIntegration/materialisation/scopeRebinding.types';
 import { CLOUD_STORES, STORES } from './stores';
 
 /**
@@ -70,6 +71,13 @@ export class LoremDB extends Dexie {
   syncTombstones!: Table<SyncTombstone, [string, string]>;
   /** Local provider configuration per access scope. */
   syncProviderBindings!: Table<SyncProviderBinding, [string, string]>;
+  /** Completed scope moves; local receipts survive operation compaction. */
+  syncScopeRebindings!: Table<ScopeRebindingReceipt, string>;
+  /**
+   * Frames a standing deletion settles that could not be verified yet, kept
+   * apart from the journal so the deletion stays until they can be.
+   */
+  syncPendingHistory!: Table<EncryptedSyncFrame, string>;
   /** Peers this device has paired with — the authentication boundary. */
   trustedDevices!: Table<TrustedDeviceRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */

@@ -32,8 +32,8 @@
     "enterFocus": "Aktivér fokustilstand",
     "normal": "Normal",
     "focus": "Fokus",
-    "focusTitleNormal": "Normal (⌘\\)",
-    "focusTitleFocus": "Fokus (⌘\\)",
+    "focusTitleNormal": "Normal ({{shortcut}})",
+    "focusTitleFocus": "Fokus ({{shortcut}})",
     "findInDoc": "Find i dokumentet",
     "inspector": "Dokumentinspektør",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Skrivning",
     "themeLabel": "Tema",
     "focusLabel": "Fokustilstand",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Flydende værktøjslinje",
     "readingWidthLabel": "Læsebredde",
     "readingWidthHint": "Mål pr. dokument",
@@ -102,14 +101,12 @@
       "hcLight": "HK lyst",
       "hcDark": "HK mørkt"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Nyheder",
     "feedback": "Send feedback…",
     "accessibility": "Tilgængelighed",
     "about": "Om",
     "helpLink": "hjælpecenter →",
     "fullSettings": "alle indstillinger →",
-    "fullSettingsKbd": "⌘,",
     "off": "Fra",
     "on": "Til",
     "tourCheckmark": "fuldført"
@@ -190,7 +187,6 @@
       "rename": "Omdøb",
       "move": "Flyt til sektion…",
       "export": "Eksportér dette dokument…",
-      "exportKbd": "⌘E",
       "print": "Udskriv…",
       "wordCount": "Ordtællingsstatistik",
       "trash": "Flyt til papirkurv"

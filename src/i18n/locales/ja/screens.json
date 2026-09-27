@@ -171,7 +171,7 @@
       "reduceMotionLabel": "モーションを低減",
       "reduceMotionHint": "ビュー間のアニメーション遷移をスキップします。",
       "keyboardHintsLabel": "キーボードヒントを表示",
-      "keyboardHintsHint": "ツールチップとボタン隅に ⌘ キーのショートカットを表示します。",
+      "keyboardHintsHint": "ツールチップとボタン隅に {{modifier}} キーのショートカットを表示します。",
       "startupLabel": "起動時に開く",
       "startupHint": "アプリを起動したときに表示される画面。",
       "startupOptions": {

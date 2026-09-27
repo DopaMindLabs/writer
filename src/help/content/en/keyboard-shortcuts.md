@@ -1,20 +1,20 @@
 # Keyboard shortcuts
 
-Keep your hands on the keyboard. On macOS use **⌘**; on Windows and Linux use
-**Ctrl**.
+Keep your hands on the keyboard. Each shortcut shows the keys for your computer:
+**Command** on macOS, **Ctrl** on Windows and Linux.
 
 ## At a glance
 
-- **⌘K** — open Quick Help from anywhere.
-- **⌘\\** — toggle focus mode.
+- `kbd:mod+k` — open Quick Help from anywhere.
+- `kbd:mod+\` — toggle focus mode.
 - **Esc** — close an overlay or cancel an edit.
-- **Ctrl/⌘ + Enter** — save a citation you're editing.
+- `kbd:mod+enter` — save a citation you're editing.
 
 ## Universal
 
-- **⌘K** — open the **Quick Help** overlay from anywhere. Search the Help Center
+- `kbd:mod+k` — open the **Quick Help** overlay from anywhere. Search the Help Center
   or jump to a shortcut, then press **Esc** to close.
-- **⌘\\** — toggle [focus mode](views-and-modes#focus) on and off.
+- `kbd:mod+\` — toggle [focus mode](views-and-modes#focus) on and off.
 
 ## Editor markdown
 
@@ -30,7 +30,7 @@ Wrap a word with `**` for bold or `*` for italic.
 ## Citations pane
 
 - **Esc** — close the pane (or cancel an in-progress edit)
-- **Ctrl/⌘ + Enter** — save the entry you're editing
+- `kbd:mod+enter` — save the entry you're editing
 
 ## A note on browser shortcuts
 

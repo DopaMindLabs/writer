@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Omezit pohyb",
       "reduceMotionHint": "Přeskočit animované přechody mezi pohledy.",
       "keyboardHintsLabel": "Zobrazit klávesové nápovědy",
-      "keyboardHintsHint": "Zobrazí zkratky s klávesou ⌘ v nápovědách a v rozích tlačítek.",
+      "keyboardHintsHint": "Zobrazí zkratky s klávesou {{modifier}} v nápovědách a v rozích tlačítek.",
       "startupLabel": "Otevřít při spuštění",
       "startupHint": "Co se zobrazí při spuštění aplikace.",
       "startupOptions": {

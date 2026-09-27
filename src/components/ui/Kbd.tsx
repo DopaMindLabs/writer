@@ -1,7 +1,20 @@
+import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
-import { isApplePlatform } from '@/lib/shortcuts/platform';
+import { formatChord } from '@/lib/shortcuts/formatChord';
 
-export interface KbdProps {
+const kbdRecipe = cva('font-mono', {
+  variants: {
+    variant: {
+      /** Beside a control: the faint 10 px meta voice. */
+      hint: 'text-[10px] tracking-wide text-ink-4',
+      /** Inside running prose, such as a Help article: sized to the text around it. */
+      inline: 'text-[0.85em] text-ink',
+    },
+  },
+  defaultVariants: { variant: 'hint' },
+});
+
+export interface KbdProps extends VariantProps<typeof kbdRecipe> {
   /**
    * A chord written platform-neutrally: `mod` resolves to ⌘ or Ctrl, plus
    * `shift` / `alt` / `enter`, joined with `+` — e.g. `mod+,`, `mod+shift+m`,
@@ -11,33 +24,15 @@ export interface KbdProps {
   className?: string;
 }
 
-const tokenLabel = (token: string, apple: boolean): string => {
-  const key = token.toLowerCase();
-  if (key === 'mod') return apple ? '⌘' : 'Ctrl';
-  if (key === 'shift') return apple ? '⇧' : 'Shift';
-  if (key === 'alt') return apple ? '⌥' : 'Alt';
-  if (key === 'enter') return apple ? '⏎' : 'Enter';
-  return token.length === 1 ? token.toUpperCase() : token;
-};
-
 /**
  * A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`). The
  * modifier is derived from the running platform at render, so each user sees
  * the key they press. On Apple the glyphs sit adjacent (`⌘⇧M`); elsewhere the
- * words join with `+` (`Ctrl+Shift+M`).
+ * words join with `+` (`Ctrl+Shift+M`). Copy that needs the same text inside a
+ * sentence formats it with {@link formatChord} rather than embedding a glyph,
+ * or renders the `inline` variant where the chord is its own element.
  */
-export const Kbd = ({ keys, className }: KbdProps) => {
-  const apple = isApplePlatform();
-  const tokens = keys.split('+').map((token) => tokenLabel(token, apple));
-  const display = apple ? tokens.join('') : tokens.join('+');
-  return (
-    <kbd
-      className={cn(
-        'font-mono text-[10px] tracking-wide text-ink-4',
-        className,
-      )}
-    >
-      {display}
-    </kbd>
-  );
+export const Kbd = ({ keys, variant, className }: KbdProps) => {
+  const display = formatChord(keys);
+  return <kbd className={cn(kbdRecipe({ variant }), className)}>{display}</kbd>;
 };

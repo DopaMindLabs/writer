@@ -7,6 +7,10 @@ import {
   type DeviceId,
 } from 'writer-sync/core';
 import type { EncryptedSyncFrame, SyncTombstone } from 'writer-sync/operations';
+import { generateDeviceIdentity, signFrame } from 'writer-sync/crypto';
+import { NoteKind, NoteState, type Note } from '@/db/schema';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
+import { makePutFrame } from './materialisation/writerOperationFactory';
 import type { PeerLinkState, PeerSession } from 'writer-sync/providers/webrtc';
 import { LoremDB } from '@/db/LoremDB';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
@@ -106,6 +110,13 @@ beforeEach(async () => {
   await db.open();
   await db.syncOperations.put(deleteFrame);
   await db.syncTombstones.put(tombstone);
+  // Received and materialised, as a peer's deletion is: the inbox holds its verdict.
+  await db.syncInbox.put({
+    operationId: deleteFrame.operationId, accessScopeId: deleteFrame.accessScopeId,
+    deviceId: deleteFrame.deviceId, logicalAt: deleteFrame.logicalAt,
+    entityTable: deleteFrame.entityTable, entityId: deleteFrame.entityId,
+    result: 'applied', receivedAt: deleteFrame.logicalAt.millis,
+  });
 });
 
 afterEach(async () => {
@@ -125,7 +136,52 @@ describe('removeTrustedDevice', () => {
     expect(await db.syncOperations.get('op-delete')).toBeUndefined();
   });
 
-  it('leaves all three tables as it found them when the release cannot be written', async () => {
+  it('keeps a deletion whose older history it cannot verify yet', async () => {
+    await trust(PEER);
+    // From a device whose identity has not arrived: never recorded as accepted,
+    // and it holds the deletion that overtook it, which it could otherwise
+    // resurrect once it verifies.
+    const unknown = await generateDeviceIdentity();
+    const gone: Note = {
+      id: deleteFrame.entityId, accessScopeId: 'scope-1', spaceId: 'scope-1',
+      createdBy: asPrincipalId('author-1'), updatedBy: asPrincipalId('author-1'),
+      mutationId: asOperationId('op-put-older'), logicalUpdatedAt: { millis: NOW - 2_000, counter: 0 },
+      l: 0, t: 0, w: 100, h: 100, kind: NoteKind.Note, state: NoteState.User,
+      body: 'gone', createdAt: NOW - 2_000,
+    };
+    const unsigned = await makePutFrame({
+      ring: await deriveKeyRing(generateRootSecret(), 1), deviceId: asDeviceId('device-unknown'),
+      entityTable: 'notes', row: gone,
+    });
+    await db.syncOperations.put({ ...unsigned, signature: await signFrame(unknown.privateKey, unsigned) });
+
+    await removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions: connected() });
+
+    expect((await db.trustedDevices.get(String(PEER)))?.status).toBe(TrustedDeviceStatus.Revoked);
+    expect(await db.syncTombstones.count()).toBe(1);
+    expect(await db.syncOperations.get('op-delete')).toBeDefined();
+    expect(await db.syncInbox.get('op-put-older')).toBeUndefined();
+    // Kept apart from the journal, so a compaction elsewhere cannot make it forgotten.
+    expect(await db.syncPendingHistory.get('op-put-older')).toBeDefined();
+  });
+
+  it('removes the device when a deletion\'s retained history does not decode', async () => {
+    await trust(PEER);
+    const sessions = connected();
+    // A provider wrote a row for the deleted entity with no logical time:
+    // nothing can order it, and nothing will ever admit it.
+    await db.table<Record<string, unknown>, string>('syncOperations')
+      .put({ ...deleteFrame, operationId: 'op-malformed', logicalAt: undefined });
+
+    await removeTrustedDevice({ db, deviceId: PEER, at: NOW, sessions });
+
+    expect((await db.trustedDevices.get(String(PEER)))?.status).toBe(TrustedDeviceStatus.Revoked);
+    expect(sessions.session.isClosed()).toBe(true);
+    expect(await db.syncTombstones.count()).toBe(0);
+    expect(await db.syncInbox.get('op-malformed')).toBeUndefined();
+  });
+
+  it('leaves every table it touches as it found them when the release cannot be written', async () => {
     await trust(PEER);
     await trust(OTHER);
     await db.syncTombstones.put({ ...tombstone, acknowledgedBy: [OTHER] });
@@ -149,6 +205,7 @@ describe('removeTrustedDevice', () => {
     expect(record?.revokedAt).toBeUndefined();
     expect(await db.syncTombstones.count()).toBe(1);
     expect(await db.syncOperations.get('op-delete')).toBeDefined();
+    expect(await db.syncInbox.count()).toBe(1);
     // Still trusted, so still connected: the removal is not a fact yet.
     expect(sessions.session.isClosed()).toBe(false);
   });

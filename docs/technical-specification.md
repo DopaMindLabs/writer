@@ -76,7 +76,8 @@
 The schema is declared in a single Dexie version, which includes the Writer Sync
 operation-protocol stores — `syncOperations` (the append-only journal of immutable
 encrypted operation frames), `syncInbox`
-(accepted operation ids), `syncTombstones` (deletion tombstones) and
+(accepted operation ids), `syncTombstones` (deletion tombstones),
+`syncPendingHistory` (unverified history a standing deletion settles) and
 `syncProviderBindings` (per-scope provider configuration). Every synced entity row
 carries provider-neutral replication metadata: a plaintext `accessScopeId`,
 `mutationId` and hybrid-logical `logicalUpdatedAt` for routing, deduplication and
@@ -312,7 +313,7 @@ Adapts to screen size and mode.
 | Floating-toolbar toggle | Visible only when enabled in global Settings. |
 | Citations button | Opens the citations drawer / panel. |
 | Mobile nav button | Hamburger; opens the sidebar drawer on mobile. |
-| Focus toggle | Enters / exits Focus mode. |
+| Focus toggle | Enters / exits Focus mode. Its tooltip names the `mod+\` chord for the running platform (⌘ on Apple, Ctrl elsewhere). |
 
 *Covered by:* `Topbar.test.tsx`, `view-modes.spec.ts`, `editor.spec.ts`.
 
@@ -706,7 +707,26 @@ wired into the app.
   not hold the acknowledgement back. Inbox rows are **never**
   pruned — the inbox is the replay guard — and a deletion is exempt from the
   window entirely: a tombstone and the signed delete frame it names are one
-  retention unit, dropped together in one transaction. A peer's acknowledgement
+  retention unit, dropped together in one transaction. That transaction first
+  records in the inbox what the deletion settled for its entity's retained older
+  operations the inbox has not already recorded and that pass the same admission
+  as materialisation (structure, payload hash, table policy, a trusted signature,
+  checked before the transaction opens, and still the same frame field for field
+  inside it, or recorded from the verified copy if the journal lost the frame in
+  between; history that could not be verified yet is kept in `syncPendingHistory`
+  so its deletion stays held across passes even after the journal loses it) — the deletion `applied`, an older
+  put `tombstoned`, an older delete `superseded` — because this device's own
+  operations never pass through the inbox, and without the tombstone an older put
+  would read as pending: the next sweep would apply it again and resurrect the
+  entity, and a scope move would refuse to run. A later operation is left alone,
+  since it may yet restore the entity. A deletion whose older history could still
+  verify later — a frame whose author's identity has not arrived — stays, with its
+  frame and that history, until the history verifies; history that can never be
+  admitted — including a signature its author's known key refuses — does not hold
+  it. A retained row that does not decode is never ordered:
+  it holds nothing, earns no inbox entry, and compaction leaves it in place. Under a deletion still standing, the retention window
+  settles admissible history with an inbox entry as it drops it, so a replay finds
+  its verdict. A peer's acknowledgement
   marks every deletion from that origin it has read past, recorded with the
   watermark it arrived with, so the evidence outlives the frames the comparison
   was made against. Release needs every still-trusted device to have marked it;
@@ -914,7 +934,7 @@ wired into the app.
 `JournalRetentionSelector.test.tsx`; and `pair-device.spec.ts`.
 Attachment framing, assembly and transfer are covered by
 `operationJournalMiddleware.test.ts`, `writerFullState.test.ts`,
-`writerOperationMaterializer.test.ts`, `attachmentChunkStore.test.ts`,
+`writerOperationMaterialiser.test.ts`, `attachmentChunkStore.test.ts`,
 `attachmentTransfer.test.ts`, `peerCatchUp.test.ts`, and
 `attachments-pair-sync.spec.ts`.
 
@@ -1061,6 +1081,16 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 | Brain Space note | Double-click | Edit |
 | Brain Space note | Escape (while editing) | Revert |
 | Brain Space note | Shift-click | Start / complete a connection |
+
+Shortcut hints show the running platform's keys: adjacent glyphs on Apple (`⌘\`), `+`-joined
+words elsewhere (`Ctrl+\`). This holds in the chrome, in settings copy that names the modifier
+(the **Show keyboard hints** description), and in Help Center articles, which write a
+shortcut as an inline `kbd:` code span holding a platform-neutral chord (`kbd:mod+\`); the
+article renderer shows it as a `Kbd`, and search excerpts show the same formatted text.
+
+*Covered by:* `ui/Kbd.test.tsx`, `help/Markdown.test.tsx`, `lib/help/search.test.ts`,
+`lib/help/content.test.ts`, `settings/placeholders/GlobalSettingsPlaceholders.test.tsx`,
+`e2e/help.spec.ts`.
 
 ---
 

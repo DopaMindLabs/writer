@@ -6,7 +6,7 @@ in the top bar.
 ## At a glance
 
 - **Write** — the default editing surface.
-- **Focus** — hide the chrome (**⌘\\**).
+- **Focus** — hide the chrome (`kbd:mod+\`).
 - **Read** — a clean, non-editable reading view.
 - **Split** — two documents side by side.
 - **Inspector** — outline, info, and history for the current doc.
@@ -19,7 +19,7 @@ available when you need them.
 ## Focus
 
 Focus mode hides the surrounding chrome so only your text remains. Toggle it
-with **⌘\\** (Ctrl+\\ on Windows/Linux) — press again to bring the chrome back.
+with `kbd:mod+\` — press again to bring the chrome back.
 
 ## Read
 

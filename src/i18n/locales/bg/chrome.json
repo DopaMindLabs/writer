@@ -32,8 +32,8 @@
     "enterFocus": "Влез в режим на фокус",
     "normal": "Нормален",
     "focus": "Фокус",
-    "focusTitleNormal": "Нормален (⌘\\)",
-    "focusTitleFocus": "Фокус (⌘\\)",
+    "focusTitleNormal": "Нормален ({{shortcut}})",
+    "focusTitleFocus": "Фокус ({{shortcut}})",
     "findInDoc": "Намери в документа",
     "inspector": "Инспектор на документ",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Писане",
     "themeLabel": "Тема",
     "focusLabel": "Режим на фокус",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Плаваща лента с инструменти",
     "readingWidthLabel": "Ширина на четене",
     "readingWidthHint": "Мярка за документ",
@@ -102,14 +101,12 @@
       "hcLight": "ВК светла",
       "hcDark": "ВК тъмна"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Какво е новото",
     "feedback": "Изпрати обратна връзка…",
     "accessibility": "Достъпност",
     "about": "Относно",
     "helpLink": "център за помощ →",
     "fullSettings": "всички настройки →",
-    "fullSettingsKbd": "⌘,",
     "off": "Изкл",
     "on": "Вкл",
     "tourCheckmark": "завършено"
@@ -190,7 +187,6 @@
       "rename": "Преименувай",
       "move": "Премести в секция…",
       "export": "Експортирай този документ…",
-      "exportKbd": "⌘E",
       "print": "Печат…",
       "wordCount": "Статистика на броя думи",
       "trash": "Премести в кошчето"

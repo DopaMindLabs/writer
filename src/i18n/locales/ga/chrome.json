@@ -32,8 +32,8 @@
     "enterFocus": "Téigh isteach i mód fócais",
     "normal": "Normálta",
     "focus": "Fócas",
-    "focusTitleNormal": "Normálta (⌘\\)",
-    "focusTitleFocus": "Fócas (⌘\\)",
+    "focusTitleNormal": "Normálta ({{shortcut}})",
+    "focusTitleFocus": "Fócas ({{shortcut}})",
     "findInDoc": "Aimsigh sa doiciméad",
     "inspector": "Cigire doiciméad",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Scríbhneoireacht",
     "themeLabel": "Téama",
     "focusLabel": "Mód fócais",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Barra uirlisí ar snámh",
     "readingWidthLabel": "Leithead léitheoireachta",
     "readingWidthHint": "Tomhas in aghaidh doiciméid",
@@ -102,14 +101,12 @@
       "hcLight": "AC geal",
       "hcDark": "AC dorcha"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Cad atá nua",
     "feedback": "Seol aiseolas…",
     "accessibility": "Inrochtaineacht",
     "about": "Maidir le",
     "helpLink": "lárionad cabhrach →",
     "fullSettings": "socruithe iomlána →",
-    "fullSettingsKbd": "⌘,",
     "off": "As",
     "on": "Ar",
     "tourCheckmark": "críochnaithe"
@@ -190,7 +187,6 @@
       "rename": "Athainmnigh",
       "move": "Bog go rann…",
       "export": "Easpórtáil an doiciméad seo…",
-      "exportKbd": "⌘E",
       "print": "Priontáil…",
       "wordCount": "Staitisticí comhairimh focal",
       "trash": "Bog go bruscar"

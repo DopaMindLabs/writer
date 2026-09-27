@@ -1,5 +1,6 @@
 import { HELP_ARTICLES } from './registry';
 import { FALLBACK_LOCALE, getHelpDoc } from './content';
+import { formatChordSpans } from './chordMarkup';
 
 export interface HelpSearchResult {
   readonly slug: string;
@@ -29,7 +30,7 @@ const buildIndex = (locale: string): readonly IndexedArticle[] =>
         category: meta.category,
         keywords: meta.keywords.join(' '),
         headings: doc.headings.map((h) => h.text).join(' '),
-        body: doc.body,
+        body: formatChordSpans(doc.body),
       },
     ];
   });

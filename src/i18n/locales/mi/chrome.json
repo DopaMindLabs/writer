@@ -32,8 +32,8 @@
     "enterFocus": "Tomokia te aratau arotahi",
     "normal": "Aratau",
     "focus": "Arotahi",
-    "focusTitleNormal": "Aratau (⌘\\)",
-    "focusTitleFocus": "Arotahi (⌘\\)",
+    "focusTitleNormal": "Aratau ({{shortcut}})",
+    "focusTitleFocus": "Arotahi ({{shortcut}})",
     "findInDoc": "Kimi i te tuhinga",
     "inspector": "Kaitirotiro tuhinga",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Tuhituhi",
     "themeLabel": "Tāhuhu",
     "focusLabel": "Aratau arotahi",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Pae taputapu mānu",
     "readingWidthLabel": "Whānui pānui",
     "readingWidthHint": "Inenga ia tuhinga",
@@ -102,14 +101,12 @@
       "hcLight": "HC mārama",
       "hcDark": "HC pōuri"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Hou",
     "feedback": "Tuku urupare…",
     "accessibility": "Whaiurutanga",
     "about": "Mō",
     "helpLink": "pokapū āwhina →",
     "fullSettings": "ngā tautuhinga katoa →",
-    "fullSettingsKbd": "⌘,",
     "off": "Tutaki",
     "on": "Mura",
     "tourCheckmark": "kua oti"
@@ -190,7 +187,6 @@
       "rename": "Whakaingoa anō",
       "move": "Nuku ki te wāhanga…",
       "export": "Kawe atu tēnei tuhinga…",
-      "exportKbd": "⌘E",
       "print": "Tā…",
       "wordCount": "Tatauranga tatau kupu",
       "trash": "Nuku ki te ipu para"

@@ -139,6 +139,11 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   localOnly('syncInbox'),
   localOnly('syncTombstones'),
   localOnly('syncProviderBindings'),
+  localOnly('syncScopeRebindings'),
+  // History a standing deletion settles that could not be verified yet, kept so
+  // the deletion stays even once the journal loses the frame. Receiver-local:
+  // what this device could not yet verify says nothing about any other device.
+  localOnly('syncPendingHistory'),
   // Which peers this device has paired with. Local-only and never replicated:
   // trust is a property of *this* device's relationships, and syncing it would
   // let one compromised peer extend trust to every other device.

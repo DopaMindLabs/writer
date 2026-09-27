@@ -6,7 +6,7 @@ import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { InvariantError } from '@/lib/invariant';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
-import { makePutFrame } from '@/lib/writerSyncIntegration/materialization/writerOperationFactory';
+import { makePutFrame } from '@/lib/writerSyncIntegration/materialisation/writerOperationFactory';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { sampleMetadata } from '@/test/fixtures';
 import { DEXIE_CLOUD_PROVIDER_ID } from './dexieCloudProviderId';

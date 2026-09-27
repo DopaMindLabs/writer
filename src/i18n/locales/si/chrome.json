@@ -32,8 +32,8 @@
     "enterFocus": "අවධාන මාදිලියට ඇතුළු වන්න",
     "normal": "සාමාන්‍ය",
     "focus": "අවධානය",
-    "focusTitleNormal": "සාමාන්‍ය (⌘\\)",
-    "focusTitleFocus": "අවධානය (⌘\\)",
+    "focusTitleNormal": "සාමාන්‍ය ({{shortcut}})",
+    "focusTitleFocus": "අවධානය ({{shortcut}})",
     "findInDoc": "ලේඛනයේ සොයන්න",
     "inspector": "ලේඛන පරීක්ෂකය",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "ලිවීම",
     "themeLabel": "තේමාව",
     "focusLabel": "අවධාන මාදිලිය",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "පාවෙන මෙවලම් තීරුව",
     "readingWidthLabel": "කියවීමේ පළල",
     "readingWidthHint": "ලේඛනයකට මැනීම",
@@ -102,14 +101,12 @@
       "hcLight": "Hc ආලෝක",
       "hcDark": "Hc අන්ධකාර"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "අලුත් කුමක්ද",
     "feedback": "ප්‍රතිපෝෂණය යවන්න…",
     "accessibility": "ප්‍රවේශ්‍යතාව",
     "about": "ගැන",
     "helpLink": "උපකාර මධ්‍යස්ථානය →",
     "fullSettings": "සියලුම සැකසුම් →",
-    "fullSettingsKbd": "⌘,",
     "off": "අක්‍රිය",
     "on": "ක්‍රියාත්මක",
     "tourCheckmark": "අවසන්"
@@ -190,7 +187,6 @@
       "rename": "නැවත නම් කරන්න",
       "move": "කොටසට ගෙනයන්න…",
       "export": "මෙම ලේඛනය අපනයනය කරන්න…",
-      "exportKbd": "⌘E",
       "print": "මුද්‍රණය…",
       "wordCount": "වචන ගණන් සංඛ්‍යාලේඛන",
       "trash": "කුණු කූඩයට ගෙනයන්න"

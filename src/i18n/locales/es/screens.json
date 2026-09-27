@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Reducir movimiento",
       "reduceMotionHint": "Omite las transiciones animadas entre vistas.",
       "keyboardHintsLabel": "Mostrar pistas de teclado",
-      "keyboardHintsHint": "Muestra los atajos ⌘ en los tooltips y en la esquina de los botones.",
+      "keyboardHintsHint": "Muestra los atajos {{modifier}} en los tooltips y en la esquina de los botones.",
       "startupLabel": "Abrir al iniciar",
       "startupHint": "Lo que ves cuando arrancas la app.",
       "startupOptions": {

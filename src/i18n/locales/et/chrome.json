@@ -32,8 +32,8 @@
     "enterFocus": "Sisene fookuse režiimi",
     "normal": "Normaalne",
     "focus": "Fookus",
-    "focusTitleNormal": "Normaalne (⌘\\)",
-    "focusTitleFocus": "Fookus (⌘\\)",
+    "focusTitleNormal": "Normaalne ({{shortcut}})",
+    "focusTitleFocus": "Fookus ({{shortcut}})",
     "findInDoc": "Otsi dokumendist",
     "inspector": "Dokumendiinspektor",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Kirjutamine",
     "themeLabel": "Teema",
     "focusLabel": "Fookuse režiim",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Hõljuv tööriistariba",
     "readingWidthLabel": "Lugemise laius",
     "readingWidthHint": "Mõõt dokumendi kohta",
@@ -102,14 +101,12 @@
       "hcLight": "KK hele",
       "hcDark": "KK tume"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Mis uut",
     "feedback": "Saada tagasisidet…",
     "accessibility": "Juurdepääs",
     "about": "Teave",
     "helpLink": "abikeskus →",
     "fullSettings": "kõik seaded →",
-    "fullSettingsKbd": "⌘,",
     "off": "Väljas",
     "on": "Sees",
     "tourCheckmark": "lõpetatud"
@@ -190,7 +187,6 @@
       "rename": "Nimeta ümber",
       "move": "Liiguta sektsiooni…",
       "export": "Ekspordi see dokument…",
-      "exportKbd": "⌘E",
       "print": "Prindi…",
       "wordCount": "Sõnade loendamise statistika",
       "trash": "Liiguta prügikasti"

@@ -10,6 +10,7 @@ A short paragraph with **bold** and *italic* text, plus a link to
 
 - First item
 - Second item with \`inline code\`
+- Press \`kbd:mod+\\\` to toggle focus mode; the chord follows the viewing machine
 
 > A block quote, for emphasis.
 `;

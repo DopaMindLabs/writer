@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Vähenda liikumist",
       "reduceMotionHint": "Jäta vahele animeeritud üleminekud vaadete vahel.",
       "keyboardHintsLabel": "Kuva klaviatuurivihjeid",
-      "keyboardHintsHint": "Kuva ⌘-klahvi kiirklahve kohtspikrites ja nuppude nurgas.",
+      "keyboardHintsHint": "Kuva {{modifier}}-klahvi kiirklahve kohtspikrites ja nuppude nurgas.",
       "startupLabel": "Ava käivitamisel",
       "startupHint": "Mida näete, kui käivitate rakenduse.",
       "startupOptions": {

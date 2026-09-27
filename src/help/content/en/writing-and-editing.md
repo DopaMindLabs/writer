@@ -7,7 +7,7 @@ The editor is built for long-form prose.
 - **Type** — everything autosaves to your browser instantly.
 - **Select text** — a floating toolbar appears for quick formatting.
 - **Rename** — click the document name in the top bar.
-- **Focus** — press **⌘\\** to hide everything but your words.
+- **Focus** — press `kbd:mod+\` to hide everything but your words.
 
 ## Autosave
 
@@ -33,7 +33,7 @@ sidebar stays readable.
 
 ## Staying focused
 
-Switch to **focus mode** (**⌘\\**) to hide everything but your text. See
+Switch to **focus mode** (`kbd:mod+\`) to hide everything but your text. See
 [Views & modes](views-and-modes).
 
 ## Related

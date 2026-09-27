@@ -166,7 +166,7 @@
       "reduceMotionLabel": "Reduzir movimento",
       "reduceMotionHint": "Salta as transições animadas entre vistas.",
       "keyboardHintsLabel": "Mostrar pistas do teclado",
-      "keyboardHintsHint": "Mostra atalhos ⌘ nos tooltips e cantos dos botões.",
+      "keyboardHintsHint": "Mostra atalhos {{modifier}} nos tooltips e cantos dos botões.",
       "startupLabel": "Abrir ao iniciar",
       "startupHint": "O que vês quando inicias a aplicação.",
       "startupOptions": { "lastView": "Última vista", "home": "Início", "brainSpace": "Brain space" }

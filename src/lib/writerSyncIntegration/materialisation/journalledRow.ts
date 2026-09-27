@@ -1,4 +1,4 @@
-import type { ReplicatedEntityMetadata } from 'writer-sync/core';
+import type { HybridLogicalTimestamp, ReplicatedEntityMetadata } from 'writer-sync/core';
 
 /**
  * What makes a row of a synced-content table framable.
@@ -20,6 +20,20 @@ const isTimestamp = (value: unknown): value is { millis: number; counter: number
   value !== null &&
   typeof (value as { millis?: unknown }).millis === 'number' &&
   typeof (value as { counter?: unknown }).counter === 'number';
+
+/**
+ * Whether a row records when it was written. The logical time is routing
+ * metadata kept in the clear, so a row read as stored, still sealed, has it too.
+ */
+export const hasLogicalTime = (
+  row: UnknownRow,
+): row is UnknownRow & { logicalUpdatedAt: HybridLogicalTimestamp } =>
+  isTimestamp(row.logicalUpdatedAt);
+
+/** Whether a row names its scope, which is routing metadata kept in the clear too. */
+export const hasAccessScope = (
+  row: UnknownRow,
+): row is UnknownRow & { accessScopeId: string } => typeof row.accessScopeId === 'string';
 
 export const isJournalledRow = (row: UnknownRow): row is JournalledRow =>
   typeof row.id === 'string' &&

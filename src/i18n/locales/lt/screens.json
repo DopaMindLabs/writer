@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Sumažinti animaciją",
       "reduceMotionHint": "Praleisti animuotus perėjimus tarp rodinių.",
       "keyboardHintsLabel": "Rodyti klaviatūros užuominas",
-      "keyboardHintsHint": "Rodyti ⌘-klavišo sparčiuosius klavišus patarime ir mygtukų kampe.",
+      "keyboardHintsHint": "Rodyti {{modifier}}-klavišo sparčiuosius klavišus patarime ir mygtukų kampe.",
       "startupLabel": "Atidaryti paleidžiant",
       "startupHint": "Ką matote paleidę programą.",
       "startupOptions": {

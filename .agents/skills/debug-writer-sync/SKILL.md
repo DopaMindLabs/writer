@@ -22,7 +22,7 @@ Start with `work-on-writer-sync`, then identify the failing boundary:
 | Pairing, verification code, reconnect or peer discovery | Writer Sync pairing/WebRTC tests and normative protocol docs |
 | Frame rejection, non-convergence, replay or attachment stall | engine `core` / `operations` / `crypto` tests and frame protocol |
 | Sync capability missing or provider not started | `src/lib/writerSyncIntegration/` when present; otherwise `src/lib/writerSync/` and `src/lib/syncProviders/` |
-| Valid frame accepted but Writer state is wrong | `src/lib/writerSyncIntegration/materialization/` when present; otherwise `src/lib/reconcile/` and `src/lib/docs/docRepository.ts` |
+| Valid frame accepted but Writer state is wrong | `src/lib/writerSyncIntegration/materialisation/` when present; otherwise `src/lib/reconcile/` and `src/lib/docs/docRepository.ts` |
 | Cloud loop, key/escrow/account/device problem | Dexie Cloud provider and live cloud harness below |
 
 Trace the failure from the first violated invariant. Do not switch providers merely to

@@ -26,7 +26,7 @@ the navigation drawer first, where the rail lives. Controls are grouped by purpo
 - A **help center →** link, followed by **More** — what's new, accessibility,
   and about.
 
-Keyboard shortcut hints (such as **⌘\\** for focus mode) show next to a control on
+Keyboard shortcut hints (such as `kbd:mod+\` for focus mode) show next to a control on
 computers and are hidden on touch devices, where there's no keyboard to press.
 
 ## Finding a setting

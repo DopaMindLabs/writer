@@ -166,7 +166,7 @@
       "reduceMotionLabel": "Beweging verminderen",
       "reduceMotionHint": "Sla geanimeerde overgangen tussen weergaven over.",
       "keyboardHintsLabel": "Toetsenbordhints tonen",
-      "keyboardHintsHint": "Toon ⌘-sneltoetsen in tooltips en bij hoeken van knoppen.",
+      "keyboardHintsHint": "Toon {{modifier}}-sneltoetsen in tooltips en bij hoeken van knoppen.",
       "startupLabel": "Openen bij opstarten",
       "startupHint": "Wat je ziet als je de app start.",
       "startupOptions": { "lastView": "Laatste weergave", "home": "Start", "brainSpace": "Brain Space" }

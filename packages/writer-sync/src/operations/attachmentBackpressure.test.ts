@@ -86,10 +86,16 @@ const runWhileDraining = async (
   void work.then(() => {
     done = true;
   });
-  // Each turn: hand the sender room, then let its continuation run.
-  for (let turn = 0; turn < 5_000 && !done; turn += 1) {
-    wire.drain();
-    await Promise.resolve();
+  // Each turn: hand the sender room, then let its continuation run. The holder
+  // checks every chunk it serves against its offer with real SHA-256, which no
+  // amount of draining resolves on its own, so each burst ends with a turn of
+  // the event loop.
+  for (let turn = 0; turn < 2_000 && !done; turn += 1) {
+    for (let message = 0; message < 64 && !done; message += 1) {
+      wire.drain();
+      await Promise.resolve();
+    }
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
   await work;
 };
@@ -184,6 +190,7 @@ describe('serving an attachment over a channel that is full', () => {
     const wire = trickleChannel();
     const transport = createWebRtcTransport(wire.channel);
     const holder = holderOver({ transport, content, manifest });
+    holder.offer([manifest]);
 
     // The largest request the protocol allows, against a channel that takes one
     // message at a time. Without pacing, the outbox refuses partway through.
@@ -220,6 +227,7 @@ describe('serving an attachment over a channel that is full', () => {
       readChunk: async ({ index }) => content.subarray(index * CHUNK, (index + 1) * CHUNK),
       saveAttachment: async () => undefined,
     });
+    holder.offer([await buildChunkManifest({ attachmentId: 'a1', content, chunkBytes: CHUNK })]);
 
     await expect(
       holder.receive({

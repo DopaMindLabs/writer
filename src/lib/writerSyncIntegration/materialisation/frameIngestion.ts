@@ -5,7 +5,7 @@ import type { DeviceId, SyncObservable } from 'writer-sync/core';
 import {
   AttachmentChunksPendingError,
   applyInboundFrame,
-} from './writerOperationMaterializer';
+} from './writerOperationMaterialiser';
 import { refreshInboundDocs } from './inboundDocRefresh';
 import { createWriterFrameVerifier } from './writerFrameVerifier';
 import { writerJournalIdentity } from './writerJournalDeps';

@@ -292,6 +292,105 @@ describe('startLivePeerSync', () => {
     stop();
   });
 
+  it('offers a moved attachment on the destination link, never with its source withdrawal', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    // Moved: the row and its resealed chunks now belong to the destination.
+    await db.noteAttachments.put({ ...attachment(), accessScopeId: 'space-2' });
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-2',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.bulkPut([
+      frameOf({
+        operationId: asOperationId('op-withdrawal'),
+        kind: 'delete',
+        entityTable: 'noteAttachments',
+        entityId: 'attachment-1',
+      }),
+      frameOf({
+        operationId: asOperationId('op-moved'),
+        accessScopeId: 'space-2',
+        entityTable: 'noteAttachments',
+        entityId: 'attachment-1',
+      }),
+    ]);
+
+    const kindsOn = (scope: string) =>
+      peer.sent.filter((sent) => sent.scope === scope).map(({ message }) => message.kind);
+    await vi.waitFor(() => {
+      expect(kindsOn('space-2')).toEqual(['frames', 'attachment-offer']);
+      expect(kindsOn('space-1')).toEqual(['frames']);
+    });
+    stop();
+  });
+
+  it('does not serve chunks a scope move replaced after they were offered', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.put(
+      frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+    );
+    await vi.waitFor(() => {
+      expect(peer.sent.map(({ message }) => message.kind)).toEqual(['frames', 'attachment-offer']);
+    });
+    // The move commits before the peer asks: the ciphertext is resealed for the
+    // destination, and the source link must not carry it.
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-2',
+      bytes: toBase64(new Uint8Array([9, 8, 7])),
+    });
+
+    peer.receive('space-1', {
+      v: 1,
+      kind: 'attachment-request',
+      attachmentId: 'attachment-1',
+      indices: [0],
+    });
+
+    await vi.waitFor(() => {
+      expect(peer.sent.at(-1)?.message).toEqual({
+        v: 1, kind: 'attachment-unavailable', attachmentId: 'attachment-1', indices: [0],
+      });
+    });
+    expect(peer.sent.some(({ message }) => message.kind === 'attachment-chunk')).toBe(false);
+    stop();
+  });
+
+  it('offers no chunks sealed for another scope than the link carries', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-2',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.put(
+      frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+    );
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-after') }));
+
+    // The later frame crossing shows the attachment's turn has passed.
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(2);
+    });
+    expect(peer.sent.map(({ message }) => message.kind)).toEqual(['frames', 'frames']);
+    stop();
+  });
+
   it('offers an attachment even when another attachment in the scope cannot build a manifest', async () => {
     // One partial or poisoned attachment must not block every offer in the
     // scope: only the attachment being offered is manifested.

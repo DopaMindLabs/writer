@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Riduci movimento",
       "reduceMotionHint": "Salta le transizioni animate tra le viste.",
       "keyboardHintsLabel": "Mostra suggerimenti tastiera",
-      "keyboardHintsHint": "Visualizza le scorciatoie ⌘ nei tooltip e nell'angolo dei pulsanti.",
+      "keyboardHintsHint": "Visualizza le scorciatoie {{modifier}} nei tooltip e nell'angolo dei pulsanti.",
       "startupLabel": "Apri all'avvio",
       "startupHint": "Cosa vedi quando avvii l'app.",
       "startupOptions": {

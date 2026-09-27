@@ -9,7 +9,7 @@ import { retentionCutoff, type RetentionOptions } from './journalRetention';
  * Selects compactable journal frames. A frame expires after every trusted peer
  * acknowledges it or its retention window closes. Acknowledgements are tracked
  * per origin device. Delete frames remain coupled to their tombstones and leave
- * only when the tombstone is releasable.
+ * only when the tombstone is releasable; frames kept until held ignore the window.
  */
 
 /** How far one still-trusted peer has read each originating device, per scope. */
@@ -31,6 +31,14 @@ export interface CompactionOptions {
    * omitted it would compact away deletions it still owes its peers.
    */
   tombstones: readonly SyncTombstone[];
+  /**
+   * Frames the retention window may not take: only once every trusted peer holds
+   * one does it leave, and the frame each peer's acknowledgement names stays
+   * with it as that peer's evidence. A deletion a scope still owes its peers
+   * that no tombstone records is one — dropped by age, it would never reach a
+   * peer returning after the window.
+   */
+  keptUntilHeld?: readonly OperationId[];
 }
 
 const byOperationId = (
@@ -73,14 +81,32 @@ export const compactableOperationIds = (
   const retained = new Set(
     options.tombstones.map((tombstone) => String(tombstone.operationId)),
   );
+  const untilHeld = new Set((options.keptUntilHeld ?? []).map(String));
+  const aged = (frame: EncryptedSyncFrame): boolean =>
+    frame.logicalAt.millis <= cutoff && !untilHeld.has(String(frame.operationId));
 
   const heldByEveryPeer = (frame: EncryptedSyncFrame): boolean =>
     peers.length > 0 &&
     peers.every((peer) => isHeldByPeer({ peer, frame, frames: index }));
 
+  // A peer is seen to hold a kept frame through the frame its acknowledgement
+  // names, which must outlast the kept one: dropped first, the mark would name
+  // nothing, and the kept frame could never be shown held by every peer.
+  const evidence = new Set<string>();
+  for (const frame of frames) {
+    if (!untilHeld.has(String(frame.operationId)) || heldByEveryPeer(frame)) continue;
+    for (const peer of peers) {
+      const mark = highWaterMark(peer, frame);
+      if (mark !== undefined && isHeldByPeer({ peer, frame, frames: index })) {
+        evidence.add(String(mark));
+      }
+    }
+  }
+
   return frames
     .filter((frame) => !retained.has(String(frame.operationId)))
-    .filter((frame) => frame.logicalAt.millis <= cutoff || heldByEveryPeer(frame))
+    .filter((frame) => !evidence.has(String(frame.operationId)))
+    .filter((frame) => aged(frame) || heldByEveryPeer(frame))
     .map((frame) => frame.operationId);
 };
 

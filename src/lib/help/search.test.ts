@@ -1,7 +1,21 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import * as platform from '@/lib/shortcuts/platform';
 import { searchHelp } from './search';
 
 describe('searchHelp', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('shows shortcuts in excerpts as the keys the reader presses', () => {
+    vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+    const result = searchHelp('toggle focus mode').find(
+      ({ slug }) => slug === 'keyboard-shortcuts',
+    );
+    expect(result?.excerpt).toContain('Ctrl+\\');
+    expect(result?.excerpt).not.toContain('kbd:');
+  });
+
   it('returns nothing for an empty query', () => {
     expect(searchHelp('')).toEqual([]);
     expect(searchHelp('   ')).toEqual([]);

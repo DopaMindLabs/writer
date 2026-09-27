@@ -171,7 +171,7 @@
       "reduceMotionLabel": "Mozgás csökkentése",
       "reduceMotionHint": "Animált átmenetek kihagyása a nézetek között.",
       "keyboardHintsLabel": "Billentyűzet-tippek megjelenítése",
-      "keyboardHintsHint": "⌘ billentyűparancsok megjelenítése eszköztippekben és gombok sarkában.",
+      "keyboardHintsHint": "{{modifier}} billentyűparancsok megjelenítése eszköztippekben és gombok sarkában.",
       "startupLabel": "Megnyitás indításkor",
       "startupHint": "Mit látsz az alkalmazás indításakor.",
       "startupOptions": {

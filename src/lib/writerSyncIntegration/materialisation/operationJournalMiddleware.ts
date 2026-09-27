@@ -73,10 +73,10 @@ export interface OperationJournalDeps {
 }
 
 /**
- * Whether the transaction is the materialiser applying an inbound frame. Only
- * `applyInboundFrame` opens a readwrite transaction that spans both a content
- * table and `syncInbox` (asserted by the middleware test suite), so the scope
- * itself is the signal — accurate per transaction even under concurrency.
+ * Whether the transaction applies explicitly prepared frames. Inbound
+ * materialisation and scope moves include both content tables and `syncInbox`,
+ * committing their own frames and acceptance records. The transaction scope
+ * suppresses duplicate journalling, including under concurrency.
  */
 const isMaterialisationTx = (trans: DBCoreTransaction): boolean =>
   (

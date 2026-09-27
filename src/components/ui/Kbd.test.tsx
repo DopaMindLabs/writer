@@ -64,6 +64,12 @@ describe('Kbd', () => {
     expect(screen.getByText('Ctrl+Enter')).toBeInTheDocument();
   });
 
+  it('renders the inline variant as the same kbd text for use inside prose', () => {
+    mockApple(false);
+    render(<Kbd keys={'mod+\\'} variant="inline" />);
+    expect(screen.getByText('Ctrl+\\').tagName).toBe('KBD');
+  });
+
   it('passes a multi-character non-modifier token through unchanged', () => {
     mockApple(false);
     render(<Kbd keys="Esc" />);

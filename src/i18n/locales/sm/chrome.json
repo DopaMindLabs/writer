@@ -32,8 +32,8 @@
     "enterFocus": "Ulu i le tulaga taulai",
     "normal": "Masani",
     "focus": "Taulai",
-    "focusTitleNormal": "Masani (⌘\\)",
-    "focusTitleFocus": "Taulai (⌘\\)",
+    "focusTitleNormal": "Masani ({{shortcut}})",
+    "focusTitleFocus": "Taulai ({{shortcut}})",
     "findInDoc": "Sailia i le faamaumauga",
     "inspector": "Faatonu o faamaumauga",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Tusitusiga",
     "themeLabel": "Autu",
     "focusLabel": "Tulaga taulai",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Pa o meafaigaluega e opeopea",
     "readingWidthLabel": "Lautele o le faitau",
     "readingWidthHint": "Fua i faamaumauga taitasi",
@@ -102,14 +101,12 @@
       "hcLight": "HC malamalama",
       "hcDark": "HC pogisa"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "O le a le mea fou",
     "feedback": "Auina mai faamatalaga…",
     "accessibility": "Avanoa",
     "about": "E uiga",
     "helpLink": "nofoaga o le fesoasoani →",
     "fullSettings": "faatulagaga uma →",
-    "fullSettingsKbd": "⌘,",
     "off": "Tapuni",
     "on": "Tatala",
     "tourCheckmark": "maeʻa"
@@ -190,7 +187,6 @@
       "rename": "Toe faaigoa",
       "move": "Si i le vaega…",
       "export": "Auina atu lenei faamaumauga…",
-      "exportKbd": "⌘E",
       "print": "Lomia…",
       "wordCount": "Faamaumauga o le faitau upu",
       "trash": "Si i le lapisi"

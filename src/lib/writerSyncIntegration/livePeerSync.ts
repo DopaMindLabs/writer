@@ -127,9 +127,10 @@ const linkCache = (
 
 const openLiveLink = async (options: {
   db: LoremDB;
+  accessScopeId: AccessScopeId;
   createTransport: () => Promise<SyncTransport>;
 }): Promise<LiveLink> => {
-  const { db } = options;
+  const { db, accessScopeId } = options;
   const transport = await options.createTransport();
   const store = createAttachmentChunkStore(db);
   const send = (message: CatchUpMessage): void => {
@@ -162,7 +163,7 @@ const openLiveLink = async (options: {
       // thing. A manifest that cannot be built is reported per attachment; the
       // frame that prompted the offer has already crossed.
       try {
-        const manifest = await manifestForAttachment(db, attachmentId);
+        const manifest = await manifestForAttachment({ db, attachmentId, accessScopeId });
         if (manifest !== null) attachments.offer([manifest]);
       } catch (error) {
         appLogger.warn('attachment cannot be offered to the peer', {
@@ -186,6 +187,7 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
   const links = linkCache((accessScopeId) =>
     openLiveLink({
       db,
+      accessScopeId,
       createTransport: () =>
         realtime.createTransport({
           accessScopeId,
@@ -221,7 +223,9 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
       return;
     }
     link.transport.send(bytes);
-    if (frame.entityTable === 'noteAttachments') {
+    // A deletion names no content, and a scope move's withdrawal must not carry
+    // the attachment it moved away over the scope it left.
+    if (frame.entityTable === 'noteAttachments' && frame.kind === 'put') {
       await Dexie.ignoreTransaction(() => link.offerAttachment(frame.entityId));
     }
   };

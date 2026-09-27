@@ -1,7 +1,7 @@
 /**
  * The mutual-exclusion gate for every sweep that applies sync-derived document
  * state. Two independent paths react to the same settled sync round: the frame
- *-ingestion sweep (`src/lib/writerSyncIntegration/materialization/frameIngestion.ts`)
+ *-ingestion sweep (`src/lib/writerSyncIntegration/materialisation/frameIngestion.ts`)
  * and the cloud reconciler (`src/lib/cloud/reconcile.ts`). Each snapshots
  * document state up front, so one running while the other writes can invert a
  * winner and re-apply a stale body — which a mounted editor then autosaves

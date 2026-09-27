@@ -171,7 +171,7 @@
       "reduceMotionLabel": "모션 줄이기",
       "reduceMotionHint": "뷰 사이의 애니메이션 전환을 건너뜁니다.",
       "keyboardHintsLabel": "키보드 힌트 표시",
-      "keyboardHintsHint": "툴팁과 버튼 모서리에 ⌘ 키 단축키를 표시합니다.",
+      "keyboardHintsHint": "툴팁과 버튼 모서리에 {{modifier}} 키 단축키를 표시합니다.",
       "startupLabel": "시작 시 열기",
       "startupHint": "앱을 실행할 때 표시되는 화면.",
       "startupOptions": {

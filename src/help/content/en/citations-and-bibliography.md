@@ -44,7 +44,7 @@ backup alongside your prose. See [Your data](your-data) for full export options.
 Inside the citations pane:
 
 - **Esc** — close the pane (or cancel an in-progress edit).
-- **Ctrl/⌘ + Enter** — save the entry you're editing.
+- `kbd:mod+enter` — save the entry you're editing.
 
 ## Related
 

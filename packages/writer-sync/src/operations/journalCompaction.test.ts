@@ -229,6 +229,71 @@ describe('compactableOperationIds and retained deletions', () => {
   });
 });
 
+describe('compactableOperationIds and frames kept until every peer holds them', () => {
+  const withdrawal = frameOf({ id: 'op-withdrawal', millis: NOW - 400 * MILLIS_PER_DAY });
+
+  it('keeps such a frame from the window, however old', () => {
+    // A deletion a scope still owes its peers, with no tombstone to hold it:
+    // dropped by age, a peer away longer than the window would never hear of it.
+    const compactable = compactableOperationIds([withdrawal], {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b' })],
+      tombstones: [],
+      keptUntilHeld: [withdrawal.operationId],
+    });
+
+    expect(compactable).toEqual([]);
+  });
+
+  it('drops it once every trusted peer holds it', () => {
+    const compactable = compactableOperationIds([withdrawal], {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b', acknowledged: { 'device-a': 'op-withdrawal' } })],
+      tombstones: [],
+      keptUntilHeld: [withdrawal.operationId],
+    });
+
+    expect(compactable.map(String)).toEqual(['op-withdrawal']);
+  });
+
+  it('keeps the frame a peer\'s acknowledgement names while a kept frame depends on it', () => {
+    // Device B holds the withdrawal through its mark on a later frame; device C
+    // has seen neither. Dropped by age, the later frame would leave B's mark
+    // naming nothing, and the withdrawal could then never be shown held.
+    const later = frameOf({ id: 'op-later', millis: NOW - 399 * MILLIS_PER_DAY });
+    const pass = (acknowledgedByC?: Record<string, string>) => compactableOperationIds(
+      [withdrawal, later],
+      {
+        retention: RETENTION,
+        peers: [
+          peer({ id: 'device-b', acknowledged: { 'device-a': 'op-later' } }),
+          peer({ id: 'device-c', acknowledged: acknowledgedByC }),
+        ],
+        tombstones: [],
+        keptUntilHeld: [withdrawal.operationId],
+      },
+    );
+
+    expect(pass()).toEqual([]);
+    // C catches up to the withdrawal; now both go.
+    expect(pass({ 'device-a': 'op-withdrawal' }).map(String).sort())
+      .toEqual(['op-later', 'op-withdrawal']);
+  });
+
+  it('leaves other frames to the window', () => {
+    const aged = frameOf({ id: 'op-aged', millis: NOW - 400 * MILLIS_PER_DAY });
+
+    const compactable = compactableOperationIds([withdrawal, aged], {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b' })],
+      tombstones: [],
+      keptUntilHeld: [withdrawal.operationId],
+    });
+
+    expect(compactable.map(String)).toEqual(['op-aged']);
+  });
+});
+
 describe('releasableTombstones', () => {
   it('releases a tombstone every trusted peer has acknowledged', () => {
     const tombstones = [tombstoneOf(['device-b', 'device-c'])];
