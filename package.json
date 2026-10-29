@@ -121,7 +121,7 @@
     "lint-staged": "^17.2.0",
     "monocart-reporter": "^2.12.3",
     "postcss": "^8.5.23",
-    "storybook": "^10.4.1",
+    "storybook": "^10.6.5",
     "tailwindcss": "^4.3.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript-eslint": "^8.65.0",
