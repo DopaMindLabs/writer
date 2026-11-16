@@ -914,7 +914,7 @@ wired into the app.
 `JournalRetentionSelector.test.tsx`; and `pair-device.spec.ts`.
 Attachment framing, assembly and transfer are covered by
 `operationJournalMiddleware.test.ts`, `writerFullState.test.ts`,
-`writerOperationMaterializer.test.ts`, `attachmentChunkStore.test.ts`,
+`writerOperationMaterialiser.test.ts`, `attachmentChunkStore.test.ts`,
 `attachmentTransfer.test.ts`, `peerCatchUp.test.ts`, and
 `attachments-pair-sync.spec.ts`.
 

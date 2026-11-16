@@ -2,10 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { createSyncCoordinator } from 'writer-sync/core';
 import type { SyncProvider } from 'writer-sync/core';
 import { appLogger } from '@/lib/appLogger';
-import { compactJournal } from './materialization/compactJournal';
+import { compactJournal } from './materialisation/compactJournal';
 import { startWriterSync } from './startWriterSync';
 
-vi.mock('./materialization/compactJournal', () => ({
+vi.mock('./materialisation/compactJournal', () => ({
   compactJournal: vi.fn(() => Promise.resolve()),
 }));
 

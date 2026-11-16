@@ -9,8 +9,8 @@ import {
 import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
-import { writerJournalDeps } from '@/lib/writerSyncIntegration/materialization/writerJournalDeps';
-import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
+import { writerJournalDeps } from '@/lib/writerSyncIntegration/materialisation/writerJournalDeps';
+import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialisation/operationJournalMiddleware';
 import {
   journalledTables,
   localOnlyTables,

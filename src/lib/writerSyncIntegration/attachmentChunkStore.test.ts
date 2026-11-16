@@ -25,11 +25,11 @@ import {
   TRANSFER_CHUNK_BYTES,
   type CatchUpMessage,
 } from 'writer-sync/operations';
-import { prepareFramePayload } from './materialization/attachmentFramePayload';
+import { prepareFramePayload } from './materialisation/attachmentFramePayload';
 import {
   makePutFrame,
   signAuthoredFrames,
-} from './materialization/writerOperationFactory';
+} from './materialisation/writerOperationFactory';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { createAttachmentChunkStore } from './attachmentChunkStore';
 

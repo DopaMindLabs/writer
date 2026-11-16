@@ -17,7 +17,7 @@ replicates is the **`syncOperations` journal** — immutable, already-encrypted 
 frames shared by every provider — plus the `cloudCrypto` escrow, the encrypted
 `accountDeviceIdentities` registry (§6.6) and its own control tables. The ten materialised content tables are device-local projections; inbound
 frames materialise through the shared inbox path
-(`src/lib/writerSync/materialization/frameIngestion.ts`), so the same operation
+(`src/lib/writerSync/materialisation/frameIngestion.ts`), so the same operation
 arriving through Dexie Cloud and any second provider applies exactly once. Dexie Cloud
 is one `SyncProvider` behind `src/lib/cloud/dexieCloudProvider.ts`; realm and member
 concepts never leave that adapter.
@@ -227,7 +227,7 @@ replicable.
 ### 4.1 The operation journal middleware (outbound chokepoint)
 
 `createOperationJournalMiddleware`
-(`src/lib/writerSync/materialization/operationJournalMiddleware.ts`) sits at DBCore level
+(`src/lib/writerSync/materialisation/operationJournalMiddleware.ts`) sits at DBCore level
 20, above the row-encryption middleware. Every add, put and delete on a journalled content
 table emits its encrypted `EncryptedSyncFrame` into `syncOperations` inside the same
 transaction as the domain write, so a write can never be separated from its frame and no
@@ -265,7 +265,7 @@ the realm is provider routing, not content.
 
 If an operation's **access scope** itself changes, relabelling is not enough: the scope is
 bound into the frame's AAD, so `rescopeFrames`
-(`src/lib/writerSync/materialization/rescopeFrames.ts`) opens each frame under the source
+(`src/lib/writerSync/materialisation/rescopeFrames.ts`) opens each frame under the source
 scope's key and reseals it under the destination's, keeping its operation id (dedup) and
 logical time (convergence). Every frame is resealed before anything is written and the
 writes commit together, so a failed transition cannot leave a scope's history split across

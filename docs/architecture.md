@@ -266,7 +266,7 @@ packages/writer-sync/src/core/        provider contracts, coordinator, selection
                                      logical clock, entity metadata, transport seam
 packages/writer-sync/src/crypto/      ScopeKeyResolver, DeviceKeyVault contract, payload crypto
 packages/writer-sync/src/operations/  operation header/frame, strict codec, convergence, ports
-src/lib/writerSyncIntegration/materialization/  Writer factory/materialiser/journal + ingestion
+src/lib/writerSyncIntegration/materialisation/  Writer factory/materialiser/journal + ingestion
 src/lib/writerSyncIntegration/        Writer table policy, configuration, boot, React context
 src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow, facade)
 ```

@@ -11,7 +11,7 @@ import {
 } from 'writer-sync/core';
 import type { ScopeKeyResolver, SyncKeyRing } from 'writer-sync/crypto';
 import { generateDeviceIdentity } from 'writer-sync/crypto';
-import { createOperationJournalMiddleware } from './materialization/operationJournalMiddleware';
+import { createOperationJournalMiddleware } from './materialisation/operationJournalMiddleware';
 import { updateReplicatedRow } from './replicatedRowUpdate';
 
 vi.mock('@/lib/profile/profile', () => ({

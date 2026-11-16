@@ -12,7 +12,7 @@ import { openOperationPayload } from 'writer-sync/crypto';
 import { verifyFrame } from 'writer-sync/operations';
 import { rescopeFrames } from './rescopeFrames';
 import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import { applyInboundFrame } from './writerOperationMaterialiser';
 
 /**
  * A scope transition must re-encrypt, not relabel: the scope id is bound into

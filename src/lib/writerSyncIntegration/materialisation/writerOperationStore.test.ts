@@ -10,7 +10,7 @@ import {
 /**
  * The Dexie-backed halves of the operation protocol. Thin by design, so these
  * assert the mapping onto Writer's tables rather than any protocol rule — the
- * rules themselves are proved in `writerOperationMaterializer.test.ts`.
+ * rules themselves are proved in `writerOperationMaterialiser.test.ts`.
  */
 
 const store = createWriterOperationStore(db);
