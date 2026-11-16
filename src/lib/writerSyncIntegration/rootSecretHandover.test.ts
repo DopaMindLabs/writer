@@ -251,6 +251,33 @@ describe('rootSecretHandoverPorts', () => {
     await expect(ports.acceptWrapper(sealed)).rejects.toThrow();
   });
 
+  it('refuses a root that arrives after the session expired, and installs nothing', async () => {
+    const transcript = new Uint8Array([1, 2]);
+    const sealed = await rootSecretHandoverPorts({
+      peer: await peerFor(transcript),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+      now: () => EXPIRES_AT - 1,
+    }).wrapForPeer();
+    await forgetDeviceKeyRing();
+    await deviceKeyVault.forget();
+    // The answering device never seals, so nothing else has read the clock for
+    // it: the wrapper itself is the first thing to arrive after the window.
+    const ports = rootSecretHandoverPorts({
+      peer: await peerFor(transcript),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+      now: () => EXPIRES_AT,
+    });
+
+    await expect(ports.acceptWrapper(sealed)).rejects.toMatchObject({
+      code: PairingErrorCode.Expired,
+    });
+
+    expect(deviceKeyProvider.hasAnyKey()).toBe(false);
+    expect(await deviceKeyVault.hasRootSecret()).toBe(false);
+  });
+
   it('refuses to open anything when this session minted no ephemeral key', async () => {
     const transcript = new Uint8Array([5, 5]);
     const ports = rootSecretHandoverPorts({

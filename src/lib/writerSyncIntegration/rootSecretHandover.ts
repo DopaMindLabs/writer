@@ -78,7 +78,7 @@ export const rootSecretHandoverPorts = (
   // Held here rather than read from the options, so expiry can let go of it.
   let sessionPrivateKey = options.sessionPrivateKey;
 
-  /** Enforces the original pairing expiry immediately before root transfer. */
+  /** Enforces the original pairing expiry before a root leaves or enters this device. */
   const requireLiveSession = (): void => {
     if (now() < options.peer.expiresAt) return;
     sessionPrivateKey = null;
@@ -114,6 +114,9 @@ export const rootSecretHandoverPorts = (
     createRoot: () => adoptRoot(generateRootSecret(), DEFAULT_EPOCH),
 
     acceptWrapper: async ({ wrapper, epoch }) => {
+      // The answering device never seals, so this is the only place its clock
+      // is read: without it a root could be installed long after the window.
+      requireLiveSession();
       if (sessionPrivateKey === null) {
         throw new Error('root secret transfer: this session minted no ephemeral key');
       }

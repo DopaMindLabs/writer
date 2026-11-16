@@ -643,9 +643,9 @@ wired into the app.
   not after.
 - **Confirming too late.** The session deadline is the earlier of the two signed
   ones, and is checked again when the account key is sealed — the step the human
-  confirmation gates. Past it the pairing ends instead of completing: no key is
-  sealed, the ephemeral key is discarded, the channel closes, and the dialog
-  reads *expired*. Nothing was recorded, so a device the user had removed is
+  confirmation gates — and when a sealed key arrives. Past it the pairing ends
+  instead of completing: no key is sealed or installed, the ephemeral key is
+  discarded, the channel closes, and the dialog reads *expired*. Nothing was recorded, so a device the user had removed is
   still removed and one that was already trusted is untouched.
 - **Reading a code.** Three paths, offered together: the **live camera**, an
   **uploaded photograph**, or **pasted text**. The camera is offered first
