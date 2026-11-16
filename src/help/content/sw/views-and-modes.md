@@ -40,11 +40,11 @@ hivyo vichwa vizuri vya habari hufanya urambazaji kuwa wa papo hapo.
 ## Upana wa kusoma
 
 Unapendelea kipimo nyembamba au pana? Rekebisha **upana wa kusoma** katika
-[Mipangilio ya haraka](customization-and-settings#quick-settings) kulingana na macho yako
+[Mipangilio ya haraka](customisation-and-settings#quick-settings) kulingana na macho yako
 na skrini.
 
 ## Zinazohusiana
 
 - [Kuandika na kuhariri](writing-and-editing) — uso wa kuhariri kwa undani.
-- [Ubinafsishaji na mipangilio](customization-and-settings) — mandhari na upana wa kusoma.
+- [Ubinafsishaji na mipangilio](customisation-and-settings) — mandhari na upana wa kusoma.
 - [Njia za mkato za kibodi](keyboard-shortcuts) — badilisha hali kutoka kwenye kibodi.

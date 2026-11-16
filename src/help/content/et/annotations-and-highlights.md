@@ -14,7 +14,7 @@ Vali tekst ja rakenda esiletõst. Esiletõsted kasutavad väikest **paletti** v�
 
 ## Paleti valimine
 
-Esiletõstete palett on kogu sinu kirjutistöö ulatuses ühtne ja **arvestab praegust teemat**, nii et esiletõsted on loetavad nii heleda, tumeda kui ka kõrge kontrastsusega režiimis. Teema ja välimuse muutmiseks mine [Kohandamine ja seaded](customization-and-settings).
+Esiletõstete palett on kogu sinu kirjutistöö ulatuses ühtne ja **arvestab praegust teemat**, nii et esiletõsted on loetavad nii heleda, tumeda kui ka kõrge kontrastsusega režiimis. Teema ja välimuse muutmiseks mine [Kohandamine ja seaded](customisation-and-settings).
 
 ## Märkused
 
@@ -29,4 +29,4 @@ Lisa lõigule märkus, kui pelgast esiletõstmisest ei piisa. Märkused hoiavad 
 ## Seotud
 
 - [BrainSpace](brainspace) — arenda märgistatud ideed edasi.
-- [Kohandamine ja seaded](customization-and-settings) — teemad ja välimus.
+- [Kohandamine ja seaded](customisation-and-settings) — teemad ja välimus.

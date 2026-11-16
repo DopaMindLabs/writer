@@ -45,5 +45,5 @@
 
 ## संबंधित
 
-- [अनुकूलन और सेटिंग](customization-and-settings) — थीम और टाइपोग्राफी।
+- [अनुकूलन और सेटिंग](customisation-and-settings) — थीम और टाइपोग्राफी।
 - [कीबोर्ड शॉर्टकट](keyboard-shortcuts) — कीबोर्ड नेविगेशन।

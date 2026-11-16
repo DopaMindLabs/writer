@@ -35,11 +35,11 @@
 
 ## 읽기 너비
 
-좁거나 넓은 너비를 원하나요? [빠른 설정](customization-and-settings#quick-settings)에서
+좁거나 넓은 너비를 원하나요? [빠른 설정](customisation-and-settings#quick-settings)에서
 **읽기 너비**를 조정해 눈과 화면에 맞추세요.
 
 ## 관련 항목
 
 - [글쓰기 & 편집](writing-and-editing) — 편집 화면 심층 분석.
-- [맞춤 설정](customization-and-settings) — 테마와 읽기 너비.
+- [맞춤 설정](customisation-and-settings) — 테마와 읽기 너비.
 - [키보드 단축키](keyboard-shortcuts) — 키보드로 모드 전환.

@@ -22,7 +22,7 @@ mest almindelige formatering. Foretrækker du tastaturet? Hver handling har ogs�
 genvej — se [Formatering og markdown](formatting-and-markdown).
 
 Du kan slå den flydende værktøjslinje fra under
-[Hurtige indstillinger](customization-and-settings#quick-settings).
+[Hurtige indstillinger](customisation-and-settings#quick-settings).
 
 ## Omdøbning af et dokument
 

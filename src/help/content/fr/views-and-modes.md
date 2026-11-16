@@ -43,11 +43,11 @@ tes titres, donc de bons titres rendent la navigation immédiate.
 ## Largeur de lecture
 
 Tu préfères une mesure plus étroite ou plus large ? Ajuste la **largeur de
-lecture** dans [Paramètres rapides](customization-and-settings) pour
+lecture** dans [Paramètres rapides](customisation-and-settings) pour
 l'adapter à tes yeux et à ton écran.
 
 ## Voir aussi
 
 - [Écriture et édition](writing-and-editing) — la surface d'édition en détail.
-- [Personnalisation et paramètres](customization-and-settings) — thèmes et largeur de lecture.
+- [Personnalisation et paramètres](customisation-and-settings) — thèmes et largeur de lecture.
 - [Raccourcis clavier](keyboard-shortcuts) — change de mode depuis le clavier.

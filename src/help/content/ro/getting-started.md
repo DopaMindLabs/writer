@@ -28,7 +28,7 @@ Acesta este întregul flux. Tot ce urmează sunt detalii la care puteți reveni.
 Prima dată când deschideți un ecran important, un scurt tur interactiv evidențiază
 elementele esențiale. Săriți un tur la jumătate și tururile nu mai pornesc automat
 pe alte ecrane. Reluați orice tur oricând din meniul de ajutor (**?**) sau din
-[Setări rapide](customization-and-settings#quick-settings).
+[Setări rapide](customisation-and-settings#quick-settings).
 
 ## Resurse conexe
 

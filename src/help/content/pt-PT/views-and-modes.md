@@ -40,11 +40,11 @@ dos seus títulos, pelo que bons títulos tornam a navegação imediata.
 ## Largura de leitura
 
 Prefere uma medida mais estreita ou mais larga? Ajuste a **largura de leitura** nas
-[Definições rápidas](customization-and-settings#quick-settings) para os seus olhos
+[Definições rápidas](customisation-and-settings#quick-settings) para os seus olhos
 e ecrã.
 
 ## Relacionado
 
 - [Escrita e edição](writing-and-editing) — a superfície de edição em profundidade.
-- [Personalização e definições](customization-and-settings) — temas e largura de leitura.
+- [Personalização e definições](customisation-and-settings) — temas e largura de leitura.
 - [Atalhos de teclado](keyboard-shortcuts) — mude de modo pelo teclado.

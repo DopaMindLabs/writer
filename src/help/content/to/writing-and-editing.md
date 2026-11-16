@@ -22,7 +22,7 @@ kī-boto? Ko e ngāue kotoa 'oku 'i ai foki ha fo'i kī-boto — sio ki
 [Ngaahi Fōtunga & Markdown](formatting-and-markdown).
 
 'Oku ke lava 'o tua'ofi 'a e tooli-pa fofolo 'i
-[Ngaahi Setenga Vave](customization-and-settings#quick-settings).
+[Ngaahi Setenga Vave](customisation-and-settings#quick-settings).
 
 ## Fakahingoa ha Tohi
 

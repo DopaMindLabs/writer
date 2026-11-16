@@ -45,5 +45,5 @@ kontur när du navigerar i appen med tangentbordet.
 
 ## Relaterat
 
-- [Anpassning och inställningar](customization-and-settings) — teman och typografi.
+- [Anpassning och inställningar](customisation-and-settings) — teman och typografi.
 - [Kortkommandon](keyboard-shortcuts) — tangentbordsnavigering.

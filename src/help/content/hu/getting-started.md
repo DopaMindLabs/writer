@@ -28,7 +28,7 @@ Ez az egész ciklus. Az alábbiakban részletek találhatók, amelyekre visszat�
 Egy kulcsfontosságú képernyő első megnyitásakor egy rövid interaktív körjelző
 mutatja be a lényeges elemeket. Ugorja át a kört félúton, és a körök más
 képernyőkön sem indulnak el automatikusan. Játsszon vissza bármely kört a
-súgó (**?**) menüből vagy a [Gyors beállításokból](customization-and-settings#quick-settings).
+súgó (**?**) menüből vagy a [Gyors beállításokból](customisation-and-settings#quick-settings).
 
 ## Kapcsolódó
 

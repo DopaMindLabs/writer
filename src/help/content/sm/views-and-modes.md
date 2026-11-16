@@ -40,11 +40,11 @@ e fausia mai ou ulutala, o lea o ulutala lelei e fa'avave ai le fa'avae.
 ## Lautele o faitauina
 
 E fiafia i se fua li'o pe lautele atu? Fa'atulaga le **lautele o faitauina** i
-[Fa'atulagaga Vave](customization-and-settings#quick-settings) e talafeagai mo ou
+[Fa'atulagaga Vave](customisation-and-settings#quick-settings) e talafeagai mo ou
 mata ma lau lau.
 
 ## Feso'ota'i
 
 - [Tusitusiga & fa'atulaga](writing-and-editing) — le fa'aogaina fa'atonu i le loloto.
-- [Fa'aueue & fa'atulagaga](customization-and-settings) — tema ma le lautele o faitauina.
+- [Fa'aueue & fa'atulagaga](customisation-and-settings) — tema ma le lautele o faitauina.
 - [Fa'ailoga ki'iboard](keyboard-shortcuts) — sui auivi mai le ki'iboard.

@@ -46,5 +46,5 @@ O suiga e teuina i totonu ma toe fa'aaogaina le taimi fou e tatala ai le polokal
 
 ## Feso'ota'i
 
-- [Fa'aueue & fa'atulagaga](customization-and-settings) — tema ma le fa'alapotopotoga o tusitusiga.
+- [Fa'aueue & fa'atulagaga](customisation-and-settings) — tema ma le fa'alapotopotoga o tusitusiga.
 - [Fa'ailoga ki'iboard](keyboard-shortcuts) — fa'avae ki'iboard.

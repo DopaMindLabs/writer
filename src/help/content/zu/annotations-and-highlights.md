@@ -14,7 +14,7 @@ Khetha umbhalo futhi usebenzise isifaziso. Izifaziso zisebenzisa **ibhalwe** enc
 
 ## Ukukhetha ibhalwe
 
-Ibhalwe yokufazisa iyafana ekulobeni kwakho konke futhi **ihlonipha isihloko samanje**, ngakho-ke izifaziso zihlale zifundeka ngokukhanya, ubumnyama, nezimo zanezinga eliphezulu lokuphambanisa. Lungisa isihloko nobukeka ku-[Ukuguqulwa & izilungiselelo](customization-and-settings).
+Ibhalwe yokufazisa iyafana ekulobeni kwakho konke futhi **ihlonipha isihloko samanje**, ngakho-ke izifaziso zihlale zifundeka ngokukhanya, ubumnyama, nezimo zanezinga eliphezulu lokuphambanisa. Lungisa isihloko nobukeka ku-[Ukuguqulwa & izilungiselelo](customisation-and-settings).
 
 ## Iziphawulo
 
@@ -29,4 +29,4 @@ Namathisela inothi esigabeni lapho isifaziso sodwa singagcini. Iziphawulo zigcin
 ## Okuhlobene
 
 - [BrainSpace](brainspace) — yandisa umqondo owaphawulwa.
-- [Ukuguqulwa & izilungiselelo](customization-and-settings) — amathimu nobukeka.
+- [Ukuguqulwa & izilungiselelo](customisation-and-settings) — amathimu nobukeka.

@@ -14,7 +14,7 @@ Yan ọrọ tí o sì fi ìmọ́lẹ̀ sí. Àwọn ìmọ́lẹ̀ lo **àwọn
 
 ## Yíyan àwọn àwọ̀
 
-Àwọn àwọ̀ ìmọ́lẹ̀ jẹ ìbáṣepọ̀ káàkiri gbogbo kíkọ rẹ tí wọ́n sì **bọ̀wọ̀ fún àkójọpọ̀ àwọ̀ lọwọlọwọ**, nítorí náà àwọn ìmọ́lẹ̀ ṣe é kà ní àwọn ìṣàkóso ìmọ́lẹ̀, òkùnkùn, àti ìdìtẹ gíga. Ṣàtunṣe àkójọpọ̀ àwọ̀ àti ìfarahàn nínú [Àtunṣe & ìtọ́nà](customization-and-settings).
+Àwọn àwọ̀ ìmọ́lẹ̀ jẹ ìbáṣepọ̀ káàkiri gbogbo kíkọ rẹ tí wọ́n sì **bọ̀wọ̀ fún àkójọpọ̀ àwọ̀ lọwọlọwọ**, nítorí náà àwọn ìmọ́lẹ̀ ṣe é kà ní àwọn ìṣàkóso ìmọ́lẹ̀, òkùnkùn, àti ìdìtẹ gíga. Ṣàtunṣe àkójọpọ̀ àwọ̀ àti ìfarahàn nínú [Àtunṣe & ìtọ́nà](customisation-and-settings).
 
 ## Àwọn àkọsílẹ̀
 
@@ -29,4 +29,4 @@ Fi àkọsílẹ̀ kan mọ́ ẹsẹ̀ kan nígbà tí ìmọ́lẹ̀ nìkan k�
 ## Jẹmọ́
 
 - [BrainSpace](brainspace) — ṣe àgbékalẹ̀ ìmọ̀ tí a ṣàmì sí sí i.
-- [Àtunṣe & ìtọ́nà](customization-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti ìfarahàn.
+- [Àtunṣe & ìtọ́nà](customisation-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti ìfarahàn.

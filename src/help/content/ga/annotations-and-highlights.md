@@ -18,7 +18,7 @@ ionas gur féidir leat do chiall féin a thógáil.
 
 Tá an pailéad aibhsithe comhsheasmhach ar fud do scríbhneoireachta agus **urramaíonn sé an
 téama reatha**, mar sin fanann aibhsithe inléite i modhanna éadroma, dorcha, agus ardchodarsnachta.
-Coigeartaigh téama agus cuma in [Saincheapadh & socruithe](customization-and-settings).
+Coigeartaigh téama agus cuma in [Saincheapadh & socruithe](customisation-and-settings).
 
 ## Anótálacha
 
@@ -34,4 +34,4 @@ eagarthóireachta in aice leis an téacs a bhaineann siad leis, gan an prós fé
 ## Gaolmhar
 
 - [BrainSpace](brainspace) — smaoineamh marcáilte a fhorbairt tuilleadh.
-- [Saincheapadh & socruithe](customization-and-settings) — téamaí agus cuma.
+- [Saincheapadh & socruithe](customisation-and-settings) — téamaí agus cuma.

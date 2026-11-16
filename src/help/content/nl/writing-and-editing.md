@@ -22,7 +22,7 @@ opmaak. Liever het toetsenbord? Elke actie heeft ook een sneltoets — zie
 [Opmaak en markdown](formatting-and-markdown).
 
 Je kunt de zwevende werkbalk uitschakelen in
-[Snelle instellingen](customization-and-settings#quick-settings).
+[Snelle instellingen](customisation-and-settings#quick-settings).
 
 ## Een document hernoemen
 

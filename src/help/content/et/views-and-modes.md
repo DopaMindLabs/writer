@@ -32,10 +32,10 @@ Inspektor paljastab dokumendi **liigenduse**, teabe ja ajaloo. Tsükleeri selle 
 
 ## Lugemislaius
 
-Eelistad kitsamat või laiemat mõõtu? Reguleeri **lugemislaiust** [Kiirsätetes](customization-and-settings#quick-settings), et see sobiks sinu silmade ja ekraaniga.
+Eelistad kitsamat või laiemat mõõtu? Reguleeri **lugemislaiust** [Kiirsätetes](customisation-and-settings#quick-settings), et see sobiks sinu silmade ja ekraaniga.
 
 ## Seotud
 
 - [Kirjutamine ja redigeerimine](writing-and-editing) — redigeerimispind süvitsi.
-- [Kohandamine ja seaded](customization-and-settings) — teemad ja lugemislaius.
+- [Kohandamine ja seaded](customisation-and-settings) — teemad ja lugemislaius.
 - [Klaviatuuri otseteed](keyboard-shortcuts) — vaheta režiime klaviatuurilt.

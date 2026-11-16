@@ -22,7 +22,7 @@ leggyakoribb formázáshoz. Inkább billentyűzetet használ? Minden műveletnek
 van parancsikonja is — lásd: [Formázás és markdown](formatting-and-markdown).
 
 Az úszó eszközpanelt a
-[Gyors beállításokban](customization-and-settings#quick-settings) kapcsolhatja ki.
+[Gyors beállításokban](customisation-and-settings#quick-settings) kapcsolhatja ki.
 
 ## Dokumentum átnevezése
 

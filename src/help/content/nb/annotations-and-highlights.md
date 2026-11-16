@@ -19,7 +19,7 @@ slik at du kan bygge ditt eget meningssystem.
 Uthevingspaletten er konsekvent gjennom hele skrivingen din og **respekterer det
 gjeldende temaet**, slik at uthevinger forblir lesbare i lys, mørk og
 høykontrastmodus. Juster tema og utseende under
-[Tilpasning og innstillinger](customization-and-settings).
+[Tilpasning og innstillinger](customisation-and-settings).
 
 ## Merknader
 
@@ -36,4 +36,4 @@ selve prosaen.
 ## Relatert
 
 - [BrainSpace](brainspace) — utvikle en markert idé videre.
-- [Tilpasning og innstillinger](customization-and-settings) — temaer og utseende.
+- [Tilpasning og innstillinger](customisation-and-settings) — temaer og utseende.

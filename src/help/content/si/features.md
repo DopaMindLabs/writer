@@ -50,10 +50,10 @@
 
 ## අභිරුචිකරණය
 
-- **ඉක්මන් සැකසුම්** — තේමාව, අවධානය, මෙවලම් තීරුව, කියවීමේ පළල, සංචාර. [තව දැනගන්න](customization-and-settings#quick-settings)
-- **තේමා** — ආලෝකිත, අඳුරු, සහ ඉහළ-වෙනස. [තව දැනගන්න](customization-and-settings#themes)
-- **ටයිපොග්‍රැෆිය** — ගද්‍ය අකුරු සහ ප්‍රමාණය. [තව දැනගන්න](customization-and-settings#typography)
-- **කියවීමේ පළල** — පටු හෝ පළල් ප්‍රමාණය. [තව දැනගන්න](customization-and-settings#reading-width)
+- **ඉක්මන් සැකසුම්** — තේමාව, අවධානය, මෙවලම් තීරුව, කියවීමේ පළල, සංචාර. [තව දැනගන්න](customisation-and-settings#quick-settings)
+- **තේමා** — ආලෝකිත, අඳුරු, සහ ඉහළ-වෙනස. [තව දැනගන්න](customisation-and-settings#themes)
+- **ටයිපොග්‍රැෆිය** — ගද්‍ය අකුරු සහ ප්‍රමාණය. [තව දැනගන්න](customisation-and-settings#typography)
+- **කියවීමේ පළල** — පටු හෝ පළල් ප්‍රමාණය. [තව දැනගන්න](customisation-and-settings#reading-width)
 
 ## ප්‍රවේශ්‍යතාව
 

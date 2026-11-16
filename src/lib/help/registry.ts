@@ -118,7 +118,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     related: [
       'writing-and-editing',
       'version-history',
-      'customization-and-settings',
+      'customisation-and-settings',
     ],
   },
   {
@@ -176,10 +176,10 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'annotations',
     featureArea: 'annotations',
     keywords: ['highlight', 'annotation', 'palette', 'mark', 'color', 'note'],
-    related: ['brainspace', 'customization-and-settings'],
+    related: ['brainspace', 'customisation-and-settings'],
   },
   {
-    slug: 'customization-and-settings',
+    slug: 'customisation-and-settings',
     category: 'customization',
     featureArea: 'customization',
     keywords: ['theme', 'dark', 'typography', 'settings', 'preferences', 'editor'],
@@ -200,7 +200,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'cursor',
       'name',
     ],
-    related: ['customization-and-settings', 'your-data'],
+    related: ['customisation-and-settings', 'your-data'],
   },
   {
     slug: 'accessibility',
@@ -216,7 +216,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'text size',
       'focus',
     ],
-    related: ['customization-and-settings', 'keyboard-shortcuts'],
+    related: ['customisation-and-settings', 'keyboard-shortcuts'],
   },
   {
     slug: 'keyboard-shortcuts',
@@ -230,7 +230,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'data',
     featureArea: 'data',
     keywords: ['export', 'import', 'backup', 'restore', 'archive', 'local', 'storage', 'offline'],
-    related: ['getting-started', 'customization-and-settings'],
+    related: ['getting-started', 'customisation-and-settings'],
   },
   {
     slug: 'cloud-sync',
@@ -301,6 +301,22 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
 ] as const;
 
 export const HELP_SLUGS: readonly string[] = HELP_ARTICLES.map((a) => a.slug);
+
+/**
+ * Slugs an article used to live at, each mapped to where it lives now.
+ *
+ * A slug is a public address: links in notes, bookmarks and older builds keep
+ * pointing at it. Renaming one means adding it here, so the old address keeps
+ * arriving at the article instead of at "not found".
+ */
+export const RETIRED_HELP_SLUGS: Readonly<Record<string, string>> = {
+  'customization-and-settings': 'customisation-and-settings',
+  'organizing-your-work': 'organising-your-work',
+};
+
+/** The slug an article lives at now, whichever of its addresses was asked for. */
+export const resolveHelpSlug = (slug: string): string =>
+  Object.hasOwn(RETIRED_HELP_SLUGS, slug) ? RETIRED_HELP_SLUGS[slug] : slug;
 
 export const getArticleMeta = (slug: string): HelpArticle | undefined =>
   HELP_ARTICLES.find((a) => a.slug === slug);

@@ -22,7 +22,7 @@ formatavimo veiksmais. Teikiate pirmenybę klaviatūrai? Kiekvienas veiksmas tur
 [Formatavimas ir markdown](formatting-and-markdown).
 
 Plūduriuojančią įrankių juostą galite išjungti
-[Greituosiuose nustatymuose](customization-and-settings#quick-settings).
+[Greituosiuose nustatymuose](customisation-and-settings#quick-settings).
 
 ## Dokumento pervardinimas
 

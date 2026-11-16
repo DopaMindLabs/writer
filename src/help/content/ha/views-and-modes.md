@@ -32,10 +32,10 @@ Mai dubawa yana bayyana **shimfida** ta takarda, bayani, da tarihi. Yi jujjuya g
 
 ## Faɗin karatu
 
-Kuna son ma'auni mafi kunkuntar ko faɗi? Daidaita **faɗin karatu** a cikin [Saitunan sauri](customization-and-settings#quick-settings) don dacewa da idanunku da allon.
+Kuna son ma'auni mafi kunkuntar ko faɗi? Daidaita **faɗin karatu** a cikin [Saitunan sauri](customisation-and-settings#quick-settings) don dacewa da idanunku da allon.
 
 ## Masu alaƙa
 
 - [Rubutu da gyara](writing-and-editing) — saman gyara a zurfi.
-- [Keɓancewa da saitunan](customization-and-settings) — jigogi da faɗin karatu.
+- [Keɓancewa da saitunan](customisation-and-settings) — jigogi da faɗin karatu.
 - [Gajerun hanyoyin madanni](keyboard-shortcuts) — canza yanayi daga madanni.

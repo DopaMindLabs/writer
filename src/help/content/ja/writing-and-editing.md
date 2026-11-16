@@ -21,7 +21,7 @@
 表示されます。キーボード派の方には、すべてのアクションにショートカットもあります —
 [フォーマットとMarkdown](formatting-and-markdown)を参照してください。
 
-フローティングツールバーは[クイック設定](customization-and-settings#quick-settings)でオフにできます。
+フローティングツールバーは[クイック設定](customisation-and-settings#quick-settings)でオフにできます。
 
 ## ドキュメント名の変更
 

@@ -41,11 +41,11 @@ rubriker, så bra rubriker gör navigeringen omedelbar.
 ## Läsbredd
 
 Föredrar du ett smalare eller bredare mått? Justera **läsbredden** i
-[Snabbinställningar](customization-and-settings#quick-settings) efter dina ögon
+[Snabbinställningar](customisation-and-settings#quick-settings) efter dina ögon
 och din skärm.
 
 ## Relaterat
 
 - [Skrivande och redigering](writing-and-editing) — redigeringsytan på djupet.
-- [Anpassning och inställningar](customization-and-settings) — teman och läsbredd.
+- [Anpassning och inställningar](customisation-and-settings) — teman och läsbredd.
 - [Kortkommandon](keyboard-shortcuts) — byt läge från tangentbordet.

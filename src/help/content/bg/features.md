@@ -51,10 +51,10 @@
 
 ## Персонализиране
 
-- **Бързи настройки** — тема, фокус, лента с инструменти, ширина на четене, обиколки. [Научи повече](customization-and-settings#quick-settings)
-- **Теми** — светла, тъмна и висок контраст. [Научи повече](customization-and-settings#themes)
-- **Типография** — шрифт и размер на прозата. [Научи повече](customization-and-settings#typography)
-- **Ширина на четене** — тясна или широка. [Научи повече](customization-and-settings#reading-width)
+- **Бързи настройки** — тема, фокус, лента с инструменти, ширина на четене, обиколки. [Научи повече](customisation-and-settings#quick-settings)
+- **Теми** — светла, тъмна и висок контраст. [Научи повече](customisation-and-settings#themes)
+- **Типография** — шрифт и размер на прозата. [Научи повече](customisation-and-settings#typography)
+- **Ширина на четене** — тясна или широка. [Научи повече](customisation-and-settings#reading-width)
 
 ## Достъпност
 

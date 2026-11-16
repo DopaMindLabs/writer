@@ -18,7 +18,7 @@ cores para você criar seu próprio sistema de significados.
 
 A paleta de destaques é consistente em toda a sua escrita e **respeita o tema atual**,
 então os destaques permanecem legíveis nos modos claro, escuro e de alto contraste.
-Ajuste tema e aparência em [Personalização e configurações](customization-and-settings).
+Ajuste tema e aparência em [Personalização e configurações](customisation-and-settings).
 
 ## Anotações
 
@@ -35,4 +35,4 @@ mantêm seu raciocínio editorial ao lado do texto a que se referem, sem poluir 
 ## Relacionado
 
 - [BrainSpace](brainspace) — desenvolva uma ideia marcada com mais profundidade.
-- [Personalização e configurações](customization-and-settings) — temas e aparência.
+- [Personalização e configurações](customisation-and-settings) — temas e aparência.

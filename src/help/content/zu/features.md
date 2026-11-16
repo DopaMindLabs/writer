@@ -50,10 +50,10 @@ Konke okungakwenziwa yizikhelo, ohlelweni olulodwa oluhlolekayo. Into nganye ixh
 
 ## Ukuguqulwa
 
-- **Izilungiselelo ezisheshayo** — isihloko, ukugxila, gude, ukukhanya kokufunda, uhambo. [Funda kabanzi](customization-and-settings#quick-settings)
-- **Amathimu** — ukukhanya, ubumnyama, nezinga eliphezulu lokuphambanisa. [Funda kabanzi](customization-and-settings#themes)
-- **Ubumbalo** — ifonti yeindumo nousayizi. [Funda kabanzi](customization-and-settings#typography)
-- **Ukukhanya kokufunda** — isilinganiso esimfishane noma esibanzi. [Funda kabanzi](customization-and-settings#reading-width)
+- **Izilungiselelo ezisheshayo** — isihloko, ukugxila, gude, ukukhanya kokufunda, uhambo. [Funda kabanzi](customisation-and-settings#quick-settings)
+- **Amathimu** — ukukhanya, ubumnyama, nezinga eliphezulu lokuphambanisa. [Funda kabanzi](customisation-and-settings#themes)
+- **Ubumbalo** — ifonti yeindumo nousayizi. [Funda kabanzi](customisation-and-settings#typography)
+- **Ukukhanya kokufunda** — isilinganiso esimfishane noma esibanzi. [Funda kabanzi](customisation-and-settings#reading-width)
 
 ## Ukufinyelela
 

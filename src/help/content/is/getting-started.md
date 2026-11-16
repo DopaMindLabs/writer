@@ -28,7 +28,7 @@ Engin reikninga, engin ský, enginn vistunarhnapppur.
 Í fyrsta skipti sem þú opnar lykilskjá bendir stuttur gagnvirkur leiðsöguleikur á
 grunnatriðin. Sleppaðu leiðsöguleik á miðri leið og leiðsöguleikar hætta að ræsast
 sjálfkrafa á öðrum skjám einnig. Endurspilaðu hvaða leiðsöguleik sem er hvenær sem er
-af hjálparvalmyndinni (**?**) eða [Flýtistillingum](customization-and-settings#quick-settings).
+af hjálparvalmyndinni (**?**) eða [Flýtistillingum](customisation-and-settings#quick-settings).
 
 ## Tengd efni
 

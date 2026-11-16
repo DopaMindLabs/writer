@@ -51,10 +51,10 @@ så du kan springe direkte til detaljerne.
 
 ## Tilpasning
 
-- **Hurtige indstillinger** — tema, fokus, værktøjslinje, læsebredde, ture. [Læs mere](customization-and-settings#quick-settings)
-- **Temaer** — lyst, mørkt og høj kontrast. [Læs mere](customization-and-settings#themes)
-- **Typografi** — prosatype og -størrelse. [Læs mere](customization-and-settings#typography)
-- **Læsebredde** — smalt eller bredt mål. [Læs mere](customization-and-settings#reading-width)
+- **Hurtige indstillinger** — tema, fokus, værktøjslinje, læsebredde, ture. [Læs mere](customisation-and-settings#quick-settings)
+- **Temaer** — lyst, mørkt og høj kontrast. [Læs mere](customisation-and-settings#themes)
+- **Typografi** — prosatype og -størrelse. [Læs mere](customisation-and-settings#typography)
+- **Læsebredde** — smalt eller bredt mål. [Læs mere](customisation-and-settings#reading-width)
 
 ## Tilgængelighed
 

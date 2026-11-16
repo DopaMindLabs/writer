@@ -24,7 +24,7 @@ See ongi kogu tsükkel. Kõik allpool on üksikasjad, mille juurde saad hiljem t
 
 ## Juhendturid
 
-Esimest korda põhiekraani avades osutab lühike interaktiivne tuur põhilistele asjadele. Tühistades tuuri poolel teel, lõpetavad turid ka teistel ekraanidel automaatselt käivitumise. Mängi mis tahes tuuri uuesti igal ajal abi (**?**) menüüst või [Kiirsätetest](customization-and-settings#quick-settings).
+Esimest korda põhiekraani avades osutab lühike interaktiivne tuur põhilistele asjadele. Tühistades tuuri poolel teel, lõpetavad turid ka teistel ekraanidel automaatselt käivitumise. Mängi mis tahes tuuri uuesti igal ajal abi (**?**) menüüst või [Kiirsätetest](customisation-and-settings#quick-settings).
 
 ## Seotud
 

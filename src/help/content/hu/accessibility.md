@@ -49,5 +49,5 @@ A módosítások helyileg tárolódnak, és az alkalmazás következő megnyitá
 
 ## Kapcsolódó
 
-- [Testreszabás és beállítások](customization-and-settings) — témák és tipográfia.
+- [Testreszabás és beállítások](customisation-and-settings) — témák és tipográfia.
 - [Billentyűparancsok](keyboard-shortcuts) — billentyűzetes navigáció.

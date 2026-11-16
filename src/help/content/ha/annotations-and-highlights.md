@@ -14,7 +14,7 @@ Zaɓi rubutu kuma yi amfani da faɗaɗawa. Faɗaɗawa suna amfani da ƙaramin **
 
 ## Zaɓar palette
 
-Palette na faɗaɗawa yana daidaita a cikin rubutunka kuma yana **girmama jigo na yanzu**, don haka faɗaɗawa suna kasancewa masu karatu a haske, duhu, da yanayin bambancin launi mai ƙarfi iri ɗaya. Daidaita jigo da bayyanawa a [Keɓancewa da saitunan](customization-and-settings).
+Palette na faɗaɗawa yana daidaita a cikin rubutunka kuma yana **girmama jigo na yanzu**, don haka faɗaɗawa suna kasancewa masu karatu a haske, duhu, da yanayin bambancin launi mai ƙarfi iri ɗaya. Daidaita jigo da bayyanawa a [Keɓancewa da saitunan](customisation-and-settings).
 
 ## Ƙalamai
 
@@ -29,4 +29,4 @@ Makala bayana zuwa sashi lokacin da faɗaɗawa kaɗai bai isa ba. Ƙalamai suna 
 ## Masu alaƙa
 
 - [BrainSpace](brainspace) — ƙara haɓaka ra'ayin da aka alama.
-- [Keɓancewa da saitunan](customization-and-settings) — jigogi da bayyanawa.
+- [Keɓancewa da saitunan](customisation-and-settings) — jigogi da bayyanawa.

@@ -28,7 +28,7 @@ Ko ia ko e lūpa kotoa. Ko e me'a kotoa 'i lalo ko e fakaikiiki 'oku ke lava 'o 
 Ko e taimi 'uluaki ko ho'ou to'o ha lau mahuinga, ko ha kātoanga teuteu fakafeitu'u 'oku
 fakahā 'a e ngaahi tu'utu'uni. Liha ha kātoanga 'i he vaeua mo e ngaahi kātoanga 'oku ta'e-
 kamata fakaotometi 'i he ngaahi lau kehe foki. Toe hoko ha kātoanga 'i ha taimi kotoa mei he
-lisi tokoni (**?**) pe [Ngaahi Setenga Vave](customization-and-settings#quick-settings).
+lisi tokoni (**?**) pe [Ngaahi Setenga Vave](customisation-and-settings#quick-settings).
 
 ## Kaunga
 

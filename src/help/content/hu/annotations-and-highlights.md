@@ -18,7 +18,7 @@ használnak, hogy saját rendszert alakíthasson ki.
 
 A kiemelési paletta egységes az egész szövegben, és **tiszteli az aktuális témát**,
 így a kiemelések világos, sötét és nagy kontrasztú módban egyaránt olvashatók maradnak.
-A témát és a megjelenést a [Testreszabás és beállítások](customization-and-settings)
+A témát és a megjelenést a [Testreszabás és beállítások](customisation-and-settings)
 menüben módosíthatja.
 
 ## Megjegyzések
@@ -37,4 +37,4 @@ anélkül hogy zsúfolttá tennék a prózát.
 ## Kapcsolódó
 
 - [BrainSpace](brainspace) — fejlesszen tovább egy megjelölt ötletet.
-- [Testreszabás és beállítások](customization-and-settings) — témák és megjelenés.
+- [Testreszabás és beállítások](customisation-and-settings) — témák és megjelenés.

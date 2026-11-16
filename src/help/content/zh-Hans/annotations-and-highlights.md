@@ -15,7 +15,7 @@
 ## 选择调色板
 
 高亮调色板在整篇文章中保持一致，并**遵循当前主题**，因此在浅色、深色和高对比度模式下
-高亮均清晰可见。在[自定义与设置](customization-and-settings)中调整主题和外观。
+高亮均清晰可见。在[自定义与设置](customisation-and-settings)中调整主题和外观。
 
 ## 批注
 
@@ -31,4 +31,4 @@
 ## 相关内容
 
 - [BrainSpace](brainspace) — 进一步发展已标记的想法。
-- [自定义与设置](customization-and-settings) — 主题与外观。
+- [自定义与设置](customisation-and-settings) — 主题与外观。

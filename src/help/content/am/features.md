@@ -50,10 +50,10 @@
 
 ## ማበጀት
 
-- **ፈጣን ቅንብሮች** — ገጽታ፣ ትኩረት፣ አሞሌ፣ የንባብ ስፋት፣ ጉብኝቶች። [ዝርዝር ለማወቅ](customization-and-settings#quick-settings)
-- **ገጽታዎች** — ብርሃን፣ ጨለማ እና ከፍተኛ ንፅፅር። [ዝርዝር ለማወቅ](customization-and-settings#themes)
-- **ፊደላት** — የጽሑፍ ቅርጸ-ፊደልና መጠን። [ዝርዝር ለማወቅ](customization-and-settings#typography)
-- **የንባብ ስፋት** — ጠባብ ወይም ሰፊ ምልክት። [ዝርዝር ለማወቅ](customization-and-settings#reading-width)
+- **ፈጣን ቅንብሮች** — ገጽታ፣ ትኩረት፣ አሞሌ፣ የንባብ ስፋት፣ ጉብኝቶች። [ዝርዝር ለማወቅ](customisation-and-settings#quick-settings)
+- **ገጽታዎች** — ብርሃን፣ ጨለማ እና ከፍተኛ ንፅፅር። [ዝርዝር ለማወቅ](customisation-and-settings#themes)
+- **ፊደላት** — የጽሑፍ ቅርጸ-ፊደልና መጠን። [ዝርዝር ለማወቅ](customisation-and-settings#typography)
+- **የንባብ ስፋት** — ጠባብ ወይም ሰፊ ምልክት። [ዝርዝር ለማወቅ](customisation-and-settings#reading-width)
 
 ## ተደራሽነት
 

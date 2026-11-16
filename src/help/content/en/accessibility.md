@@ -47,5 +47,5 @@ Changes are stored locally and reapplied the next time you open the app.
 
 ## Related
 
-- [Customisation & settings](customization-and-settings) — themes and typography.
+- [Customisation & settings](customisation-and-settings) — themes and typography.
 - [Keyboard shortcuts](keyboard-shortcuts) — keyboard navigation.

@@ -18,7 +18,7 @@ kad galėtumėte sukurti savo reikšmių sistemą.
 
 Paryškinimų paletė yra vienoda visame rašyme ir **atsižvelgia į dabartinę temą**, todėl paryškinimai
 lieka įskaitomi šviesiuoju, tamsiuoju ir didelio kontrasto režimais. Temą ir išvaizdą sureguliuokite
-[Tinkinimas ir nustatymai](customization-and-settings).
+[Tinkinimas ir nustatymai](customisation-and-settings).
 
 ## Anotacijos
 
@@ -34,4 +34,4 @@ mąstymą šalia teksto, kuriam jis priklauso, neužgriozdindamos paties teksto.
 ## Susiję
 
 - [BrainSpace](brainspace) — plėtokite pažymėtą idėją toliau.
-- [Tinkinimas ir nustatymai](customization-and-settings) — temos ir išvaizda.
+- [Tinkinimas ir nustatymai](customisation-and-settings) — temos ir išvaizda.

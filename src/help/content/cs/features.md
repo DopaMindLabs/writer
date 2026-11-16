@@ -51,10 +51,10 @@ svého průvodce, takže můžete přejít přímo na detail.
 
 ## Přizpůsobení
 
-- **Rychlé nastavení** — motiv, soustředění, panel nástrojů, šířka čtení, průvodci. [Více](customization-and-settings#quick-settings)
-- **Motivy** — světlé, tmavé a vysoce kontrastní. [Více](customization-and-settings#themes)
-- **Typografie** — písmo a velikost prózy. [Více](customization-and-settings#typography)
-- **Šířka čtení** — úzká nebo široká. [Více](customization-and-settings#reading-width)
+- **Rychlé nastavení** — motiv, soustředění, panel nástrojů, šířka čtení, průvodci. [Více](customisation-and-settings#quick-settings)
+- **Motivy** — světlé, tmavé a vysoce kontrastní. [Více](customisation-and-settings#themes)
+- **Typografie** — písmo a velikost prózy. [Více](customisation-and-settings#typography)
+- **Šířka čtení** — úzká nebo široká. [Více](customisation-and-settings#reading-width)
 
 ## Přístupnost
 

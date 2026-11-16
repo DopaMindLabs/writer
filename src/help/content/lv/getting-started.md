@@ -28,7 +28,7 @@ Tā ir visa pamatdarbība. Viss zemāk ir detaļas, pie kurām varat atgriezties
 Pirmoreiz atverot galveno ekrānu, īsa interaktīva tūre norāda uz svarīgākajiem
 elementiem. Izlaidiet tūri pusceļā, un tūres pārstāj automātiski sākties arī citos
 ekrānos. Atskaņojiet jebkuru tūri no palīdzības (**?**) izvēlnes vai
-[Ātriestatījumiem](customization-and-settings#quick-settings).
+[Ātriestatījumiem](customisation-and-settings#quick-settings).
 
 ## Saistītais
 

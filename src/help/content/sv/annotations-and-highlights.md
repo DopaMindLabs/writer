@@ -18,7 +18,7 @@ färger så att du kan bygga ditt eget meningssystem.
 
 Markeringspaletten är konsekvent i hela ditt skrivande och **respekterar det aktuella
 temat**, så markeringar förblir läsbara i ljusa, mörka och högkontrastlägen.
-Justera tema och utseende i [Anpassning och inställningar](customization-and-settings).
+Justera tema och utseende i [Anpassning och inställningar](customisation-and-settings).
 
 ## Anteckningar
 
@@ -35,4 +35,4 @@ upp själva prosan.
 ## Relaterat
 
 - [BrainSpace](brainspace) — utveckla en markerad idé vidare.
-- [Anpassning och inställningar](customization-and-settings) — teman och utseende.
+- [Anpassning och inställningar](customisation-and-settings) — teman och utseende.

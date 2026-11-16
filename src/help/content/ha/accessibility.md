@@ -40,5 +40,5 @@ Ana adana canje-canje a gida kuma ana sake amfani da su lokacin da ka'i na gaba 
 
 ## Masu alaƙa
 
-- [Keɓancewa da saitunan](customization-and-settings) — jigogi da rubutun allo.
+- [Keɓancewa da saitunan](customisation-and-settings) — jigogi da rubutun allo.
 - [Gajerun hanyoyin madanni](keyboard-shortcuts) — tafiya da madanni.

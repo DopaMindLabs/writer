@@ -22,7 +22,7 @@ formateringen. Föredrar du tangentbordet? Varje åtgärd har också ett kortkom
 se [Formatering och markdown](formatting-and-markdown).
 
 Du kan stänga av det flytande verktygsfältet i
-[Snabbinställningar](customization-and-settings#quick-settings).
+[Snabbinställningar](customisation-and-settings#quick-settings).
 
 ## Byta namn på ett dokument
 

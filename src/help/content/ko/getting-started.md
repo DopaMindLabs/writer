@@ -27,7 +27,7 @@
 
 주요 화면을 처음 열면 짧은 인터랙티브 투어가 핵심을 안내합니다. 투어를 중간에 건너뛰면
 다른 화면에서도 투어가 자동으로 시작되지 않습니다. 도움말（**?**）메뉴 또는
-[빠른 설정](customization-and-settings#quick-settings)에서 언제든지 투어를 다시 볼 수 있습니다.
+[빠른 설정](customisation-and-settings#quick-settings)에서 언제든지 투어를 다시 볼 수 있습니다.
 
 ## 관련 항목
 

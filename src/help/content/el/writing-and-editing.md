@@ -22,7 +22,7 @@
 επίσης συντόμευση — δείτε [Μορφοποίηση και markdown](formatting-and-markdown).
 
 Μπορείτε να απενεργοποιήσετε την κινητή γραμμή εργαλείων στις
-[Γρήγορες ρυθμίσεις](customization-and-settings#quick-settings).
+[Γρήγορες ρυθμίσεις](customisation-and-settings#quick-settings).
 
 ## Μετονομασία εγγράφου
 

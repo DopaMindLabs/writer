@@ -28,7 +28,7 @@ Det är hela cykeln. Allt nedan är detaljer du kan komma tillbaka till.
 Första gången du öppnar en viktig skärm pekar en kort interaktiv tur ut det
 väsentliga. Hoppa över en tur halvvägs och turer slutar starta automatiskt på
 andra skärmar också. Spela upp valfri tur när du vill från **?**-menyn eller
-[Snabbinställningar](customization-and-settings#quick-settings).
+[Snabbinställningar](customisation-and-settings#quick-settings).
 
 ## Relaterat
 

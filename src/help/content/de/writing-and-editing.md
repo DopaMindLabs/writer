@@ -24,7 +24,7 @@ auch ein Kürzel — siehe [Formatierung und
 Markdown](formatting-and-markdown).
 
 Du kannst die schwebende Werkzeugleiste in
-[Schnelleinstellungen](customization-and-settings) ausschalten.
+[Schnelleinstellungen](customisation-and-settings) ausschalten.
 
 ## Ein Dokument umbenennen
 

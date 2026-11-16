@@ -19,7 +19,7 @@ Fili 'a e tohi 'o fakahoko ha palaiati. Ko e ngaahi palaiati 'oku nau ngāue'aki
 Ko e paleti palaiati 'oku tau tatau 'i ho'o tohi kotoa mo **fakanatinati ki he tefito
 lolotonga**, ko ia ko e ngaahi palaiati 'oku nau nofo ke lau ngofua 'i he ngaahi fōtunga
 māma, pouli, mo e fakamāma'ata lahi. Liliu 'a e tefito mo e ngāue 'i
-[Ngaahi Liliu & Setenga](customization-and-settings).
+[Ngaahi Liliu & Setenga](customisation-and-settings).
 
 ## Ngaahi Fakamatala
 
@@ -36,4 +36,4 @@ fakautuutu 'a e ngāue mahino pe.
 ## Kaunga
 
 - [BrainSpace](brainspace) — fakangaohi lahi ange ha fakakaukau 'oku palaiati.
-- [Ngaahi Liliu & Setenga](customization-and-settings) — ngaahi tefito mo e ngāue.
+- [Ngaahi Liliu & Setenga](customisation-and-settings) — ngaahi tefito mo e ngāue.

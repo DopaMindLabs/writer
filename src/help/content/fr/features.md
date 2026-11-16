@@ -51,10 +51,10 @@ mène à son guide pour que tu sautes directement au détail.
 
 ## Personnalisation
 
-- **Paramètres rapides** — thème, focus, barre d'outils, largeur de lecture, visites. [En savoir plus](customization-and-settings)
-- **Thèmes** — clair, sombre, et contraste élevé. [En savoir plus](customization-and-settings)
-- **Typographie** — police et taille de la prose. [En savoir plus](customization-and-settings)
-- **Largeur de lecture** — mesure étroite ou large. [En savoir plus](customization-and-settings)
+- **Paramètres rapides** — thème, focus, barre d'outils, largeur de lecture, visites. [En savoir plus](customisation-and-settings)
+- **Thèmes** — clair, sombre, et contraste élevé. [En savoir plus](customisation-and-settings)
+- **Typographie** — police et taille de la prose. [En savoir plus](customisation-and-settings)
+- **Largeur de lecture** — mesure étroite ou large. [En savoir plus](customisation-and-settings)
 
 ## Accessibilité
 

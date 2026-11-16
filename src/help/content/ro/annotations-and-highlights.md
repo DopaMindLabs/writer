@@ -18,7 +18,7 @@ de culori, astfel încât să vă puteți construi propriul sistem de semnifica�
 
 Paleta de evidențiere este consecventă în tot textul dvs. și **respectă tema curentă**,
 deci evidențierile rămân lizibile în modurile luminoasă, întunecată și cu contrast
-ridicat. Ajustați tema și aspectul în [Personalizare și setări](customization-and-settings).
+ridicat. Ajustați tema și aspectul în [Personalizare și setări](customisation-and-settings).
 
 ## Adnotări
 
@@ -35,4 +35,4 @@ păstrează gândurile editoriale lângă textul la care se referă, fără a ag
 ## Resurse conexe
 
 - [BrainSpace](brainspace) — dezvoltați mai departe o idee marcată.
-- [Personalizare și setări](customization-and-settings) — teme și aspect.
+- [Personalizare și setări](customisation-and-settings) — teme și aspect.

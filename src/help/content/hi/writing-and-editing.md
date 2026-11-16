@@ -22,7 +22,7 @@
 मार्कडाउन](formatting-and-markdown) देखें।
 
 आप फ़्लोटिंग टूलबार को
-[Quick settings](customization-and-settings#quick-settings) में बंद कर सकते हैं।
+[Quick settings](customisation-and-settings#quick-settings) में बंद कर सकते हैं।
 
 ## दस्तावेज़ का नाम बदलना
 

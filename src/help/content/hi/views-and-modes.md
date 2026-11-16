@@ -40,11 +40,11 @@
 ## पढ़ने की चौड़ाई
 
 संकरी या चौड़ी माप पसंद है? अपनी आँखों और स्क्रीन के अनुसार
-[Quick settings](customization-and-settings#quick-settings) में **पढ़ने की चौड़ाई**
+[Quick settings](customisation-and-settings#quick-settings) में **पढ़ने की चौड़ाई**
 समायोजित करें।
 
 ## संबंधित
 
 - [लेखन और संपादन](writing-and-editing) — संपादन सतह गहराई से।
-- [अनुकूलन और सेटिंग](customization-and-settings) — थीम और पढ़ने की चौड़ाई।
+- [अनुकूलन और सेटिंग](customisation-and-settings) — थीम और पढ़ने की चौड़ाई।
 - [कीबोर्ड शॉर्टकट](keyboard-shortcuts) — कीबोर्ड से मोड बदलें।

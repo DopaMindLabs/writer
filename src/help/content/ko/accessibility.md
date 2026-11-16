@@ -43,5 +43,5 @@
 
 ## 관련 항목
 
-- [맞춤 설정](customization-and-settings) — 테마와 타이포그래피.
+- [맞춤 설정](customisation-and-settings) — 테마와 타이포그래피.
 - [키보드 단축키](keyboard-shortcuts) — 키보드 탐색.

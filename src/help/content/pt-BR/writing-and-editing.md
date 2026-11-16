@@ -22,7 +22,7 @@ as formatações mais comuns. Prefere o teclado? Cada ação também tem um atal
 veja [Formatação e markdown](formatting-and-markdown).
 
 Você pode desativar a barra de ferramentas flutuante nas
-[Configurações rápidas](customization-and-settings#quick-settings).
+[Configurações rápidas](customisation-and-settings#quick-settings).
 
 ## Renomeando um documento
 

@@ -22,7 +22,7 @@ cele mai comune formatări. Preferați tastatura? Fiecare acțiune are și o com
 rapidă — consultați [Formatare și markdown](formatting-and-markdown).
 
 Puteți dezactiva bara de instrumente flotantă din
-[Setări rapide](customization-and-settings#quick-settings).
+[Setări rapide](customisation-and-settings#quick-settings).
 
 ## Redenumirea unui document
 

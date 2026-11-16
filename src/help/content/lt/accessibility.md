@@ -44,5 +44,5 @@ Pakeitimai išsaugomi vietiškai ir pritaikomi kitą kartą atidarius programą.
 
 ## Susiję
 
-- [Tinkinimas ir nustatymai](customization-and-settings) — temos ir tipografija.
+- [Tinkinimas ir nustatymai](customisation-and-settings) — temos ir tipografija.
 - [Klaviatūros spartieji klavišai](keyboard-shortcuts) — navigacija klaviatūra.

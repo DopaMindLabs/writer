@@ -22,7 +22,7 @@
 път — вижте [Форматиране и markdown](formatting-and-markdown).
 
 Можете да изключите плаващата лента с инструменти в
-[Бързи настройки](customization-and-settings#quick-settings).
+[Бързи настройки](customisation-and-settings#quick-settings).
 
 ## Преименуване на документ
 

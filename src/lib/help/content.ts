@@ -144,5 +144,7 @@ export const getHelpDoc = (
 export const hasHelpDoc = (slug: string): boolean =>
   byLocale.get(FALLBACK_LOCALE)?.has(slug) ?? false;
 
-export const listHelpDocSlugs = (): readonly string[] =>
-  Array.from(byLocale.get(FALLBACK_LOCALE)?.keys() ?? []);
+export const listHelpDocSlugs = (locale: string = FALLBACK_LOCALE): readonly string[] =>
+  Array.from(byLocale.get(locale)?.keys() ?? []);
+
+export const listHelpLocales = (): readonly string[] => Array.from(byLocale.keys());

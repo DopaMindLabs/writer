@@ -18,7 +18,7 @@
 
 하이라이트 팔레트는 전체 글쓰기에 걸쳐 일관성이 있고 **현재 테마를 반영**하므로, 밝기·어둡기·
 고대비 모드 어디서나 하이라이트가 잘 보입니다. 테마와 외관은
-[맞춤 설정](customization-and-settings)에서 조정하세요.
+[맞춤 설정](customisation-and-settings)에서 조정하세요.
 
 ## 주석
 
@@ -34,4 +34,4 @@
 ## 관련 항목
 
 - [BrainSpace](brainspace) — 표시한 아이디어를 더 발전시키기.
-- [맞춤 설정](customization-and-settings) — 테마와 외관.
+- [맞춤 설정](customisation-and-settings) — 테마와 외관.

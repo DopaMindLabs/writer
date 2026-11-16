@@ -22,7 +22,7 @@ formateringen. Foretrekker du tastaturet? Hver handling har også en snarvei —
 se [Formatering og markdown](formatting-and-markdown).
 
 Du kan slå av den flytende verktøylinjen i
-[Hurtiginnstillinger](customization-and-settings#quick-settings).
+[Hurtiginnstillinger](customisation-and-settings#quick-settings).
 
 ## Gi nytt navn til et dokument
 

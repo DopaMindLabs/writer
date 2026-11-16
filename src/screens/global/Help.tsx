@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { NavShell } from '@/components/chrome/NavShell';
 import type { NavTabDef, NavTabGroup } from '@/components/chrome/NavTabs';
 import { Card } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import { routes } from '@/lib/routes';
 import {
   getArticlesByCategory,
   HELP_CATEGORIES,
+  resolveHelpSlug,
   type HelpCategory,
 } from '@/lib/help/registry';
 import { getHelpDoc } from '@/lib/help/content';
@@ -135,9 +136,17 @@ export const HelpScreen = () => {
   const { t, i18n } = useTranslation('help');
   const locale = i18n.language;
   const { slug } = useParams();
+  const { hash } = useLocation();
   const navigate = useNavigate();
   const groups = useHelpNavGroups(locale);
   const active = slug ?? OVERVIEW_ID;
+
+  // An article that moved keeps its old address: forward it, anchor and all,
+  // and replace the entry so Back does not land on the redirect again.
+  if (slug !== undefined && resolveHelpSlug(slug) !== slug) {
+    const anchor = hash.length > 1 ? hash.slice(1) : undefined;
+    return <Navigate replace to={routes.helpArticle(resolveHelpSlug(slug), anchor)} />;
+  }
 
   const handleSelect = (id: string) => {
     void navigate(id === OVERVIEW_ID ? routes.help() : routes.helpArticle(id));

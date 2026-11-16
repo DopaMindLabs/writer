@@ -32,10 +32,10 @@
 
 ## የንባብ ስፋት
 
-ጠባብ ወይም ሰፊ ምልክት ትፈልጋለህ? **የንባብ ስፋቱ**ን [ፈጣን ቅንብሮች](customization-and-settings#quick-settings) ውስጥ አስተካክል — ዓይንህ እና ማያ ፊደልህ ያምር ዘንድ።
+ጠባብ ወይም ሰፊ ምልክት ትፈልጋለህ? **የንባብ ስፋቱ**ን [ፈጣን ቅንብሮች](customisation-and-settings#quick-settings) ውስጥ አስተካክል — ዓይንህ እና ማያ ፊደልህ ያምር ዘንድ።
 
 ## ተዛማጅ
 
 - [መጻፍ እና ማርትዕ](writing-and-editing) — ማርትዕ ሞዴ ዝርዝር።
-- [ማበጀት እና ቅንብሮች](customization-and-settings) — ገጽታዎቹ እና የንባብ ስፋት።
+- [ማበጀት እና ቅንብሮች](customisation-and-settings) — ገጽታዎቹ እና የንባብ ስፋት።
 - [የቁልፍ ሰሌዳ አቋራጮች](keyboard-shortcuts) — ሁነታዎቹ ከቁልፍ ሰሌዳ ለቀይሩ።

@@ -51,10 +51,10 @@ svo þú getir stökkið beint í smáatriðin.
 
 ## Sérstilling
 
-- **Flýtistillingar** — þema, fókus, verkfærastika, lesunarbreidd, leiðsöguleikar. [Frekari upplýsingar](customization-and-settings#quick-settings)
-- **Þemu** — ljóst, dökkt og háskerptu. [Frekari upplýsingar](customization-and-settings#themes)
-- **Leturgerð** — prósasnitt og stærð. [Frekari upplýsingar](customization-and-settings#typography)
-- **Lesunarbreidd** — þröng eða breið mæling. [Frekari upplýsingar](customization-and-settings#reading-width)
+- **Flýtistillingar** — þema, fókus, verkfærastika, lesunarbreidd, leiðsöguleikar. [Frekari upplýsingar](customisation-and-settings#quick-settings)
+- **Þemu** — ljóst, dökkt og háskerptu. [Frekari upplýsingar](customisation-and-settings#themes)
+- **Leturgerð** — prósasnitt og stærð. [Frekari upplýsingar](customisation-and-settings#typography)
+- **Lesunarbreidd** — þröng eða breið mæling. [Frekari upplýsingar](customisation-and-settings#reading-width)
 
 ## Aðgengi
 

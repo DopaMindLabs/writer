@@ -32,10 +32,10 @@ Olùyẹ̀wò ń fihàn **àkójọ àkọlé** ìwé, alaye, àti ìtàn. Yípa
 
 ## Ìwọ̀n kíkà
 
-Fẹ́ ìwọ̀n dín tàbí gbòòrò? Ṣàtunṣe **ìwọ̀n kíkà** nínú [Ìtọ́nà yíyára](customization-and-settings#quick-settings) láti bá ojú àti ojú ìwòye rẹ mu.
+Fẹ́ ìwọ̀n dín tàbí gbòòrò? Ṣàtunṣe **ìwọ̀n kíkà** nínú [Ìtọ́nà yíyára](customisation-and-settings#quick-settings) láti bá ojú àti ojú ìwòye rẹ mu.
 
 ## Jẹmọ́
 
 - [Kíkọ & ìṣàtunṣe](writing-and-editing) — ojú ìṣàtunṣe ní jíjinlẹ̀.
-- [Àtunṣe & ìtọ́nà](customization-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti ìwọ̀n kíkà.
+- [Àtunṣe & ìtọ́nà](customisation-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti ìwọ̀n kíkà.
 - [Àwọn keyboard shortcut](keyboard-shortcuts) — yípadà àwọn ìṣàkóso láti keyboard.

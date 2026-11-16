@@ -50,10 +50,10 @@
 
 ## 自定义
 
-- **快速设置** — 主题、专注、工具栏、阅读宽度、游览。[了解更多](customization-and-settings#quick-settings)
-- **主题** — 浅色、深色和高对比度。[了解更多](customization-and-settings#themes)
-- **字体排版** — 正文字体和字号。[了解更多](customization-and-settings#typography)
-- **阅读宽度** — 窄或宽的度量。[了解更多](customization-and-settings#reading-width)
+- **快速设置** — 主题、专注、工具栏、阅读宽度、游览。[了解更多](customisation-and-settings#quick-settings)
+- **主题** — 浅色、深色和高对比度。[了解更多](customisation-and-settings#themes)
+- **字体排版** — 正文字体和字号。[了解更多](customisation-and-settings#typography)
+- **阅读宽度** — 窄或宽的度量。[了解更多](customisation-and-settings#reading-width)
 
 ## 无障碍
 

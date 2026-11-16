@@ -38,5 +38,5 @@ Izinguquko zigcinwa ngasese futhi ziphindwe lapho uvula isikhelo njalo.
 
 ## Okuhlobene
 
-- [Ukuguqulwa & izilungiselelo](customization-and-settings) — amathimu nobumbalo.
+- [Ukuguqulwa & izilungiselelo](customisation-and-settings) — amathimu nobumbalo.
 - [Izinhlelo-mfutho zezibhebhezeli](keyboard-shortcuts) — ukuzula ngezibhebhezeli.

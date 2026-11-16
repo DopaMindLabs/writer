@@ -28,7 +28,7 @@ Dat is de hele cyclus. Alles hieronder is detail waar je later op terug kunt kom
 De eerste keer dat je een belangrijk scherm opent, wijst een korte interactieve
 rondleiding de essentials aan. Sla een rondleiding halverwege over en rondleidingen
 stoppen ook automatisch te starten op andere schermen. Speel een rondleiding op elk
-gewenst moment opnieuw af via het **?**-menu of [Snelle instellingen](customization-and-settings#quick-settings).
+gewenst moment opnieuw af via het **?**-menu of [Snelle instellingen](customisation-and-settings#quick-settings).
 
 ## Gerelateerd
 

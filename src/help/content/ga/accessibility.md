@@ -45,5 +45,5 @@ Stóráiltear athruithe go háitiúil agus cuirtear i bhfeidhm arís iad an ché
 
 ## Gaolmhar
 
-- [Saincheapadh & socruithe](customization-and-settings) — téamaí agus clóghrafaíocht.
+- [Saincheapadh & socruithe](customisation-and-settings) — téamaí agus clóghrafaíocht.
 - [Aicearra méarchláir](keyboard-shortcuts) — nascleanúint méarchláir.

@@ -51,10 +51,10 @@ kotoa 'oku hōhoko ki hono teuteu ke ke teke hangatonu ki he fakaikiiki.
 
 ## Ngaahi Liliu
 
-- **Ngaahi Setenga Vave** — tefito, fokisi, tooli-pa, laulahi 'o hono lau, ngaahi tāpou. [Ako lahi ange](customization-and-settings#quick-settings)
-- **Ngaahi Tefito** — māma, pouli, mo e fakamāma'ata lahi. [Ako lahi ange](customization-and-settings#themes)
-- **Ngaahi Tohi** — fono tohi mo hono lahi. [Ako lahi ange](customization-and-settings#typography)
-- **Laulahi 'o hono Lau** — measi haiki pe lautō. [Ako lahi ange](customization-and-settings#reading-width)
+- **Ngaahi Setenga Vave** — tefito, fokisi, tooli-pa, laulahi 'o hono lau, ngaahi tāpou. [Ako lahi ange](customisation-and-settings#quick-settings)
+- **Ngaahi Tefito** — māma, pouli, mo e fakamāma'ata lahi. [Ako lahi ange](customisation-and-settings#themes)
+- **Ngaahi Tohi** — fono tohi mo hono lahi. [Ako lahi ange](customisation-and-settings#typography)
+- **Laulahi 'o hono Lau** — measi haiki pe lautō. [Ako lahi ange](customisation-and-settings#reading-width)
 
 ## Ngaahi Founga ki he Kakai Faingata'a'ia
 

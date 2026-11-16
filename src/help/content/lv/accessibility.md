@@ -46,5 +46,5 @@ Izmaiņas tiek glabātas lokāli un tiek atjaunotas nākamajā reizē, kad atver
 
 ## Saistītais
 
-- [Pielāgošana un iestatījumi](customization-and-settings) — motīvi un tipogrāfija.
+- [Pielāgošana un iestatījumi](customisation-and-settings) — motīvi un tipogrāfija.
 - [Tastatūras īsceļi](keyboard-shortcuts) — navigācija ar tastatūru.

@@ -51,10 +51,10 @@ così puoi passare direttamente ai dettagli.
 
 ## Personalizzazione
 
-- **Impostazioni rapide** — tema, focus, barra degli strumenti, larghezza di lettura, tour. [Scopri di più](customization-and-settings#quick-settings)
-- **Temi** — chiaro, scuro e ad alto contrasto. [Scopri di più](customization-and-settings#themes)
-- **Tipografia** — font e dimensione del testo. [Scopri di più](customization-and-settings#typography)
-- **Larghezza di lettura** — misura stretta o ampia. [Scopri di più](customization-and-settings#reading-width)
+- **Impostazioni rapide** — tema, focus, barra degli strumenti, larghezza di lettura, tour. [Scopri di più](customisation-and-settings#quick-settings)
+- **Temi** — chiaro, scuro e ad alto contrasto. [Scopri di più](customisation-and-settings#themes)
+- **Tipografia** — font e dimensione del testo. [Scopri di più](customisation-and-settings#typography)
+- **Larghezza di lettura** — misura stretta o ampia. [Scopri di più](customisation-and-settings#reading-width)
 
 ## Accessibilità
 

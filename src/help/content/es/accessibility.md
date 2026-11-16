@@ -49,5 +49,5 @@ app.
 
 ## Relacionado
 
-- [Personalización y configuración](customization-and-settings) — temas y tipografía.
+- [Personalización y configuración](customisation-and-settings) — temas y tipografía.
 - [Atajos de teclado](keyboard-shortcuts) — navegación con teclado.

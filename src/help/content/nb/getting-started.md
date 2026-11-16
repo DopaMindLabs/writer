@@ -28,7 +28,7 @@ Det er hele syklusen. Alt nedenfor er detaljer du kan komme tilbake til.
 Første gang du åpner en viktig skjerm, viser en kort interaktiv omvisning de
 viktigste elementene. Hopp over en omvisning underveis, og omvisninger slutter å
 starte automatisk på andre skjermer også. Spill av en omvisning på nytt når du
-vil fra **?**-menyen eller [Hurtiginnstillinger](customization-and-settings#quick-settings).
+vil fra **?**-menyen eller [Hurtiginnstillinger](customisation-and-settings#quick-settings).
 
 ## Relatert
 

@@ -45,5 +45,5 @@ Změny jsou uloženy lokálně a při příštím otevření aplikace se znovu p
 
 ## Viz také
 
-- [Přizpůsobení a nastavení](customization-and-settings) — motivy a typografie.
+- [Přizpůsobení a nastavení](customisation-and-settings) — motivy a typografie.
 - [Klávesové zkratky](keyboard-shortcuts) — navigace pomocí klávesnice.

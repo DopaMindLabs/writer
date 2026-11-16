@@ -41,11 +41,11 @@ ko ngā tūāhua pai ka tere te whakatere.
 ## Whānuitanga pānui
 
 E hiahia ana ki tētahi āhua kitea-iti rānei nui? Tāeratia te **whānuitanga pānui** i roto i
-[Tautuhinga Tere](customization-and-settings#quick-settings) hei hāngai ki ōu karu
+[Tautuhinga Tere](customisation-and-settings#quick-settings) hei hāngai ki ōu karu
 me tōu mata.
 
 ## Pānga
 
 - [Tuhituhi & ētita](writing-and-editing) — te mata ētita i roto i te hōhonu.
-- [Whakarite & tautuhinga](customization-and-settings) — ngā kaupeka me te whānuitanga pānui.
+- [Whakarite & tautuhinga](customisation-and-settings) — ngā kaupeka me te whānuitanga pānui.
 - [Ngā tohutohu papapātuhi](keyboard-shortcuts) — huri aratahi mai i te papapātuhi.

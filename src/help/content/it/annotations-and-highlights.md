@@ -19,7 +19,7 @@ Seleziona il testo e applica un'evidenziazione. Le evidenziazioni usano una picc
 La tavolozza di evidenziazione è coerente in tutta la tua scrittura e **rispetta il
 tema corrente**, così le evidenziazioni restano leggibili nelle modalità chiara, scura
 e ad alto contrasto. Regola il tema e l'aspetto in
-[Personalizzazione e impostazioni](customization-and-settings).
+[Personalizzazione e impostazioni](customisation-and-settings).
 
 ## Annotazioni
 
@@ -37,4 +37,4 @@ riferisce, senza intasare la prosa stessa.
 ## Correlato
 
 - [BrainSpace](brainspace) — sviluppa ulteriormente un'idea contrassegnata.
-- [Personalizzazione e impostazioni](customization-and-settings) — temi e aspetto.
+- [Personalizzazione e impostazioni](customisation-and-settings) — temi e aspetto.

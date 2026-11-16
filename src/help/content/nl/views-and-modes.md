@@ -41,10 +41,10 @@ uit je kopjes, dus goede kopjes maken navigatie onmiddellijk.
 ## Leeskolombreedte
 
 Geef je de voorkeur aan een smalle of brede maat? Pas de **leeskolombreedte** aan in
-[Snelle instellingen](customization-and-settings#quick-settings) naar jouw ogen en scherm.
+[Snelle instellingen](customisation-and-settings#quick-settings) naar jouw ogen en scherm.
 
 ## Gerelateerd
 
 - [Schrijven en bewerken](writing-and-editing) — het bewerkingsoppervlak in diepte.
-- [Aanpassing en instellingen](customization-and-settings) — thema's en leeskolombreedte.
+- [Aanpassing en instellingen](customisation-and-settings) — thema's en leeskolombreedte.
 - [Sneltoetsen](keyboard-shortcuts) — wissel van modus via het toetsenbord.

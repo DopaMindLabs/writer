@@ -21,7 +21,7 @@
 키보드 사용자라면 모든 작업에 단축키도 있습니다 —
 [서식 & 마크다운](formatting-and-markdown)을 참조하세요.
 
-플로팅 툴바는 [빠른 설정](customization-and-settings#quick-settings)에서 끌 수 있습니다.
+플로팅 툴바는 [빠른 설정](customisation-and-settings#quick-settings)에서 끌 수 있습니다.
 
 ## 문서 이름 바꾸기
 

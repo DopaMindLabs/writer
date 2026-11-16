@@ -41,10 +41,10 @@ dvs., deci titluri bune fac navigarea instantanee.
 ## Lățimea de citire
 
 Preferați o măsură mai îngustă sau mai largă? Ajustați **lățimea de citire** în
-[Setări rapide](customization-and-settings#quick-settings) după preferințe și ecran.
+[Setări rapide](customisation-and-settings#quick-settings) după preferințe și ecran.
 
 ## Resurse conexe
 
 - [Scriere și editare](writing-and-editing) — suprafața de editare în profunzime.
-- [Personalizare și setări](customization-and-settings) — teme și lățime de citire.
+- [Personalizare și setări](customisation-and-settings) — teme și lățime de citire.
 - [Comenzi rapide de tastatură](keyboard-shortcuts) — comutarea modurilor de la tastatură.

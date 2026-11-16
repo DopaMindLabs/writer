@@ -17,7 +17,7 @@ Kò sí bọ́tìnnì fipamọ́ àti kò sí ewu ipadanu ìwé àkọ̀kọ́. 
 
 Yan ọrọ èyíkéyìí láti fihàn toolbar lébèlébè kékeré kan fún ìtọ̀nà tó wọ́pọ̀ jù. Fẹ́ keyboard? Ìgbésẹ̀ kọ̀ọ̀kan ní kúlẹ̀kúlẹ̀ rẹ̀ — wo [Títọ̀ & markdown](formatting-and-markdown).
 
-O lè pa toolbar lébèlébè rẹ́ nínú [Ìtọ́nà yíyára](customization-and-settings#quick-settings).
+O lè pa toolbar lébèlébè rẹ́ nínú [Ìtọ́nà yíyára](customisation-and-settings#quick-settings).
 
 ## Títún sọ orúkọ ìwé
 

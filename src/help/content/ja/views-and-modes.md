@@ -36,11 +36,11 @@
 
 ## 表示幅
 
-より狭いまたは広い幅を好みますか？[クイック設定](customization-and-settings#quick-settings)で
+より狭いまたは広い幅を好みますか？[クイック設定](customisation-and-settings#quick-settings)で
 **表示幅**を調整して、目と画面に合わせましょう。
 
 ## 関連項目
 
 - [執筆と編集](writing-and-editing) — 編集画面の詳細。
-- [カスタマイズと設定](customization-and-settings) — テーマと表示幅。
+- [カスタマイズと設定](customisation-and-settings) — テーマと表示幅。
 - [キーボードショートカット](keyboard-shortcuts) — キーボードでモードを切り替える。

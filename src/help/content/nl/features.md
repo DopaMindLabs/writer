@@ -51,10 +51,10 @@ gids zodat je direct naar de details kunt springen.
 
 ## Aanpassing
 
-- **Snelle instellingen** — thema, focus, werkbalk, leeskolombreedte, rondleidingen. [Meer informatie](customization-and-settings#quick-settings)
-- **Thema's** — licht, donker en hoog contrast. [Meer informatie](customization-and-settings#themes)
-- **Typografie** — proza-lettertype en -grootte. [Meer informatie](customization-and-settings#typography)
-- **Leeskolombreedte** — smalle of brede maat. [Meer informatie](customization-and-settings#reading-width)
+- **Snelle instellingen** — thema, focus, werkbalk, leeskolombreedte, rondleidingen. [Meer informatie](customisation-and-settings#quick-settings)
+- **Thema's** — licht, donker en hoog contrast. [Meer informatie](customisation-and-settings#themes)
+- **Typografie** — proza-lettertype en -grootte. [Meer informatie](customisation-and-settings#typography)
+- **Leeskolombreedte** — smalle of brede maat. [Meer informatie](customisation-and-settings#reading-width)
 
 ## Toegankelijkheid
 

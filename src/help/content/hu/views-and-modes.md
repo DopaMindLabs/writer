@@ -43,11 +43,11 @@ teszik a navigálást.
 ## Olvasási szélesség
 
 Szűkebb vagy szélesebb mértéket preferál? Állítsa be az **olvasási szélességet**
-a [Gyors beállításokban](customization-and-settings#quick-settings) az igényeinek
+a [Gyors beállításokban](customisation-and-settings#quick-settings) az igényeinek
 és képernyőjének megfelelően.
 
 ## Kapcsolódó
 
 - [Írás és szerkesztés](writing-and-editing) — a szerkesztési felület mélyebben.
-- [Testreszabás és beállítások](customization-and-settings) — témák és olvasási szélesség.
+- [Testreszabás és beállítások](customisation-and-settings) — témák és olvasási szélesség.
 - [Billentyűparancsok](keyboard-shortcuts) — módváltás billentyűzetről.

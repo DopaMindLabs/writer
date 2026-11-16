@@ -27,7 +27,7 @@ Tai ir yra visas ciklas. Toliau pateikiama išsami informacija, kurią galite pe
 
 Pirmą kartą atidarius pagrindinį ekraną, trumpas interaktyvus turas parodo svarbiausias dalis.
 Nutraukite turą viduryje ir turai nustos automatiškai startavę kituose ekranuose. Pakartokite bet
-kurį turą kada norite iš pagalbos (**?**) meniu arba [Greituosiuose nustatymuose](customization-and-settings#quick-settings).
+kurį turą kada norite iš pagalbos (**?**) meniu arba [Greituosiuose nustatymuose](customisation-and-settings#quick-settings).
 
 ## Susiję
 

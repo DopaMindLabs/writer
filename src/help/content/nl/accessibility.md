@@ -46,5 +46,5 @@ Wijzigingen worden lokaal opgeslagen en opnieuw toegepast de volgende keer dat j
 
 ## Gerelateerd
 
-- [Aanpassing en instellingen](customization-and-settings) — thema's en typografie.
+- [Aanpassing en instellingen](customisation-and-settings) — thema's en typografie.
 - [Sneltoetsen](keyboard-shortcuts) — navigatie met het toetsenbord.

@@ -51,10 +51,10 @@ Minden, amit az alkalmazás tud, egy áttekinthető listában. Minden elem a saj
 
 ## Testreszabás
 
-- **Gyors beállítások** — téma, fókusz, eszközsor, olvasási szélesség, körök. [Részletek](customization-and-settings#quick-settings)
-- **Témák** — világos, sötét és nagy kontrasztú. [Részletek](customization-and-settings#themes)
-- **Tipográfia** — prózabetűtípus és méret. [Részletek](customization-and-settings#typography)
-- **Olvasási szélesség** — szűk vagy széles mérték. [Részletek](customization-and-settings#reading-width)
+- **Gyors beállítások** — téma, fókusz, eszközsor, olvasási szélesség, körök. [Részletek](customisation-and-settings#quick-settings)
+- **Témák** — világos, sötét és nagy kontrasztú. [Részletek](customisation-and-settings#themes)
+- **Tipográfia** — prózabetűtípus és méret. [Részletek](customisation-and-settings#typography)
+- **Olvasási szélesség** — szűk vagy széles mérték. [Részletek](customisation-and-settings#reading-width)
 
 ## Akadálymentesség
 

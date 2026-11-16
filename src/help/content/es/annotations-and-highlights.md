@@ -19,7 +19,7 @@ Selecciona texto y aplica un marcador. Los marcadores usan una pequeña
 La paleta de marcadores es coherente en toda tu escritura y **respeta el tema
 actual**, así los marcadores se mantienen legibles en modos claro, oscuro y de
 alto contraste. Ajusta el tema y la apariencia en
-[Personalización y configuración](customization-and-settings).
+[Personalización y configuración](customisation-and-settings).
 
 ## Anotaciones
 
@@ -36,4 +36,4 @@ sin abarrotar la prosa.
 ## Relacionado
 
 - [BrainSpace](brainspace) — desarrolla una idea marcada.
-- [Personalización y configuración](customization-and-settings) — temas y apariencia.
+- [Personalización y configuración](customisation-and-settings) — temas y apariencia.

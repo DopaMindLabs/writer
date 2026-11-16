@@ -51,10 +51,10 @@ verlinkt zu seinem Leitfaden, damit du direkt zum Detail springst.
 
 ## Anpassung
 
-- **Schnelleinstellungen** — Thema, Fokus, Werkzeugleiste, Lesebreite, Touren. [Mehr](customization-and-settings)
-- **Themen** — hell, dunkel und hoher Kontrast. [Mehr](customization-and-settings)
-- **Typografie** — Prosa-Schrift und -Größe. [Mehr](customization-and-settings)
-- **Lesebreite** — enges oder breites Maß. [Mehr](customization-and-settings)
+- **Schnelleinstellungen** — Thema, Fokus, Werkzeugleiste, Lesebreite, Touren. [Mehr](customisation-and-settings)
+- **Themen** — hell, dunkel und hoher Kontrast. [Mehr](customisation-and-settings)
+- **Typografie** — Prosa-Schrift und -Größe. [Mehr](customisation-and-settings)
+- **Lesebreite** — enges oder breites Maß. [Mehr](customisation-and-settings)
 
 ## Barrierefreiheit
 

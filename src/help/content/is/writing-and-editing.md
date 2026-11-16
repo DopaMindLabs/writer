@@ -22,7 +22,7 @@ Vill þú nota lyklaborðið? Sérhver aðgerð hefur einnig flýtilykil — sj�
 [Snið og markdown](formatting-and-markdown).
 
 Þú getur slökkt á fljótandi verkfærastikunni í
-[Flýtistillingum](customization-and-settings#quick-settings).
+[Flýtistillingum](customisation-and-settings#quick-settings).
 
 ## Endurnefna skjal
 

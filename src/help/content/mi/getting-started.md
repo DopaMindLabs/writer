@@ -28,7 +28,7 @@ Ko tērā te hurihanga katoa. Ko ngā mea katoa i raro ko ngā taipitopito ka ā
 I te tuatahi o tōu tuwhera i tētahi mata matua, ka tohu tētahi haerenga ārahi poto i ngā
 mea nui. Tīmata tētahi haerenga mā-waenga ā, ka mutu ngā haerenga ki te tīmata aunoa
 i ērā atu mata hoki. Tākaro anō tētahi haerenga i noa atu i noa atu mai i te tahua āwhina (**?**)
-rānei [Tautuhinga Tere](customization-and-settings#quick-settings).
+rānei [Tautuhinga Tere](customisation-and-settings#quick-settings).
 
 ## Pānga
 

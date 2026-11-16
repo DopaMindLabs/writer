@@ -19,7 +19,7 @@ abyś mógł zbudować własny system znaczeń.
 Paleta wyróżnień jest spójna w całym Twoim piśmie i **respektuje bieżący motyw**,
 dzięki czemu wyróżnienia pozostają czytelne w trybach jasnym, ciemnym i o wysokim
 kontraście. Dostosuj motyw i wygląd w
-[Personalizacji i ustawieniach](customization-and-settings).
+[Personalizacji i ustawieniach](customisation-and-settings).
 
 ## Adnotacje
 
@@ -37,4 +37,4 @@ samej prozy.
 ## Powiązane
 
 - [BrainSpace](brainspace) — rozwijaj zaznaczony pomysł dalej.
-- [Personalizacja i ustawienia](customization-and-settings) — motywy i wygląd.
+- [Personalizacja i ustawienia](customisation-and-settings) — motywy i wygląd.

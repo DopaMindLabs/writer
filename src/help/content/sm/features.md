@@ -52,10 +52,10 @@ fa'amatalaga.
 
 ## Fa'aueue
 
-- **Fa'atulagaga Vave** — tema, fa'amamafa, faaaupega, lautele o faitauina, fa'avai. [A'oa'o atili](customization-and-settings#quick-settings)
-- **Tema** — susulu, pogisa, ma maualuga-fa'ailoga. [A'oa'o atili](customization-and-settings#themes)
-- **Fa'alapotopotoga o tusitusiga** — font ma tele o prose. [A'oa'o atili](customization-and-settings#typography)
-- **Lautele o faitauina** — fua li'o pe lautele. [A'oa'o atili](customization-and-settings#reading-width)
+- **Fa'atulagaga Vave** — tema, fa'amamafa, faaaupega, lautele o faitauina, fa'avai. [A'oa'o atili](customisation-and-settings#quick-settings)
+- **Tema** — susulu, pogisa, ma maualuga-fa'ailoga. [A'oa'o atili](customisation-and-settings#themes)
+- **Fa'alapotopotoga o tusitusiga** — font ma tele o prose. [A'oa'o atili](customisation-and-settings#typography)
+- **Lautele o faitauina** — fua li'o pe lautele. [A'oa'o atili](customisation-and-settings#reading-width)
 
 ## Fa'aogaoga
 

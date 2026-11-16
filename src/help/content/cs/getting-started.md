@@ -28,7 +28,7 @@ To je celý cyklus. Vše níže jsou detaily, ke kterým se můžete vrátit.
 Při prvním otevření klíčové obrazovky krátký interaktivní průvodce upozorní na
 podstatné věci. Přeskočte průvodce v půlce a průvodci přestanou automaticky
 spouštět na ostatních obrazovkách. Kdykoli přehrajte libovolný průvodce z menu
-nápovědy (**?**) nebo z [Rychlého nastavení](customization-and-settings#quick-settings).
+nápovědy (**?**) nebo z [Rychlého nastavení](customisation-and-settings#quick-settings).
 
 ## Viz také
 

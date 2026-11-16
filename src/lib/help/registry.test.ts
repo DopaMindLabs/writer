@@ -4,7 +4,9 @@ import {
   HELP_ARTICLES,
   HELP_CATEGORIES,
   HELP_SLUGS,
+  RETIRED_HELP_SLUGS,
   getArticlesByCategory,
+  resolveHelpSlug,
 } from './registry';
 import { hasHelpDoc } from './content';
 import { TOUR_IDS } from '@/tours/tours';
@@ -58,6 +60,25 @@ describe('help registry coverage', () => {
         (a) => a.slug === article.slug,
       );
       expect(inCategory).toBe(true);
+    }
+  });
+
+  it('sends a retired slug to the article that replaced it', () => {
+    expect(resolveHelpSlug('customization-and-settings')).toBe(
+      'customisation-and-settings',
+    );
+    expect(resolveHelpSlug('organizing-your-work')).toBe('organising-your-work');
+  });
+
+  it('leaves a slug that was never retired as it is', () => {
+    expect(resolveHelpSlug('getting-started')).toBe('getting-started');
+    expect(resolveHelpSlug('not-a-real-article')).toBe('not-a-real-article');
+  });
+
+  it('retires a slug only in favour of a live article, never a live slug', () => {
+    for (const [retired, current] of Object.entries(RETIRED_HELP_SLUGS)) {
+      expect(HELP_SLUGS, `${retired} is still live`).not.toContain(retired);
+      expect(HELP_SLUGS, `${retired} points nowhere`).toContain(current);
     }
   });
 });

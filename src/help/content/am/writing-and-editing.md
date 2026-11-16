@@ -17,7 +17,7 @@
 
 ጽሑፍ ምረጥ — ዋናው ቅርጸት ቀላሉ ለሚጠቀምበት ትንሽ ተንሳፋፊ የመሳሪያ አሞሌ ይታያሉ። ቁልፍ ሰሌዳ ትፈልጋለህ? እያንዳንዱ ተግባር አቋራጭ አለው — [ቅርጸት እና ማርክዳውን](formatting-and-markdown)ን ይመልከቱ።
 
-ተንሳፋፊ የመሳሪያ አሞሌ [ፈጣን ቅንብሮች](customization-and-settings#quick-settings) ውስጥ ማጥፋት ይቻላሉ።
+ተንሳፋፊ የመሳሪያ አሞሌ [ፈጣን ቅንብሮች](customisation-and-settings#quick-settings) ውስጥ ማጥፋት ይቻላሉ።
 
 ## ሰነድ ስም መቀየር
 

@@ -32,10 +32,10 @@
 
 ## 阅读宽度
 
-偏好更窄或更宽的版面？在[快速设置](customization-and-settings#quick-settings)中调整**阅读宽度**，适应您的眼睛和屏幕。
+偏好更窄或更宽的版面？在[快速设置](customisation-and-settings#quick-settings)中调整**阅读宽度**，适应您的眼睛和屏幕。
 
 ## 相关
 
 - [写作与编辑](writing-and-editing)——编辑界面详解。
-- [自定义与设置](customization-and-settings)——主题和阅读宽度。
+- [自定义与设置](customisation-and-settings)——主题和阅读宽度。
 - [键盘快捷键](keyboard-shortcuts)——通过键盘切换模式。

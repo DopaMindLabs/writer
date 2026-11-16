@@ -51,10 +51,10 @@ ao seu guia para ir directamente aos detalhes.
 
 ## Personalização
 
-- **Definições rápidas** — tema, foco, barra de ferramentas, largura de leitura, visitas. [Saber mais](customization-and-settings#quick-settings)
-- **Temas** — claro, escuro e alto contraste. [Saber mais](customization-and-settings#themes)
-- **Tipografia** — tipo de letra e tamanho da prosa. [Saber mais](customization-and-settings#typography)
-- **Largura de leitura** — medida estreita ou larga. [Saber mais](customization-and-settings#reading-width)
+- **Definições rápidas** — tema, foco, barra de ferramentas, largura de leitura, visitas. [Saber mais](customisation-and-settings#quick-settings)
+- **Temas** — claro, escuro e alto contraste. [Saber mais](customisation-and-settings#themes)
+- **Tipografia** — tipo de letra e tamanho da prosa. [Saber mais](customisation-and-settings#typography)
+- **Largura de leitura** — medida estreita ou larga. [Saber mais](customisation-and-settings#reading-width)
 
 ## Acessibilidade
 

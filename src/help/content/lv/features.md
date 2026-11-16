@@ -51,10 +51,10 @@ rokasgrāmatu, lai varētu uzreiz pāriet uz detaļām.
 
 ## Pielāgošana
 
-- **Ātriestatījumi** — motīvs, fokuss, rīkjosla, lasīšanas platums, tūres. [Uzzināt vairāk](customization-and-settings#quick-settings)
-- **Motīvi** — gaišs, tumšs un augsta kontrasta. [Uzzināt vairāk](customization-and-settings#themes)
-- **Tipogrāfija** — prozas fonts un izmērs. [Uzzināt vairāk](customization-and-settings#typography)
-- **Lasīšanas platums** — šaurs vai plats mērs. [Uzzināt vairāk](customization-and-settings#reading-width)
+- **Ātriestatījumi** — motīvs, fokuss, rīkjosla, lasīšanas platums, tūres. [Uzzināt vairāk](customisation-and-settings#quick-settings)
+- **Motīvi** — gaišs, tumšs un augsta kontrasta. [Uzzināt vairāk](customisation-and-settings#themes)
+- **Tipogrāfija** — prozas fonts un izmērs. [Uzzināt vairāk](customisation-and-settings#typography)
+- **Lasīšanas platums** — šaurs vai plats mērs. [Uzzināt vairāk](customisation-and-settings#reading-width)
 
 ## Pieejamība
 

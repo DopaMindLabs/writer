@@ -28,7 +28,7 @@ Det er hele cyklussen. Alt nedenfor er detaljer, du kan vende tilbage til.
 Første gang du åbner en vigtig skærm, viser en kort interaktiv tur de vigtigste
 elementer. Spring en tur over undervejs, og ture stopper med automatisk at starte på
 andre skærme. Afspil en tur igen, når du vil, fra **?**-menuen eller
-[Hurtige indstillinger](customization-and-settings#quick-settings).
+[Hurtige indstillinger](customisation-and-settings#quick-settings).
 
 ## Relateret
 

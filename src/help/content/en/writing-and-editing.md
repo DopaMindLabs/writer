@@ -22,7 +22,7 @@ formatting. Prefer the keyboard? Every action also has a shortcut — see
 [Formatting & markdown](formatting-and-markdown).
 
 You can turn the floating toolbar off in
-[Quick settings](customization-and-settings#quick-settings).
+[Quick settings](customisation-and-settings#quick-settings).
 
 ## Renaming a document
 

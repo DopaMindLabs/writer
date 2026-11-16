@@ -51,10 +51,10 @@ face legătura cu ghidul său, astfel încât puteți sări direct la detalii.
 
 ## Personalizare
 
-- **Setări rapide** — temă, focus, bară de instrumente, lățime de citire, tururi. [Detalii](customization-and-settings#quick-settings)
-- **Teme** — luminoasă, întunecată și contrast ridicat. [Detalii](customization-and-settings#themes)
-- **Tipografie** — font și dimensiune proză. [Detalii](customization-and-settings#typography)
-- **Lățimea de citire** — îngustă sau lată. [Detalii](customization-and-settings#reading-width)
+- **Setări rapide** — temă, focus, bară de instrumente, lățime de citire, tururi. [Detalii](customisation-and-settings#quick-settings)
+- **Teme** — luminoasă, întunecată și contrast ridicat. [Detalii](customisation-and-settings#themes)
+- **Tipografie** — font și dimensiune proză. [Detalii](customisation-and-settings#typography)
+- **Lățimea de citire** — îngustă sau lată. [Detalii](customisation-and-settings#reading-width)
 
 ## Accesibilitate
 

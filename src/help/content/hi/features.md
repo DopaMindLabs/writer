@@ -51,10 +51,10 @@
 
 ## अनुकूलन
 
-- **Quick settings** — थीम, फ़ोकस, टूलबार, पढ़ने की चौड़ाई, टूर। [अधिक जानें](customization-and-settings#quick-settings)
-- **थीम** — लाइट, डार्क, और हाई कंट्रास्ट। [अधिक जानें](customization-and-settings#themes)
-- **टाइपोग्राफी** — गद्य फ़ॉन्ट और साइज़। [अधिक जानें](customization-and-settings#typography)
-- **पढ़ने की चौड़ाई** — संकरी या चौड़ी माप। [अधिक जानें](customization-and-settings#reading-width)
+- **Quick settings** — थीम, फ़ोकस, टूलबार, पढ़ने की चौड़ाई, टूर। [अधिक जानें](customisation-and-settings#quick-settings)
+- **थीम** — लाइट, डार्क, और हाई कंट्रास्ट। [अधिक जानें](customisation-and-settings#themes)
+- **टाइपोग्राफी** — गद्य फ़ॉन्ट और साइज़। [अधिक जानें](customisation-and-settings#typography)
+- **पढ़ने की चौड़ाई** — संकरी या चौड़ी माप। [अधिक जानें](customisation-and-settings#reading-width)
 
 ## सुलभता
 

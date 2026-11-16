@@ -29,7 +29,7 @@ To cały cykl. Wszystko poniżej to szczegóły, do których możesz wracać.
 Przy pierwszym otwarciu kluczowego ekranu krótki interaktywny samouczek wskazuje
 najważniejsze elementy. Pomiń samouczek w połowie, a samouczki przestają się
 automatycznie uruchamiać na innych ekranach. Odtwórz dowolny samouczek kiedy chcesz
-z menu **?** lub [Szybkich ustawień](customization-and-settings#quick-settings).
+z menu **?** lub [Szybkich ustawień](customisation-and-settings#quick-settings).
 
 ## Powiązane
 

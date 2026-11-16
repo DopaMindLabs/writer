@@ -17,7 +17,7 @@ Babu maɓallin ajiye kuma babu haɗarin rasa daftari. Saboda ajiyewa yana **gida
 
 Zaɓi kowane rubutu don bayyana ƙaramin kayan aiki da ke iyo don mafi yawan tsarin da aka saba yi. Kuna son madannai? Kowane aiki yana da gajeriyar hanya — duba [Tsari da markdown](formatting-and-markdown).
 
-Kuna iya kashe kayan aikin da ke iyo a cikin [Saitunan sauri](customization-and-settings#quick-settings).
+Kuna iya kashe kayan aikin da ke iyo a cikin [Saitunan sauri](customisation-and-settings#quick-settings).
 
 ## Sake suna takarda
 

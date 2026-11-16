@@ -22,7 +22,7 @@ formatowaniem. Wolisz klawiaturę? Każde działanie ma też skrót — patrz
 [Formatowanie i markdown](formatting-and-markdown).
 
 Możesz wyłączyć pływający pasek narzędzi w
-[Szybkich ustawieniach](customization-and-settings#quick-settings).
+[Szybkich ustawieniach](customisation-and-settings#quick-settings).
 
 ## Zmiana nazwy dokumentu
 

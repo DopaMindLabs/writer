@@ -74,6 +74,15 @@ describe('HelpScreen', () => {
     ).toBeInTheDocument();
   });
 
+  it('forwards a retired slug to the article that replaced it', () => {
+    renderAtRoute(<HelpScreen />, {
+      path: '/help/:slug',
+      initialEntries: ['/help/customization-and-settings#themes'],
+    });
+    expect(screen.getByTestId('help-article')).toBeInTheDocument();
+    expect(screen.queryByTestId('help-article-missing')).not.toBeInTheDocument();
+  });
+
   it('shows a friendly message for an unknown article', () => {
     renderAtRoute(<HelpScreen />, {
       path: '/help/:slug',

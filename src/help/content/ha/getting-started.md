@@ -24,7 +24,7 @@ Wannan shi ne duka zagayen. Komai da ke ƙasa cikakken bayani ne da za ku iya ko
 
 ## Yawon shakatawa na jagora
 
-Karo na farko da kuka buɗe allon muhimmi, gajeren yawon shakatawa na mu'amala yana nuna muhimman abubuwa. Tsallake yawon shakatawa a tsakiya kuma yawon shakatawa sun daina fara kai tsaye a allon sauran. Sake kunna kowane yawon shakatawa duk lokacin da kuke so daga menu na taimako (**?**) ko [Saitunan sauri](customization-and-settings#quick-settings).
+Karo na farko da kuka buɗe allon muhimmi, gajeren yawon shakatawa na mu'amala yana nuna muhimman abubuwa. Tsallake yawon shakatawa a tsakiya kuma yawon shakatawa sun daina fara kai tsaye a allon sauran. Sake kunna kowane yawon shakatawa duk lokacin da kuke so daga menu na taimako (**?**) ko [Saitunan sauri](customisation-and-settings#quick-settings).
 
 ## Masu alaƙa
 

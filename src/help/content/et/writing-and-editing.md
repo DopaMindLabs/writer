@@ -17,7 +17,7 @@ Salvestamisnuppu pole ja mustandi kaotamise ohtu pole. Kuna salvestusruum on **k
 
 Vali mis tahes tekst, et kuvada väike ujuv tööriistariba kõige tavalisema vorminduse jaoks. Eelistad klaviatuuri? Igal toimingul on ka otsetee — vaata [Vormindamine ja markdown](formatting-and-markdown).
 
-Ujuva tööriistariba saab välja lülitada [Kiirsätetes](customization-and-settings#quick-settings).
+Ujuva tööriistariba saab välja lülitada [Kiirsätetes](customisation-and-settings#quick-settings).
 
 ## Dokumendi ümbernimetamine
 

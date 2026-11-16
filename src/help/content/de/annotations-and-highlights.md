@@ -21,7 +21,7 @@ Die Markierungspalette ist über dein Schreiben konsistent und
 **respektiert das aktuelle Thema**, sodass Markierungen in hellen,
 dunklen und kontrastreichen Modi gleichermaßen lesbar bleiben. Passe
 Thema und Aussehen in [Anpassung und
-Einstellungen](customization-and-settings) an.
+Einstellungen](customisation-and-settings) an.
 
 ## Anmerkungen
 
@@ -38,4 +38,4 @@ Text, auf den es sich bezieht, ohne die Prosa selbst zu überfrachten.
 ## Verwandt
 
 - [BrainSpace](brainspace) — entwickle eine markierte Idee weiter.
-- [Anpassung und Einstellungen](customization-and-settings) — Themen und Aussehen.
+- [Anpassung und Einstellungen](customisation-and-settings) — Themen und Aussehen.

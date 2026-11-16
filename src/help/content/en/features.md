@@ -51,10 +51,10 @@ so you can jump straight to the detail.
 
 ## Customisation
 
-- **Quick settings** — theme, focus, toolbar, reading width, tours. [Learn more](customization-and-settings#quick-settings)
-- **Themes** — light, dark, and high contrast. [Learn more](customization-and-settings#themes)
-- **Typography** — prose font and size. [Learn more](customization-and-settings#typography)
-- **Reading width** — narrow or wide measure. [Learn more](customization-and-settings#reading-width)
+- **Quick settings** — theme, focus, toolbar, reading width, tours. [Learn more](customisation-and-settings#quick-settings)
+- **Themes** — light, dark, and high contrast. [Learn more](customisation-and-settings#themes)
+- **Typography** — prose font and size. [Learn more](customisation-and-settings#typography)
+- **Reading width** — narrow or wide measure. [Learn more](customisation-and-settings#reading-width)
 
 ## Accessibility
 

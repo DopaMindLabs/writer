@@ -45,5 +45,5 @@ Mabadiliko huhifadhiwa ndani ya kifaa na kutumiwa tena wakati mwingine unapofung
 
 ## Zinazohusiana
 
-- [Ubinafsishaji na mipangilio](customization-and-settings) — mandhari na fonti.
+- [Ubinafsishaji na mipangilio](customisation-and-settings) — mandhari na fonti.
 - [Njia za mkato za kibodi](keyboard-shortcuts) — urambazaji wa kibodi.

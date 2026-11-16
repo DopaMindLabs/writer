@@ -18,7 +18,7 @@ krāsām, lai jūs varētu izveidot savu nozīmes sistēmu.
 
 Izcēlumu palete ir vienāda visā jūsu rakstīšanā un **ievēro pašreizējo motīvu**, tāpēc
 izcēlumi paliek salasāmi gaišā, tumšā un augsta kontrasta režīmos. Pielāgojiet motīvu
-un izskatu sadaļā [Pielāgošana un iestatījumi](customization-and-settings).
+un izskatu sadaļā [Pielāgošana un iestatījumi](customisation-and-settings).
 
 ## Anotācijas
 
@@ -34,4 +34,4 @@ redaktora domas blakus tekstam, uz kuru tās attiecas, nepārslogojot pašu proz
 ## Saistītais
 
 - [BrainSpace](brainspace) — attīstiet iezīmētu ideju tālāk.
-- [Pielāgošana un iestatījumi](customization-and-settings) — motīvi un izskats.
+- [Pielāgošana un iestatījumi](customisation-and-settings) — motīvi un izskats.

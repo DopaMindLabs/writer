@@ -49,5 +49,5 @@ que tu ouvres l'app.
 
 ## Voir aussi
 
-- [Personnalisation et paramètres](customization-and-settings) — thèmes et typographie.
+- [Personnalisation et paramètres](customisation-and-settings) — thèmes et typographie.
 - [Raccourcis clavier](keyboard-shortcuts) — navigation au clavier.

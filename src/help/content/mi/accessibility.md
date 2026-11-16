@@ -45,5 +45,5 @@ Ka tiakina ngā hurihanga i roto i tō ake wāhi, ā, ka whakaahua anō i te wā
 
 ## Pānga
 
-- [Whakarite & tautuhinga](customization-and-settings) — ngā kaupeka me te momotuhi.
+- [Whakarite & tautuhinga](customisation-and-settings) — ngā kaupeka me te momotuhi.
 - [Ngā tohutohu papapātuhi](keyboard-shortcuts) — whakatere papapātuhi.

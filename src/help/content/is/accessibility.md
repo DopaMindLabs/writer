@@ -45,5 +45,5 @@ Breytingar eru geymdar staðbundið og notaðar aftur næst þegar þú opnar fo
 
 ## Tengd efni
 
-- [Sérstilling og stillingar](customization-and-settings) — þemu og leturgerð.
+- [Sérstilling og stillingar](customisation-and-settings) — þemu og leturgerð.
 - [Lyklaborðsflýtilyklar](keyboard-shortcuts) — lyklaborðsleiðsögn.

@@ -24,7 +24,7 @@ Lokho kuyikhona ukuzungezela kwonke. Konke okungezansi kwemininingwane ongabuya 
 
 ## Uhambo lweziqondiso olunqindisiwe
 
-Isikhathi sokuqala uvula isikrini esibalulekile, uhambo olufushane olunqindisiwe lubonisa izinto ezibalulekile. Dlula uhambo phakathi futhi uhambo luyeka ukuqala ngokwenzekayo kwamanye namanye amaskrini. Phinda noma iyiphi uhambo nganoma inini kusuka ku-menyu yosizo (**?**) noma ku-[Izilungiselelo ezisheshayo](customization-and-settings#quick-settings).
+Isikhathi sokuqala uvula isikrini esibalulekile, uhambo olufushane olunqindisiwe lubonisa izinto ezibalulekile. Dlula uhambo phakathi futhi uhambo luyeka ukuqala ngokwenzekayo kwamanye namanye amaskrini. Phinda noma iyiphi uhambo nganoma inini kusuka ku-menyu yosizo (**?**) noma ku-[Izilungiselelo ezisheshayo](customisation-and-settings#quick-settings).
 
 ## Okuhlobene
 

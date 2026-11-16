@@ -45,5 +45,5 @@ mens du navigerer i appen med et tastatur.
 
 ## Relateret
 
-- [Tilpasning og indstillinger](customization-and-settings) — temaer og typografi.
+- [Tilpasning og indstillinger](customisation-and-settings) — temaer og typografi.
 - [Tastaturgenveje](keyboard-shortcuts) — tastaturnavigation.

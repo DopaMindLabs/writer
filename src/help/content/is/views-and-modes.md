@@ -39,10 +39,10 @@ gera góðar fyrirsagnir leiðsögn samstundis.
 ## Lesunarbreidd
 
 Vilt þú þrengri eða breiðari mælingu? Stilltu **lesunarbreidd** í
-[Flýtistillingum](customization-and-settings#quick-settings) eftir þínum augum og skjá.
+[Flýtistillingum](customisation-and-settings#quick-settings) eftir þínum augum og skjá.
 
 ## Tengd efni
 
 - [Ritun og klipping](writing-and-editing) — ritunaryfirbor í dýpt.
-- [Sérstilling og stillingar](customization-and-settings) — þemu og lesunarbreidd.
+- [Sérstilling og stillingar](customisation-and-settings) — þemu og lesunarbreidd.
 - [Lyklaborðsflýtilyklar](keyboard-shortcuts) — skiptu um hama af lyklaborðinu.

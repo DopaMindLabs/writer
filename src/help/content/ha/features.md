@@ -50,10 +50,10 @@ Duk abin da app din zai iya yi, a cikin jerin da za a iya dubawa cikin sauri. Ko
 
 ## Keɓancewa
 
-- **Saitunan sauri** — jigo, mayar da hankali, kayan aiki, faɗin karatu, yawon shakatawa. [Ƙara koyo](customization-and-settings#quick-settings)
-- **Jigogi** — haske, duhu, da bambancin launi mai ƙarfi. [Ƙara koyo](customization-and-settings#themes)
-- **Rubutun allo** — rubutun adabi da girma. [Ƙara koyo](customization-and-settings#typography)
-- **Faɗin karatu** — ma'aunin kunkuntar ko faɗi. [Ƙara koyo](customization-and-settings#reading-width)
+- **Saitunan sauri** — jigo, mayar da hankali, kayan aiki, faɗin karatu, yawon shakatawa. [Ƙara koyo](customisation-and-settings#quick-settings)
+- **Jigogi** — haske, duhu, da bambancin launi mai ƙarfi. [Ƙara koyo](customisation-and-settings#themes)
+- **Rubutun allo** — rubutun adabi da girma. [Ƙara koyo](customisation-and-settings#typography)
+- **Faɗin karatu** — ma'aunin kunkuntar ko faɗi. [Ƙara koyo](customisation-and-settings#reading-width)
 
 ## Saukin Shiga
 

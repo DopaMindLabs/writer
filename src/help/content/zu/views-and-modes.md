@@ -32,10 +32,10 @@ Umhloleli uveza **uhlaka** lwedokhumenti, ulwazi, nomlando. Shintsha usayizi waw
 
 ## Ukukhanya kokufunda
 
-Uthanda isilinganiso esimfishane noma esibanzi? Lungisa **ukukhanya kokufunda** ku-[Izilungiselelo ezisheshayo](customization-and-settings#quick-settings) ukuze zifanele amehlo akho nesikrini.
+Uthanda isilinganiso esimfishane noma esibanzi? Lungisa **ukukhanya kokufunda** ku-[Izilungiselelo ezisheshayo](customisation-and-settings#quick-settings) ukuze zifanele amehlo akho nesikrini.
 
 ## Okuhlobene
 
 - [Ukubhala nokuhlela](writing-and-editing) — ingqikithi yokuhlelwa ngajule.
-- [Ukuguqulwa nezilungiselelo](customization-and-settings) — amathimu nokukhanya kokufunda.
+- [Ukuguqulwa nezilungiselelo](customisation-and-settings) — amathimu nokukhanya kokufunda.
 - [Izinhlelo-mfutho zezibhebhezeli](keyboard-shortcuts) — shintsha izimodi kusaka ezibhebhezeli.

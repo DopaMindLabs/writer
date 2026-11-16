@@ -24,7 +24,7 @@ Ibi kíkọ tó jẹ ìbílẹ̀-àkọ́kọ́. Iṣẹ́ rẹ wà nínú **àw
 
 ## Àwọn ìrin àjò àtọ́nà
 
-Ìgbà àkọ́kọ́ tí o bá ṣí ojú ìwòye pàtàkì kan, ìrin àjò ìfikọ́ kúkúrú kan ń ṣe àmì àwọn pàtàkì. Fo ìrin àjò kan ní ààrin tí àwọn ìrin àjò yóò dáwọ́ ìbẹ̀rẹ̀ fúnra wọn lórí àwọn ojú ìwòye mìíràn. Tún ṣere ìrin àjò èyíkéyìí nígbà tí o bá fẹ́ láti àkójọ àṣàyàn ìrànlọ́wọ́ (**?**) tàbí [Ìtọ́nà yíyára](customization-and-settings#quick-settings).
+Ìgbà àkọ́kọ́ tí o bá ṣí ojú ìwòye pàtàkì kan, ìrin àjò ìfikọ́ kúkúrú kan ń ṣe àmì àwọn pàtàkì. Fo ìrin àjò kan ní ààrin tí àwọn ìrin àjò yóò dáwọ́ ìbẹ̀rẹ̀ fúnra wọn lórí àwọn ojú ìwòye mìíràn. Tún ṣere ìrin àjò èyíkéyìí nígbà tí o bá fẹ́ láti àkójọ àṣàyàn ìrànlọ́wọ́ (**?**) tàbí [Ìtọ́nà yíyára](customisation-and-settings#quick-settings).
 
 ## Jẹmọ́
 

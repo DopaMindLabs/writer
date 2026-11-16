@@ -50,10 +50,10 @@ Kõik, mida rakendus teha oskab, ühes ülevaatlikus nimekirjas. Iga üksus ling
 
 ## Kohandamine
 
-- **Kiirsätted** — teema, fookus, tööriistariba, lugemislaius, turid. [Uuri lähemalt](customization-and-settings#quick-settings)
-- **Teemad** — hele, tume ja kõrge kontrastsusega. [Uuri lähemalt](customization-and-settings#themes)
-- **Tüpograafia** — proosafont ja -suurus. [Uuri lähemalt](customization-and-settings#typography)
-- **Lugemislaius** — kitsas või lai mõõt. [Uuri lähemalt](customization-and-settings#reading-width)
+- **Kiirsätted** — teema, fookus, tööriistariba, lugemislaius, turid. [Uuri lähemalt](customisation-and-settings#quick-settings)
+- **Teemad** — hele, tume ja kõrge kontrastsusega. [Uuri lähemalt](customisation-and-settings#themes)
+- **Tüpograafia** — proosafont ja -suurus. [Uuri lähemalt](customisation-and-settings#typography)
+- **Lugemislaius** — kitsas või lai mõõt. [Uuri lähemalt](customisation-and-settings#reading-width)
 
 ## Ligipääsetavus
 

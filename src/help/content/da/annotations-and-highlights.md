@@ -18,7 +18,7 @@ farver, så du kan opbygge dit eget meningssystem.
 
 Fremhævningspaletten er konsistent i hele dit skriftlige arbejde og **respekterer det
 aktuelle tema**, så fremhævninger forbliver læsbare i lys, mørk og højkonstrasttilstand.
-Juster tema og udseende under [Tilpasning og indstillinger](customization-and-settings).
+Juster tema og udseende under [Tilpasning og indstillinger](customisation-and-settings).
 
 ## Anmærkninger
 
@@ -36,4 +36,4 @@ at forstyrre selve prosaen.
 ## Relateret
 
 - [BrainSpace](brainspace) — udvikl en markeret idé videre.
-- [Tilpasning og indstillinger](customization-and-settings) — temaer og udseende.
+- [Tilpasning og indstillinger](customisation-and-settings) — temaer og udseende.

@@ -19,7 +19,7 @@ laiti o lanu ina ia mafai ona e fausia lou uiga lava.
 O le fa'atulagaga lanu o susulu e tutusa i ou tusitusiga uma ma e **fa'aaloalogia
 le tema o lo'o iai**, o lea e vaaia lelei susulu i le susulu, pogisa, ma
 fa'a-maualuga-fa'ailoga. Fa'atulaga tema ma foliga i
-[Fa'aueue & fa'atulagaga](customization-and-settings).
+[Fa'aueue & fa'atulagaga](customisation-and-settings).
 
 ## Fa'amatalaga
 
@@ -36,4 +36,4 @@ ma le fa'aletonu o le prose lava ia.
 ## Feso'ota'i
 
 - [BrainSpace](brainspace) — fa'atupula'ia se manatu ua fa'ailoga.
-- [Fa'aueue & fa'atulagaga](customization-and-settings) — tema ma foliga.
+- [Fa'aueue & fa'atulagaga](customisation-and-settings) — tema ma foliga.

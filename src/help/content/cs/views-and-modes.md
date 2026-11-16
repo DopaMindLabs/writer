@@ -40,11 +40,11 @@ nadpisů, takže dobré nadpisy okamžitě usnadní navigaci.
 ## Šířka čtení
 
 Preferujete užší nebo širší formát? Upravte **šířku čtení** v
-[Rychlém nastavení](customization-and-settings#quick-settings) dle svých
+[Rychlém nastavení](customisation-and-settings#quick-settings) dle svých
 potřeb a obrazovky.
 
 ## Viz také
 
 - [Psaní a úpravy](writing-and-editing) — editační plocha do hloubky.
-- [Přizpůsobení a nastavení](customization-and-settings) — motivy a šířka čtení.
+- [Přizpůsobení a nastavení](customisation-and-settings) — motivy a šířka čtení.
 - [Klávesové zkratky](keyboard-shortcuts) — přepínání režimů z klávesnice.

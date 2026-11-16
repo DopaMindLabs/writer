@@ -40,11 +40,11 @@ dalle tue intestazioni, quindi le buone intestazioni rendono la navigazione imme
 ## Larghezza di lettura
 
 Preferisci una misura più stretta o più ampia? Regola la **larghezza di lettura** nelle
-[Impostazioni rapide](customization-and-settings#quick-settings) in base alle tue
+[Impostazioni rapide](customisation-and-settings#quick-settings) in base alle tue
 esigenze visive e al tuo schermo.
 
 ## Correlato
 
 - [Scrittura e modifica](writing-and-editing) — la superficie di modifica in dettaglio.
-- [Personalizzazione e impostazioni](customization-and-settings) — temi e larghezza di lettura.
+- [Personalizzazione e impostazioni](customisation-and-settings) — temi e larghezza di lettura.
 - [Scorciatoie da tastiera](keyboard-shortcuts) — cambia modalità dalla tastiera.

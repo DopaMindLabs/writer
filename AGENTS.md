@@ -135,9 +135,15 @@ _customise_, _behaviour_, _centre_, _licence_ (`-ce` for nouns), _-ise_ not _-iz
 (`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
 and docs.
 
-- **Exceptions:** code identifiers, URL slugs, and CSS/token names stay as written (they are
-  identifiers, not prose), as do established product/proper names already used across the app
-  (e.g. **Help Center**). Don't rename a slug just to spell it the British way.
+- **Identifiers we own are British too:** file and folder names, symbols and Help Center
+  slugs (`materialisation/`, `OperationMaterialiser`, `customisation-and-settings`).
+- **Exceptions:** names we do not own or cannot change freely stay as written — third-party
+  and platform APIs, CSS properties and token names, wire-format fields and stored table or
+  key names — as do established product/proper names already used across the app (e.g.
+  **Help Center**).
+- **Never break a slug.** A Help Center slug is a public address. Renaming one requires an
+  entry in `RETIRED_HELP_SLUGS` (`src/lib/help/registry.ts`) in the same commit, so the old
+  address forwards to the article; rename the file in every locale, not only `en`.
 - When adding or editing copy, match the British spellings already in surrounding text.
 
 ## Sync engine boundary (read before touching sync)

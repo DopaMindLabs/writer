@@ -38,5 +38,5 @@
 
 ## ተዛማጅ
 
-- [ማበጀት እና ቅንብሮች](customization-and-settings) — ጭብጦች እና ፊደላት።
+- [ማበጀት እና ቅንብሮች](customisation-and-settings) — ጭብጦች እና ፊደላት።
 - [የቁልፍ ሰሌዳ አቋራጮች](keyboard-shortcuts) — የቁልፍ ሰሌዳ አሰሳ።

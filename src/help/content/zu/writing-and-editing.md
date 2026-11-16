@@ -17,7 +17,7 @@ Awekho inkinobho yokugcina nalikho ingozi yokulahleka kohlolo. Ngoba isitoreji *
 
 Khetha umbhalo uthola igude eliwayo encane lohlobisa okujwayelekile kakhulu. Uthanda izibhebhezeli? Yonke into ine-nhlelo-mfutho yayo — bheka ku-[Ukuhlobisa ne-markdown](formatting-and-markdown).
 
-Ungavala igude eliwayo ku-[Izilungiselelo ezisheshayo](customization-and-settings#quick-settings).
+Ungavala igude eliwayo ku-[Izilungiselelo ezisheshayo](customisation-and-settings#quick-settings).
 
 ## Ukuqamba kabusha idokhumenti
 

@@ -30,7 +30,7 @@ fo'i mai.
 O le taimi muamua e tatala ai se lau autu, o se fa'avai fa'atonu pu'epu'e e
 fa'ailo mea autu. Tu'u lava se fa'avai fa'atonu ina ua leva ma o fa'avai fa'atonu
 e le amata otometi i isi lau. Toe fa'atunu soo se fa'avai fa'atonu i soo se taimi
-mai le fua 'autonu fesoasoani (**?**) pe [Fa'atulagaga Vave](customization-and-settings#quick-settings).
+mai le fua 'autonu fesoasoani (**?**) pe [Fa'atulagaga Vave](customisation-and-settings#quick-settings).
 
 ## Feso'ota'i
 

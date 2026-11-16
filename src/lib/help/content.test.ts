@@ -3,6 +3,7 @@ import {
   getHelpDoc,
   hasHelpDoc,
   listHelpDocSlugs,
+  listHelpLocales,
   slugify,
 } from './content';
 
@@ -39,6 +40,18 @@ describe('help content loader', () => {
     const slugs = listHelpDocSlugs();
     expect(slugs).toContain('getting-started');
     expect(slugs).toContain('your-data');
+  });
+
+  it('has no translated article without an English counterpart', () => {
+    // A translation filed under a slug English does not have is never shown:
+    // the reader silently gets the English article instead.
+    const english = new Set(listHelpDocSlugs());
+    const orphans = listHelpLocales().flatMap((locale) =>
+      listHelpDocSlugs(locale)
+        .filter((slug) => !english.has(slug))
+        .map((slug) => `${locale}/${slug}`),
+    );
+    expect(orphans).toEqual([]);
   });
 
   it('slugifies heading text into url-safe anchors', () => {

@@ -45,5 +45,5 @@ Ko e ngaahi liliu 'oku tauhi fakalokolo pē 'o fakahoko ko e taimi ho'ou fo'i h�
 
 ## Kaunga
 
-- [Ngaahi Liliu & Setenga](customization-and-settings) — ngaahi tefito mo e ngaahi tohi.
+- [Ngaahi Liliu & Setenga](customisation-and-settings) — ngaahi tefito mo e ngaahi tohi.
 - [Ngaahi Fo'i Kī-Boto](keyboard-shortcuts) — teuteu 'aki e kī-boto.

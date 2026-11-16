@@ -17,7 +17,7 @@
 
 选择任意文本，弹出小型浮动工具栏，用于最常用的格式操作。偏好键盘？每个操作都有快捷键——请参阅[格式化与 Markdown](formatting-and-markdown)。
 
-您可以在[快速设置](customization-and-settings#quick-settings)中关闭浮动工具栏。
+您可以在[快速设置](customisation-and-settings#quick-settings)中关闭浮动工具栏。
 
 ## 重命名文档
 

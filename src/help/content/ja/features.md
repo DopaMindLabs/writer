@@ -50,10 +50,10 @@
 
 ## カスタマイズ
 
-- **クイック設定** — テーマ、フォーカス、ツールバー、表示幅、ツアー。[詳細を見る](customization-and-settings#quick-settings)
-- **テーマ** — ライト、ダーク、ハイコントラスト。[詳細を見る](customization-and-settings#themes)
-- **タイポグラフィ** — 本文フォントとサイズ。[詳細を見る](customization-and-settings#typography)
-- **表示幅** — 狭いまたは広い幅。[詳細を見る](customization-and-settings#reading-width)
+- **クイック設定** — テーマ、フォーカス、ツールバー、表示幅、ツアー。[詳細を見る](customisation-and-settings#quick-settings)
+- **テーマ** — ライト、ダーク、ハイコントラスト。[詳細を見る](customisation-and-settings#themes)
+- **タイポグラフィ** — 本文フォントとサイズ。[詳細を見る](customisation-and-settings#typography)
+- **表示幅** — 狭いまたは広い幅。[詳細を見る](customisation-and-settings#reading-width)
 
 ## アクセシビリティ
 

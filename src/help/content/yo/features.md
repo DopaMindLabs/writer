@@ -50,10 +50,10 @@ Gbogbo ohun tí ètò lè ṣe, ní àtòjọ ọ̀kan tó rọrùn láti yẹ̀
 
 ## Àtunṣe
 
-- **Ìtọ́nà yíyára** — àkójọpọ̀ àwọ̀, idojúkọ, toolbar, ìwọ̀n kíkà, àwọn ìrin àjò. [Kọ́ síi](customization-and-settings#quick-settings)
-- **Àwọn àkójọpọ̀ àwọ̀** — ìmọ́lẹ̀, òkùnkùn, àti ìdìtẹ gíga. [Kọ́ síi](customization-and-settings#themes)
-- **Iṣẹ́ ìkọ** — fọ́ọ̀ntì ọrọ àti ìwọ̀n. [Kọ́ síi](customization-and-settings#typography)
-- **Ìwọ̀n kíkà** — ìwọ̀n dín tàbí gbòòrò. [Kọ́ síi](customization-and-settings#reading-width)
+- **Ìtọ́nà yíyára** — àkójọpọ̀ àwọ̀, idojúkọ, toolbar, ìwọ̀n kíkà, àwọn ìrin àjò. [Kọ́ síi](customisation-and-settings#quick-settings)
+- **Àwọn àkójọpọ̀ àwọ̀** — ìmọ́lẹ̀, òkùnkùn, àti ìdìtẹ gíga. [Kọ́ síi](customisation-and-settings#themes)
+- **Iṣẹ́ ìkọ** — fọ́ọ̀ntì ọrọ àti ìwọ̀n. [Kọ́ síi](customisation-and-settings#typography)
+- **Ìwọ̀n kíkà** — ìwọ̀n dín tàbí gbòòrò. [Kọ́ síi](customisation-and-settings#reading-width)
 
 ## Ìráàyèsí
 

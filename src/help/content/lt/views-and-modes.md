@@ -39,11 +39,11 @@ geros antraštės navigaciją padaro akimirksnišką.
 ## Skaitymo plotis
 
 Teikiate pirmenybę siauresniam arba platesniam matmeniui? Sureguliuokite **skaitymo plotį**
-[Greituosiuose nustatymuose](customization-and-settings#quick-settings), kad pritaikytumėte prie savo
+[Greituosiuose nustatymuose](customisation-and-settings#quick-settings), kad pritaikytumėte prie savo
 akių ir ekrano.
 
 ## Susiję
 
 - [Rašymas ir redagavimas](writing-and-editing) — redagavimo paviršius išsamiai.
-- [Tinkinimas ir nustatymai](customization-and-settings) — temos ir skaitymo plotis.
+- [Tinkinimas ir nustatymai](customisation-and-settings) — temos ir skaitymo plotis.
 - [Klaviatūros spartieji klavišai](keyboard-shortcuts) — režimų perjungimas klaviatūra.

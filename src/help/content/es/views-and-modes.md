@@ -41,11 +41,11 @@ encabezados, así que unos buenos encabezados hacen que la navegación sea inmed
 ## Ancho de lectura
 
 ¿Prefieres una medida más estrecha o más ancha? Ajusta el **ancho de lectura** en
-[Configuración rápida](customization-and-settings) para adaptarlo a tus ojos y a
+[Configuración rápida](customisation-and-settings) para adaptarlo a tus ojos y a
 tu pantalla.
 
 ## Relacionado
 
 - [Escritura y edición](writing-and-editing) — la superficie de edición en detalle.
-- [Personalización y configuración](customization-and-settings) — temas y ancho de lectura.
+- [Personalización y configuración](customisation-and-settings) — temas y ancho de lectura.
 - [Atajos de teclado](keyboard-shortcuts) — cambia de modo desde el teclado.

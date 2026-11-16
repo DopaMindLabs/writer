@@ -49,5 +49,5 @@ eine dickere, kontrastreichere Kontur beim Navigieren mit Tastatur.
 
 ## Verwandt
 
-- [Anpassung und Einstellungen](customization-and-settings) — Themen und Typografie.
+- [Anpassung und Einstellungen](customisation-and-settings) — Themen und Typografie.
 - [Tastenkürzel](keyboard-shortcuts) — Tastaturnavigation.

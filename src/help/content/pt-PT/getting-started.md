@@ -28,7 +28,7 @@ Este é o ciclo completo. Tudo o que se segue são detalhes a que pode voltar.
 Da primeira vez que abre um ecrã importante, uma visita interactiva curta assinala
 os elementos essenciais. Salte uma visita a meio e as visitas deixam de iniciar
 automaticamente noutros ecrãs. Reproduza qualquer visita quando quiser a partir do
-menu **?** ou das [Definições rápidas](customization-and-settings#quick-settings).
+menu **?** ou das [Definições rápidas](customisation-and-settings#quick-settings).
 
 ## Relacionado
 

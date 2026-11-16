@@ -41,11 +41,11 @@ maithe an nascleanúint láithreach.
 ## Leithead léitheoireachta
 
 An fearr leat beart níos cúinge nó níos leithne? Coigeartaigh an **leithead léitheoireachta** i
-[Socruithe tapaidh](customization-and-settings#quick-settings) chun oiriúint do do shúile
+[Socruithe tapaidh](customisation-and-settings#quick-settings) chun oiriúint do do shúile
 agus scáileán.
 
 ## Gaolmhar
 
 - [Scríbhneoireacht & eagarthóireacht](writing-and-editing) — an dromchla eagarthóireachta go mion.
-- [Saincheapadh & socruithe](customization-and-settings) — téamaí agus leithead léitheoireachta.
+- [Saincheapadh & socruithe](customisation-and-settings) — téamaí agus leithead léitheoireachta.
 - [Aicearraí méarchláir](keyboard-shortcuts) — athraigh móid ón méarchlár.

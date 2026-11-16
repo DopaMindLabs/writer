@@ -29,7 +29,7 @@ Questo è l'intero ciclo. Tutto ciò che segue è un dettaglio a cui puoi tornar
 La prima volta che apri una schermata chiave, un breve tour interattivo indica
 gli elementi essenziali. Salta un tour a metà e i tour smettono di avviarsi
 automaticamente anche sulle altre schermate. Riproduci qualsiasi tour quando
-vuoi dal menu **?** o dalle [Impostazioni rapide](customization-and-settings#quick-settings).
+vuoi dal menu **?** o dalle [Impostazioni rapide](customisation-and-settings#quick-settings).
 
 ## Correlato
 

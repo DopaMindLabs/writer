@@ -30,7 +30,7 @@ zurückkehren kannst.
 Wenn du zum ersten Mal einen Schlüsselbildschirm öffnest, weist dich
 eine kurze interaktive Tour auf das Wesentliche hin. Spiele eine Tour
 später erneut aus dem Hilfe-Menü (**?**) oder den
-[Schnelleinstellungen](customization-and-settings) ab.
+[Schnelleinstellungen](customisation-and-settings) ab.
 
 ## Verwandt
 

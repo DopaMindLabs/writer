@@ -28,7 +28,7 @@ Hiyo ndiyo mzunguko mzima. Kila kitu hapa chini ni maelezo unayoweza kurudi kwak
 Mara ya kwanza ukifungua skrini muhimu, ziara fupi ya maingiliano inaonyesha
 mambo ya msingi. Ruka ziara katikati na ziara zitaacha kuanza otomatiki kwenye
 skrini nyingine pia. Cheza tena ziara yoyote upendapo kutoka kwenye menyu ya msaada (**?**)
-au [Mipangilio ya haraka](customization-and-settings#quick-settings).
+au [Mipangilio ya haraka](customisation-and-settings#quick-settings).
 
 ## Zinazohusiana
 

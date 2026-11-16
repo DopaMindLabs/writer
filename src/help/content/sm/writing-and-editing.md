@@ -22,7 +22,7 @@ fa'atulagaga masani. E fiafia i le ki'iboard? O gaoioiga uma e iai foi ni
 fa'ailoga — va'ai [Fa'atulagaga & markdown](formatting-and-markdown).
 
 E mafai ona e tapuni le faaaupega fa'alele i
-[Fa'atulagaga Vave](customization-and-settings#quick-settings).
+[Fa'atulagaga Vave](customisation-and-settings#quick-settings).
 
 ## Fa'aigoaina se pepa
 

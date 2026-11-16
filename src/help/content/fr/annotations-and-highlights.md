@@ -20,7 +20,7 @@ ton propre code.
 La palette de surlignage est cohérente dans toute ton écriture et
 **respecte le thème actuel**, donc les surlignages restent lisibles en
 modes clair, sombre et contraste élevé. Ajuste le thème et l'apparence
-dans [Personnalisation et paramètres](customization-and-settings).
+dans [Personnalisation et paramètres](customisation-and-settings).
 
 ## Annotations
 
@@ -37,4 +37,4 @@ auquel il se rapporte, sans encombrer la prose elle-même.
 ## Voir aussi
 
 - [BrainSpace](brainspace) — développe une idée marquée plus loin.
-- [Personnalisation et paramètres](customization-and-settings) — thèmes et apparence.
+- [Personnalisation et paramètres](customisation-and-settings) — thèmes et apparence.

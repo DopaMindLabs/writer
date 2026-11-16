@@ -51,10 +51,10 @@ ki tōna aratohu kia taea ai e koe te tere ki te taipitopito.
 
 ## Whakarite
 
-- **Tautuhinga Tere** — kaupeka, arotahi, paepae rauemi, whānuitanga pānui, haerenga. [Akohia ake](customization-and-settings#quick-settings)
-- **Ngā kaupeka** — mārama, pouri, me te tairoa-teitei. [Akohia ake](customization-and-settings#themes)
-- **Momotuhi** — momotuhi kuputuhi me te rahi. [Akohia ake](customization-and-settings#typography)
-- **Whānuitanga pānui** — āhua kitea-iti rānei nui. [Akohia ake](customization-and-settings#reading-width)
+- **Tautuhinga Tere** — kaupeka, arotahi, paepae rauemi, whānuitanga pānui, haerenga. [Akohia ake](customisation-and-settings#quick-settings)
+- **Ngā kaupeka** — mārama, pouri, me te tairoa-teitei. [Akohia ake](customisation-and-settings#themes)
+- **Momotuhi** — momotuhi kuputuhi me te rahi. [Akohia ake](customisation-and-settings#typography)
+- **Whānuitanga pānui** — āhua kitea-iti rānei nui. [Akohia ake](customisation-and-settings#reading-width)
 
 ## Āheitanga
 

@@ -22,7 +22,7 @@ común. ¿Prefieres el teclado? Cada acción tiene también un atajo — consult
 [Formato y Markdown](formatting-and-markdown).
 
 Puedes desactivar la barra flotante en
-[Configuración rápida](customization-and-settings).
+[Configuración rápida](customisation-and-settings).
 
 ## Renombrar un documento
 

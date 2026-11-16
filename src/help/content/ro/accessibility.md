@@ -46,5 +46,5 @@ Modificările sunt stocate local și reaplicate la următoarea deschidere a apli
 
 ## Resurse conexe
 
-- [Personalizare și setări](customization-and-settings) — teme și tipografie.
+- [Personalizare și setări](customisation-and-settings) — teme și tipografie.
 - [Comenzi rapide de tastatură](keyboard-shortcuts) — navigare cu tastatura.

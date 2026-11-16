@@ -22,7 +22,7 @@ e whakamahia ana rawa atu. E hiahia ana ki te papapātuhi? Ko ia mahi he tohutoh
 [Whakarite & mākoha](formatting-and-markdown).
 
 Ka taea e koe te huri i te paepae rauemi rere ki raro i
-[Tautuhinga Tere](customization-and-settings#quick-settings).
+[Tautuhinga Tere](customisation-and-settings#quick-settings).
 
 ## Te whakaingoa anō i tētahi tuhinga
 

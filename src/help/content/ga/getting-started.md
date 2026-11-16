@@ -28,7 +28,7 @@ Sin an lúb iomlán. Ní mionsonra iad gach rud thíos is féidir leat filleadh 
 An chéad uair a osclaíonn tú scáileán príomhúil, díríonn turas idirghníomhach gairid aird ar
 na bunrudaí. Scip turas go leath-bhealach agus stopann turais ag tosú go huathoibríoch ar
 scáileáin eile freisin. Athsheinm aon turas am ar bith ón roghchlár cabhair (**?**)
-nó [Socruithe tapaidh](customization-and-settings#quick-settings).
+nó [Socruithe tapaidh](customisation-and-settings#quick-settings).
 
 ## Gaolmhar
 

@@ -51,10 +51,10 @@
 
 ## 맞춤 설정
 
-- **빠른 설정** — 테마, 포커스, 툴바, 읽기 너비, 투어. [자세히 보기](customization-and-settings#quick-settings)
-- **테마** — 밝게, 어둡게, 고대비. [자세히 보기](customization-and-settings#themes)
-- **타이포그래피** — 본문 폰트와 크기. [자세히 보기](customization-and-settings#typography)
-- **읽기 너비** — 좁거나 넓은 너비. [자세히 보기](customization-and-settings#reading-width)
+- **빠른 설정** — 테마, 포커스, 툴바, 읽기 너비, 투어. [자세히 보기](customisation-and-settings#quick-settings)
+- **테마** — 밝게, 어둡게, 고대비. [자세히 보기](customisation-and-settings#themes)
+- **타이포그래피** — 본문 폰트와 크기. [자세히 보기](customisation-and-settings#typography)
+- **읽기 너비** — 좁거나 넓은 너비. [자세히 보기](customisation-and-settings#reading-width)
 
 ## 접근성
 

@@ -45,5 +45,5 @@ Endringer lagres lokalt og gjenbrukes neste gang du åpner appen.
 
 ## Relatert
 
-- [Tilpasning og innstillinger](customization-and-settings) — temaer og typografi.
+- [Tilpasning og innstillinger](customisation-and-settings) — temaer og typografi.
 - [Tastatursnarveier](keyboard-shortcuts) — tastaturnavigasjon.

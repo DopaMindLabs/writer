@@ -18,7 +18,7 @@ van kleuren zodat je je eigen betekenissysteem kunt opbouwen.
 
 Het markeringspalet is consistent door al je schrijfwerk en **respecteert het huidige
 thema**, zodat markeringen leesbaar blijven in lichte, donkere en hoog-contrastmodi.
-Pas thema en uiterlijk aan via [Aanpassing en instellingen](customization-and-settings).
+Pas thema en uiterlijk aan via [Aanpassing en instellingen](customisation-and-settings).
 
 ## Annotaties
 
@@ -35,4 +35,4 @@ zonder de tekst zelf te verstoren.
 ## Gerelateerd
 
 - [BrainSpace](brainspace) — werk een gemarkeerd idee verder uit.
-- [Aanpassing en instellingen](customization-and-settings) — thema's en uiterlijk.
+- [Aanpassing en instellingen](customisation-and-settings) — thema's en uiterlijk.

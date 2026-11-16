@@ -51,10 +51,10 @@ do swojego przewodnika, dzięki czemu możesz przejść bezpośrednio do szczeg�
 
 ## Personalizacja
 
-- **Szybkie ustawienia** — motyw, skupienie, pasek narzędzi, szerokość czytania, samouczki. [Dowiedz się więcej](customization-and-settings#quick-settings)
-- **Motywy** — jasny, ciemny i wysoki kontrast. [Dowiedz się więcej](customization-and-settings#themes)
-- **Typografia** — krój i rozmiar czcionki. [Dowiedz się więcej](customization-and-settings#typography)
-- **Szerokość czytania** — wąski lub szeroki format. [Dowiedz się więcej](customization-and-settings#reading-width)
+- **Szybkie ustawienia** — motyw, skupienie, pasek narzędzi, szerokość czytania, samouczki. [Dowiedz się więcej](customisation-and-settings#quick-settings)
+- **Motywy** — jasny, ciemny i wysoki kontrast. [Dowiedz się więcej](customisation-and-settings#themes)
+- **Typografia** — krój i rozmiar czcionki. [Dowiedz się więcej](customisation-and-settings#typography)
+- **Szerokość czytania** — wąski lub szeroki format. [Dowiedz się więcej](customisation-and-settings#reading-width)
 
 ## Dostępność
 

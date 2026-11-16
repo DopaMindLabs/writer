@@ -18,7 +18,7 @@
 
 ハイライトパレットは文章全体で統一されており、**現在のテーマを尊重**するため、ライト・
 ダーク・ハイコントラストモードのいずれでもハイライトが見やすく表示されます。テーマと
-外観の調整は[カスタマイズと設定](customization-and-settings)で行えます。
+外観の調整は[カスタマイズと設定](customisation-and-settings)で行えます。
 
 ## 注釈
 
@@ -34,4 +34,4 @@
 ## 関連項目
 
 - [BrainSpace](brainspace) — マークしたアイデアをさらに発展させる。
-- [カスタマイズと設定](customization-and-settings) — テーマと外観。
+- [カスタマイズと設定](customisation-and-settings) — テーマと外観。

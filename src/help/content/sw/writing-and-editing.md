@@ -22,7 +22,7 @@ Unapendelea kibodi? Kila kitendo pia kina mkato — angalia
 [Muundo na markdown](formatting-and-markdown).
 
 Unaweza kuzima mwambaa wa zana unaoelea katika
-[Mipangilio ya haraka](customization-and-settings#quick-settings).
+[Mipangilio ya haraka](customisation-and-settings#quick-settings).
 
 ## Kubadilisha jina la hati
 

@@ -46,5 +46,5 @@ Zmiany są przechowywane lokalnie i stosowane ponownie przy następnym otwarciu 
 
 ## Powiązane
 
-- [Personalizacja i ustawienia](customization-and-settings) — motywy i typografia.
+- [Personalizacja i ustawienia](customisation-and-settings) — motywy i typografia.
 - [Skróty klawiszowe](keyboard-shortcuts) — nawigacja klawiaturą.

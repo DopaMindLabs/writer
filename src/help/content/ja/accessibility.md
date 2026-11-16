@@ -44,5 +44,5 @@
 
 ## 関連項目
 
-- [カスタマイズと設定](customization-and-settings) — テーマとタイポグラフィ。
+- [カスタマイズと設定](customisation-and-settings) — テーマとタイポグラフィ。
 - [キーボードショートカット](keyboard-shortcuts) — キーボードによるナビゲーション。

@@ -18,7 +18,7 @@ abyste si mohli vytvořit vlastní systém.
 
 Paleta zvýraznění je konzistentní v celém textu a **respektuje aktuální motiv**,
 takže zvýraznění zůstane čitelné ve světlém, tmavém i vysoce kontrastním režimu.
-Motiv a vzhled upravíte v části [Přizpůsobení a nastavení](customization-and-settings).
+Motiv a vzhled upravíte v části [Přizpůsobení a nastavení](customisation-and-settings).
 
 ## Poznámky
 
@@ -35,4 +35,4 @@ samotný text.
 ## Viz také
 
 - [BrainSpace](brainspace) — rozviňte označený nápad dále.
-- [Přizpůsobení a nastavení](customization-and-settings) — motivy a vzhled.
+- [Přizpůsobení a nastavení](customisation-and-settings) — motivy a vzhled.

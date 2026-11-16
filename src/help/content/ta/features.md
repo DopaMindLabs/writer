@@ -50,10 +50,10 @@
 
 ## தனிப்பயனாக்கம்
 
-- **விரைவு அமைப்புகள்** — தீம், கவனம், கருவிப்பட்டி, வாசிப்பு அகலம், சுற்றுலாக்கள். [மேலும் அறிக](customization-and-settings#quick-settings)
-- **தீம்கள்** — வெளிர், இருண்ட, மற்றும் உயர் மாறுபாடு. [மேலும் அறிக](customization-and-settings#themes)
-- **வகைப்பெயர்ச்சி** — உரை எழுத்துரு மற்றும் அளவு. [மேலும் அறிக](customization-and-settings#typography)
-- **வாசிப்பு அகலம்** — குறுகிய அல்லது பரந்த அளவீடு. [மேலும் அறிக](customization-and-settings#reading-width)
+- **விரைவு அமைப்புகள்** — தீம், கவனம், கருவிப்பட்டி, வாசிப்பு அகலம், சுற்றுலாக்கள். [மேலும் அறிக](customisation-and-settings#quick-settings)
+- **தீம்கள்** — வெளிர், இருண்ட, மற்றும் உயர் மாறுபாடு. [மேலும் அறிக](customisation-and-settings#themes)
+- **வகைப்பெயர்ச்சி** — உரை எழுத்துரு மற்றும் அளவு. [மேலும் அறிக](customisation-and-settings#typography)
+- **வாசிப்பு அகலம்** — குறுகிய அல்லது பரந்த அளவீடு. [மேலும் அறிக](customisation-and-settings#reading-width)
 
 ## அணுகல்தன்மை
 

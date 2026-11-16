@@ -22,7 +22,7 @@ is coitianta. An fearr leat an méarchlár? Tá aicearra ag gach gníomh freisin
 [Formáidiú & markdown](formatting-and-markdown).
 
 Is féidir an barra uirlisí snámhach a chasadh as i
-[Socruithe tapaidh](customization-and-settings#quick-settings).
+[Socruithe tapaidh](customisation-and-settings#quick-settings).
 
 ## Cáipéis a athainmniú
 

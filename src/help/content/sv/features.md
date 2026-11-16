@@ -51,10 +51,10 @@ så du kan hoppa direkt till detaljerna.
 
 ## Anpassning
 
-- **Snabbinställningar** — tema, fokus, verktygsfält, läsbredd, turer. [Läs mer](customization-and-settings#quick-settings)
-- **Teman** — ljust, mörkt och hög kontrast. [Läs mer](customization-and-settings#themes)
-- **Typografi** — prosatypsnitt och -storlek. [Läs mer](customization-and-settings#typography)
-- **Läsbredd** — smalt eller brett mått. [Läs mer](customization-and-settings#reading-width)
+- **Snabbinställningar** — tema, fokus, verktygsfält, läsbredd, turer. [Läs mer](customisation-and-settings#quick-settings)
+- **Teman** — ljust, mörkt och hög kontrast. [Läs mer](customisation-and-settings#themes)
+- **Typografi** — prosatypsnitt och -storlek. [Läs mer](customisation-and-settings#typography)
+- **Läsbredd** — smalt eller brett mått. [Läs mer](customisation-and-settings#reading-width)
 
 ## Tillgänglighet
 

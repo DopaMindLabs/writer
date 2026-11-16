@@ -28,7 +28,7 @@ Esse é o ciclo completo. Tudo abaixo é detalhe ao qual você pode voltar.
 Na primeira vez que você abre uma tela importante, um tour interativo rápido aponta
 os elementos essenciais. Pule um tour no meio e os tours param de iniciar automaticamente
 nas outras telas também. Reproduza qualquer tour quando quiser pelo menu **?** ou nas
-[Configurações rápidas](customization-and-settings#quick-settings).
+[Configurações rápidas](customisation-and-settings#quick-settings).
 
 ## Relacionado
 

@@ -51,10 +51,10 @@ kad galėtumėte iškart pereiti prie detalių.
 
 ## Tinkinimas
 
-- **Greiti nustatymai** — tema, fokusas, įrankių juosta, skaitymo plotis, mokomieji turai. [Sužinoti daugiau](customization-and-settings#quick-settings)
-- **Temos** — šviesioji, tamsioji ir didelio kontrasto. [Sužinoti daugiau](customization-and-settings#themes)
-- **Tipografija** — teksto šriftas ir dydis. [Sužinoti daugiau](customization-and-settings#typography)
-- **Skaitymo plotis** — siauras arba platus matmuo. [Sužinoti daugiau](customization-and-settings#reading-width)
+- **Greiti nustatymai** — tema, fokusas, įrankių juosta, skaitymo plotis, mokomieji turai. [Sužinoti daugiau](customisation-and-settings#quick-settings)
+- **Temos** — šviesioji, tamsioji ir didelio kontrasto. [Sužinoti daugiau](customisation-and-settings#themes)
+- **Tipografija** — teksto šriftas ir dydis. [Sužinoti daugiau](customisation-and-settings#typography)
+- **Skaitymo plotis** — siauras arba platus matmuo. [Sužinoti daugiau](customisation-and-settings#reading-width)
 
 ## Pritaikymas neįgaliesiems
 

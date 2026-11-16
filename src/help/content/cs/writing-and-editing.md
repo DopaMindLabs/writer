@@ -22,7 +22,7 @@ formátování. Preferujete klávesnici? Každá akce má také zkratku — viz
 [Formátování a markdown](formatting-and-markdown).
 
 Plovoucí panel nástrojů můžete vypnout v
-[Rychlém nastavení](customization-and-settings#quick-settings).
+[Rychlém nastavení](customisation-and-settings#quick-settings).
 
 ## Přejmenování dokumentu
 

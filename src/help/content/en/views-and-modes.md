@@ -40,11 +40,11 @@ headings, so good headings make navigation instant.
 ## Reading width
 
 Prefer a narrower or wider measure? Adjust the **reading width** in
-[Quick settings](customization-and-settings#quick-settings) to suit your eyes
+[Quick settings](customisation-and-settings#quick-settings) to suit your eyes
 and screen.
 
 ## Related
 
 - [Writing & editing](writing-and-editing) — the editing surface in depth.
-- [Customisation & settings](customization-and-settings) — themes and reading width.
+- [Customisation & settings](customisation-and-settings) — themes and reading width.
 - [Keyboard shortcuts](keyboard-shortcuts) — switch modes from the keyboard.

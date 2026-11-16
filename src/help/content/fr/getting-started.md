@@ -28,7 +28,7 @@ C'est toute la boucle. Tout ce qui suit, c'est du détail.
 
 La première fois que tu ouvres un écran clé, une courte visite interactive
 te montre l'essentiel. Replay une visite plus tard depuis le menu d'aide
-(**?**) ou les [Paramètres rapides](customization-and-settings).
+(**?**) ou les [Paramètres rapides](customisation-and-settings).
 
 ## Voir aussi
 

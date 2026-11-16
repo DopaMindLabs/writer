@@ -18,7 +18,7 @@ kia taea ai e koe te hanga i tōu ake tikanga.
 
 He rite tonu te tāhū tōrangitia mā tō tuhituhi katoa, ā, ka **whai i te kaupeka o nāianei**, nō reira ka noho
 mōhiotia ngā tōrangitia i roto i ngā āhua mārama, pouri, me te tairoa-teitei hoki. Tāera kaupeka me te āhua i
-[Whakarite & tautuhinga](customization-and-settings).
+[Whakarite & tautuhinga](customisation-and-settings).
 
 ## Tuhipoka
 
@@ -34,4 +34,4 @@ i ō whakaaro ētita tata ki ngā kuputuhi e hāngai ana, me te kore e whakangur
 ## Pānga
 
 - [BrainSpace](brainspace) — whakawhanaketia tētahi whakaaro kua tohua.
-- [Whakarite & tautuhinga](customization-and-settings) — ngā kaupeka me te āhua.
+- [Whakarite & tautuhinga](customisation-and-settings) — ngā kaupeka me te āhua.

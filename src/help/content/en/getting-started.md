@@ -26,7 +26,7 @@ saves automatically in your browser. Sync is available when you want it.
 The first time you open a key screen, a short interactive tour points out the
 essentials. Skip a tour part-way and tours stop starting automatically on
 other screens too. Replay any tour whenever you like from the help (**?**)
-menu or [Quick settings](customization-and-settings#quick-settings).
+menu or [Quick settings](customisation-and-settings#quick-settings).
 
 ## Related
 

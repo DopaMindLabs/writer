@@ -41,11 +41,11 @@ så gode overskrifter gør navigationen øjeblikkelig.
 ## Læsebredde
 
 Foretrækker du et smallere eller bredere mål? Juster **læsebredden** under
-[Hurtige indstillinger](customization-and-settings#quick-settings) efter dine øjne
+[Hurtige indstillinger](customisation-and-settings#quick-settings) efter dine øjne
 og din skærm.
 
 ## Relateret
 
 - [Skrivning og redigering](writing-and-editing) — redigeringsoverfladen i dybden.
-- [Tilpasning og indstillinger](customization-and-settings) — temaer og læsebredde.
+- [Tilpasning og indstillinger](customisation-and-settings) — temaer og læsebredde.
 - [Tastaturgenveje](keyboard-shortcuts) — skift tilstand fra tastaturet.

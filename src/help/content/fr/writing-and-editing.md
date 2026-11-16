@@ -22,7 +22,7 @@ formatage le plus courant. Tu préfères le clavier ? Chaque action a aussi
 un raccourci — voir [Formatage et Markdown](formatting-and-markdown).
 
 Tu peux désactiver la barre flottante dans
-[Paramètres rapides](customization-and-settings).
+[Paramètres rapides](customisation-and-settings).
 
 ## Renommer un document
 

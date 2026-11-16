@@ -46,5 +46,5 @@ As alterações são guardadas localmente e reaplicadas na próxima vez que abri
 
 ## Relacionado
 
-- [Personalização e definições](customization-and-settings) — temas e tipografia.
+- [Personalização e definições](customisation-and-settings) — temas e tipografia.
 - [Atalhos de teclado](keyboard-shortcuts) — navegação pelo teclado.

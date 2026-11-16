@@ -51,10 +51,10 @@ kipengele kinaelekeza kwenye mwongozo wake ili uweze kuruka moja kwa moja kwenye
 
 ## Ubinafsishaji
 
-- **Mipangilio ya haraka** — mandhari, kuzingatia, mwambaa wa zana, upana wa kusoma, ziara. [Jifunza zaidi](customization-and-settings#quick-settings)
-- **Mandhari** — mwanga, giza, na mwangaza wa juu. [Jifunza zaidi](customization-and-settings#themes)
-- **Fonti** — fonti na ukubwa wa maandishi ya mazungumzo. [Jifunza zaidi](customization-and-settings#typography)
-- **Upana wa kusoma** — kipimo nyembamba au pana. [Jifunza zaidi](customization-and-settings#reading-width)
+- **Mipangilio ya haraka** — mandhari, kuzingatia, mwambaa wa zana, upana wa kusoma, ziara. [Jifunza zaidi](customisation-and-settings#quick-settings)
+- **Mandhari** — mwanga, giza, na mwangaza wa juu. [Jifunza zaidi](customisation-and-settings#themes)
+- **Fonti** — fonti na ukubwa wa maandishi ya mazungumzo. [Jifunza zaidi](customisation-and-settings#typography)
+- **Upana wa kusoma** — kipimo nyembamba au pana. [Jifunza zaidi](customisation-and-settings#reading-width)
 
 ## Ufikiaji
 

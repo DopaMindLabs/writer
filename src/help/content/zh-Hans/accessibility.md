@@ -42,5 +42,5 @@
 
 ## 相关内容
 
-- [自定义与设置](customization-and-settings) — 主题与字体排版。
+- [自定义与设置](customisation-and-settings) — 主题与字体排版。
 - [键盘快捷键](keyboard-shortcuts) — 键盘导航。

@@ -39,5 +39,5 @@ Tan **Fọ àwọn ọ̀nà mọ́ nígbogbo ìgbà** kí àwọn ọ̀nà má �
 
 ## Jẹmọ́
 
-- [Àtunṣe & ìtọ́nà](customization-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti iṣẹ́ ìkọ.
+- [Àtunṣe & ìtọ́nà](customisation-and-settings) — àwọn àkójọpọ̀ àwọ̀ àti iṣẹ́ ìkọ.
 - [Àwọn keyboard shortcut](keyboard-shortcuts) — ìtọ́sọ́nà keyboard.

@@ -17,7 +17,7 @@ smíðað þína eigin merkingu.
 
 Litavalið er samkvæmt um alla ritun þína og **virðir núverandi þema**, þannig að
 undirstrikunin helst læsileg í ljósum, dökkum og háskerpuham. Stilltu þema og útlit í
-[Sérstilling og stillingar](customization-and-settings).
+[Sérstilling og stillingar](customisation-and-settings).
 
 ## Athugasemdir
 
@@ -34,4 +34,4 @@ prósan sjálfan.
 ## Tengd efni
 
 - [BrainSpace](brainspace) — þróaðu merkta hugmynd áfram.
-- [Sérstilling og stillingar](customization-and-settings) — þemu og útlit.
+- [Sérstilling og stillingar](customisation-and-settings) — þemu og útlit.

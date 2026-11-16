@@ -19,7 +19,7 @@ ili uweze kujenga maana yako mwenyewe.
 Paleti ya uangaziaji inakubaliana kwenye maandishi yako yote na **inaheshimu
 mandhari ya sasa**, hivyo uangaziaji unabaki unaoweza kusomeka katika hali za mwanga, giza, na mwangaza wa juu
 sawa. Rekebisha mandhari na mwonekano katika
-[Ubinafsishaji na mipangilio](customization-and-settings).
+[Ubinafsishaji na mipangilio](customisation-and-settings).
 
 ## Maelezo mafupi
 
@@ -36,4 +36,4 @@ maandishi yenyewe.
 ## Zinazohusiana
 
 - [BrainSpace](brainspace) — endeleza wazo lililowekwa alama zaidi.
-- [Ubinafsishaji na mipangilio](customization-and-settings) — mandhari na mwonekano.
+- [Ubinafsishaji na mipangilio](customisation-and-settings) — mandhari na mwonekano.

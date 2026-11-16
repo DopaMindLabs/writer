@@ -51,10 +51,10 @@ threoir ionas gur féidir leat léim díreach go dtí an mionsonra.
 
 ## Saincheapadh
 
-- **Socruithe tapaidh** — téama, fócas, barra uirlisí, leithead léitheoireachta, turais. [Foghlaim tuilleadh](customization-and-settings#quick-settings)
-- **Téamaí** — éadrom, dorcha, agus ardchodarsnacht. [Foghlaim tuilleadh](customization-and-settings#themes)
-- **Clóghrafaíocht** — clófhoireann agus méid próis. [Foghlaim tuilleadh](customization-and-settings#typography)
-- **Leithead léitheoireachta** — beart cúng nó leathan. [Foghlaim tuilleadh](customization-and-settings#reading-width)
+- **Socruithe tapaidh** — téama, fócas, barra uirlisí, leithead léitheoireachta, turais. [Foghlaim tuilleadh](customisation-and-settings#quick-settings)
+- **Téamaí** — éadrom, dorcha, agus ardchodarsnacht. [Foghlaim tuilleadh](customisation-and-settings#themes)
+- **Clóghrafaíocht** — clófhoireann agus méid próis. [Foghlaim tuilleadh](customisation-and-settings#typography)
+- **Leithead léitheoireachta** — beart cúng nó leathan. [Foghlaim tuilleadh](customisation-and-settings#reading-width)
 
 ## Inrochtaineacht
 

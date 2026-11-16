@@ -19,7 +19,7 @@ so you can build your own meaning.
 The highlight palette is consistent across your writing and **respects the
 current theme**, so highlights stay legible in light, dark, and high-contrast
 modes alike. Adjust theme and appearance in
-[Customisation & settings](customization-and-settings).
+[Customisation & settings](customisation-and-settings).
 
 ## Annotations
 
@@ -36,4 +36,4 @@ prose itself.
 ## Related
 
 - [BrainSpace](brainspace) — develop a marked-up idea further.
-- [Customisation & settings](customization-and-settings) — themes and appearance.
+- [Customisation & settings](customisation-and-settings) — themes and appearance.

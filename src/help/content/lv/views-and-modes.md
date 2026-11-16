@@ -41,11 +41,11 @@ labi virsraksti padara navigāciju tūlītēju.
 ## Lasīšanas platums
 
 Dodat priekšroku šaurākam vai platākam mēram? Pielāgojiet **lasīšanas platumu**
-[Ātriestatījumos](customization-and-settings#quick-settings) atbilstoši acīm
+[Ātriestatījumos](customisation-and-settings#quick-settings) atbilstoši acīm
 un ekrānam.
 
 ## Saistītais
 
 - [Rakstīšana un rediģēšana](writing-and-editing) — rediģēšanas virsma padziļināti.
-- [Pielāgošana un iestatījumi](customization-and-settings) — motīvi un lasīšanas platums.
+- [Pielāgošana un iestatījumi](customisation-and-settings) — motīvi un lasīšanas platums.
 - [Tastatūras īsceļi](keyboard-shortcuts) — pārslēdziet režīmus no tastatūras.

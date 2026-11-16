@@ -46,5 +46,5 @@ Le modifiche vengono memorizzate localmente e riapplicate alla prossima apertura
 
 ## Correlato
 
-- [Personalizzazione e impostazioni](customization-and-settings) — temi e tipografia.
+- [Personalizzazione e impostazioni](customisation-and-settings) — temi e tipografia.
 - [Scorciatoie da tastiera](keyboard-shortcuts) — navigazione con la tastiera.

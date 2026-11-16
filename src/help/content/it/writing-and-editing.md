@@ -22,7 +22,7 @@ formattazioni più comuni. Preferisci la tastiera? Ogni azione ha anche una scor
 vedi [Formattazione e markdown](formatting-and-markdown).
 
 Puoi disattivare la barra degli strumenti mobile nelle
-[Impostazioni rapide](customization-and-settings#quick-settings).
+[Impostazioni rapide](customisation-and-settings#quick-settings).
 
 ## Rinominare un documento
 

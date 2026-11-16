@@ -41,11 +41,11 @@ ho'o ngaahi 'ulu, ko ia ko e ngaahi 'ulu lelei 'oku ngāue ngofua 'a e teuteu.
 ## Laulahi 'o hono Lau
 
 Fili measi haiki pe lautō ange? Fokotu'u 'a e **laulahi 'o hono lau** 'i
-[Ngaahi Setenga Vave](customization-and-settings#quick-settings) ke ngāue'aki ki ho'o mata
+[Ngaahi Setenga Vave](customisation-and-settings#quick-settings) ke ngāue'aki ki ho'o mata
 mo e lau-'aho.
 
 ## Kaunga
 
 - [Tohi & Liliu](writing-and-editing) — ko e 'ānava liliu 'i he fakamahu'i.
-- [Ngaahi Liliu & Setenga](customization-and-settings) — ngaahi tefito mo e laulahi 'o hono lau.
+- [Ngaahi Liliu & Setenga](customisation-and-settings) — ngaahi tefito mo e laulahi 'o hono lau.
 - [Ngaahi Fo'i Kī-Boto](keyboard-shortcuts) — feohi 'a e ngaahi fōtunga mei he kī-boto.

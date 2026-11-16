@@ -27,7 +27,7 @@ Ese es todo el bucle. Lo de abajo son detalles a los que puedes volver.
 
 La primera vez que abres una pantalla clave, un breve tour interactivo te
 muestra lo esencial. Vuelve a reproducir cualquier tour desde el menú de ayuda
-(**?**) o desde [Configuración rápida](customization-and-settings).
+(**?**) o desde [Configuración rápida](customisation-and-settings).
 
 ## Relacionado
 

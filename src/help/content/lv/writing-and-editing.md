@@ -22,7 +22,7 @@ formatēšanas veidiem. Dodat priekšroku tastatūrai? Katrai darbībai ir arī 
 skatiet [Formatēšana un markdown](formatting-and-markdown).
 
 Peldošo rīkjoslu varat izslēgt
-[Ātriestatījumos](customization-and-settings#quick-settings).
+[Ātriestatījumos](customisation-and-settings#quick-settings).
 
 ## Dokumenta pārdēvēšana
 

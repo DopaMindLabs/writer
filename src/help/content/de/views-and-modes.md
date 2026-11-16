@@ -44,11 +44,11 @@ Gliederung ist aus deinen Überschriften gebaut, sodass gute
 ## Lesebreite
 
 Bevorzugst du ein engeres oder breiteres Maß? Passe die **Lesebreite**
-in [Schnelleinstellungen](customization-and-settings) an, um sie an
+in [Schnelleinstellungen](customisation-and-settings) an, um sie an
 deine Augen und deinen Bildschirm anzupassen.
 
 ## Verwandt
 
 - [Schreiben und Bearbeiten](writing-and-editing) — die Bearbeitungsoberfläche im Detail.
-- [Anpassung und Einstellungen](customization-and-settings) — Themen und Lesebreite.
+- [Anpassung und Einstellungen](customisation-and-settings) — Themen und Lesebreite.
 - [Tastenkürzel](keyboard-shortcuts) — Modi über die Tastatur wechseln.

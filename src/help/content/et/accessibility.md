@@ -46,5 +46,5 @@ Muudatused salvestatakse kohalikult ja rakendatakse uuesti järgmisel rakenduse 
 
 ## Seotud
 
-- [Kohandamine ja seaded](customization-and-settings) — teemad ja tüpograafia.
+- [Kohandamine ja seaded](customisation-and-settings) — teemad ja tüpograafia.
 - [Klaviatuuri otseteed](keyboard-shortcuts) — klaviatuuriga navigeerimine.
