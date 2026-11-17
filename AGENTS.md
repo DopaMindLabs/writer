@@ -92,11 +92,15 @@ The canonical sequence for any change, reconciling the rules that each demand to
 3. **Implement** until green, keeping lint/typecheck clean as you go.
 4. **Same PR:** update the spec section, help article(s), a11y tests, and `.stories.tsx`
    the change touches.
-5. **Run the gates:** `npm run lint`, `npm run typecheck`, `npm run test:run`;
-   `npm run test:e2e` for UI-facing changes; `npm run test:e2e:coverage` for
-   coverage-affecting changes.
+5. **Run the local gates:** `npm run lint`, `npm run typecheck`, and the unit tests and
+   e2e specs that cover the changed files (`npx vitest run <paths>`,
+   `npx playwright test <specs>`). CI runs the full unit suite, the full e2e suite and the
+   coverage ratchet on every pull request update and on pushes to `main` and `develop`;
+   leave the full sweep to it. A branch with no PR gets no CI run, so open the draft PR
+   before relying on it.
 6. **Conventional Commit** and push; the PR title must itself be a valid Conventional
-   Commit subject.
+   Commit subject. A correction to a commit already in the PR is folded into that commit
+   (see "Review fixes" under Commits & branches), not added on top.
 
 **When a stop-and-ask rule fires and no user can answer** (headless or autonomous run):
 stop that thread of work, finish what does not depend on the answer, and surface the
@@ -228,15 +232,16 @@ is checked in review.
 - **Coverage may only increase.** Never lower a value in `coverage-baseline.json` or relax the
   ratchet to make CI pass — fix the tests instead. When a run raises the floors, commit the
   updated `coverage-baseline.json`.
-- Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
+- `npm run test:e2e:coverage` gates CI on every pull request update and on pushes to `main`
+  and `develop`. Run it locally only to commit floors that a coverage improvement raises.
 - `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
   95% target / 85% floor applies to the rest of the app.
 
-### Running e2e (agents: headless, locally — don't defer to CI)
+### Running e2e (agents: headless; related specs locally, full suite in CI)
 
 - **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
-  or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
-  than waiting for CI to find failures.
+  or CI environment). Before pushing, run the specs that exercise the changed code yourself
+  rather than waiting for CI to find failures; CI runs the full suite and the ratchet.
 - **Write specs that pass cross-platform — agents run on macOS, CI runs on Linux.** Never
   assume the local OS. The trap is keyboard modifiers: `Meta` is Cmd on macOS (so `Meta+a`
   selects all locally) but the Super/Windows key on Linux/Windows, where the same chord is a
@@ -276,8 +281,8 @@ not a checkbox.
   test is being removed or is redundant. In that case, remove the test as part of that
   agreed change. Anything short of that — including a "temporary" skip — requires asking the
   user first.
-- Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
-  alongside `npm run lint` and `npm run typecheck`.
+- Before committing, run `npm run lint`, `npm run typecheck` and the unit tests and e2e
+  specs that cover the changed files. CI runs the full suites.
 
 ### Test-suite guardrails
 
@@ -329,6 +334,23 @@ the moment a misnamed branch is checked out (`--warn` mode):
   so a valid message under a vendor-noreply mailbox no longer slips through.
   The sole allowed occurrence in a message is the literal `.claude` config
   folder path, so a commit editing `.claude/settings.json` can still name the file.
+- **Review fixes.** When a review, CI or your own check finds a problem in a commit already
+  in the PR, fold the correction into that commit: `git commit --fixup=<sha>`, then squash
+  it in before pushing with `GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash <base>`
+  (`--autosquash` only acts under `-i`; the editor setting accepts the generated todo list
+  so it runs without a prompt). Keep one commit per logical change; never a chain of
+  "address review" commits. When the fold changes what the commit does, use
+  `git commit --fixup=amend:<sha>` instead: autosquash then replaces the commit's message
+  with the fixup's. That message keeps `amend! <original subject>` as its first line, then
+  a blank line and the new Conventional Commit message; without an interactive editor,
+  write it to a file and commit with `GIT_EDITOR="cp <file>"`. The squash is a force push
+  of the PR's own branch only, with `--force-with-lease`; never of `main`, `develop` or a
+  release branch.
+- **Restack children.** A squash rewrites the commits any stacked PR is built on. Before
+  pushing it, list the open PRs whose base is this branch. After pushing, rebase each one
+  onto the rewritten branch (`git rebase --onto <branch> <old-tip> <child>`) and
+  force-push it with `--force-with-lease`, so it shows only its own commits and diff. A
+  child branch you did not create is its author's to rebase: tell them instead.
 
 ### Protected branches (read before any git write)
 
@@ -370,6 +392,47 @@ production releases and is changed only through the project's release process, n
   flagged. It is the reviewer counterpart to the human-only item and must never be conflated
   with it.
 - Always open PRs as **Draft**; a maintainer marks them ready for review.
+
+### PR body content
+
+Each section carries one kind of fact. Write only what a reviewer cannot get from the
+diff, the checks panel or another section; a PR body is read long after it was written.
+
+- **Summary and Changes:** behaviour and the reason for it, not how the work was done.
+- **Commits:** the current `git log <base>..HEAD --oneline`, where `<base>` is the PR's
+  actual base branch. The template's comment names `develop`, the usual base; a stacked
+  PR uses its parent's branch instead. Update the list with every push.
+- **Testing Steps:** actions a reviewer takes. No results or counts.
+- **Checklist:** the only place that attests gates, TDD and repository rules. Tick the
+  gates item once CI's full run passes on the PR's head; the targeted local runs above do
+  not attest it on their own.
+- **Additional Comments:** optional. Reviewer context found nowhere else: stack order, a
+  decision the reviewer must make, a mismatch with a linked issue. Otherwise leave it empty.
+
+Never write these in a PR body:
+
+- gate results, test or file counts, or coverage figures;
+- CI or job status, or any claim true only when written ("the e2e job is still running");
+- self-attestation or negative claims ("no floors were lowered", "no new library is
+  needed", "reproduced before the fix"); the checklist, diff and CI are the evidence;
+- how the work was done: amends, folded commits, commit counts, agent process;
+- the state of other issues or PRs; comment on them instead;
+- known limitations or follow-ups; open an issue, and the cross-reference links it. A
+  limitation that is an unfixed security weakness is the exception: never describe it in a
+  PR, a public issue or a commit message. Report it privately: a draft GitHub security
+  advisory on this repository, or directly to a maintainer when you cannot create one.
+  Say only that a private report exists.
+
+### Review threads
+
+- Reply only after CI passes on the commit that fixes the finding: push, wait for green,
+  then reply and resolve. Never reply to or resolve a thread while that CI is pending or red.
+- A finding about the PR title or body alone has no fixing commit. Correct the title or
+  body, re-read it against `.github/PULL_REQUEST_TEMPLATE.md`, then reply and resolve.
+- One reply per thread: the fixing commit, the root cause and the test that proves it.
+- A finding you will not fix gets one reply giving the reason, and stays unresolved.
+- Before working from a PR's comments, list the open PRs whose base is that PR's branch: a
+  stacked PR may already hold the fix.
 
 ## Specification (read before changing behaviour)
 
