@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TemplateSection as TemplateSectionDef } from '@/data/templates';
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import type { TranslateFn } from './Sidebar.types';
 import {
   buildDocsForSection,
@@ -13,9 +14,17 @@ const section = (
   id: string,
   order: number,
   parentSectionId: string | null = null,
-): Section => ({ id, spaceId: 's1', parentSectionId, label: id, order });
+): Section => ({
+  ...sampleMetadata(),
+  id,
+  spaceId: 's1',
+  parentSectionId,
+  label: id,
+  order,
+});
 
 const doc = (id: string, sectionId: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

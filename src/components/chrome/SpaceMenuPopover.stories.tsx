@@ -1,9 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import type { Space } from '@/db/schema';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const space: Space = {
+  ...entityMetadata,
   id: 's1',
   tag: 'TST',
   name: 'Test Space',

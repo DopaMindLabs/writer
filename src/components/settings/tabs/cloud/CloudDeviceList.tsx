@@ -22,7 +22,7 @@ export interface CloudDeviceListProps {
  */
 export const CloudDeviceList = ({ onSignOut }: CloudDeviceListProps) => {
   const { t } = useTranslation('screens');
-  const key = (name: string) => `settings.account.cloud.devices.${name}`;
+  const key = (name: string) => `settings.cloud.devices.${name}`;
   const list = useDeviceList();
   const removal = useDeviceRemoval();
 

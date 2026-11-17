@@ -1,6 +1,6 @@
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { CloudSyncStatusRow } from './CloudSyncStatusRow';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 const CASES: { phase: SyncPhase; label: RegExp; klass: string }[] = [
   { phase: SyncPhase.InSync, label: /Up to date/i, klass: 'text-success' },

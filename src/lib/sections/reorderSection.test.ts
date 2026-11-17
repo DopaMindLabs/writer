@@ -1,9 +1,10 @@
 import { db } from '@/db/db';
 import { InvariantError } from '@/lib/invariant';
+import { sampleMetadata } from '@/test/fixtures';
 import { reorderSection } from './reorderSection';
 
 const putSection = (id: string, order: number, parentSectionId: string | null = null) =>
-  db.sections.put({ id, spaceId: 's1', parentSectionId, label: id, order });
+  db.sections.put({ ...sampleMetadata(), id, spaceId: 's1', parentSectionId, label: id, order });
 
 const orderOf = async (id: string) => (await db.sections.get(id))?.order;
 
@@ -36,6 +37,20 @@ describe('reorderSection', () => {
     expect(await orderOf('a')).toBe(0);
     expect(await orderOf('b')).toBe(1);
     expect(await orderOf('c')).toBe(2);
+  });
+
+  it('gives every renumbered section its own fresh mutation id', async () => {
+    const before = await db.sections.toArray();
+
+    await reorderSection('c', 0);
+
+    const after = await db.sections.toArray();
+    const ids = after.map((section) => section.mutationId);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const section of after) {
+      const previous = before.find((candidate) => candidate.id === section.id);
+      expect(section.mutationId).not.toBe(previous?.mutationId);
+    }
   });
 
   it('is a no-op for an unknown section', async () => {

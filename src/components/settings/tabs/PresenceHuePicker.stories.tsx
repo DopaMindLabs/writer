@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PresenceHuePicker } from './PresenceHuePicker';
-import type { PresenceHue } from '@/lib/account/profile';
+import type { PresenceHue } from '@/lib/profile/profile';
 
 const meta = {
   title: 'Settings/PresenceHuePicker',

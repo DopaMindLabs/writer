@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
-import { sampleDoc, seedBasicSpace } from '@/test/fixtures';
+import { sampleDoc, sampleMetadata, seedBasicSpace } from '@/test/fixtures';
 import { db } from '@/db/db';
 import type { Section } from '@/db/schema';
 import {
@@ -12,6 +12,7 @@ import {
 import { DocSectionSubmenu } from './DocSectionSubmenu';
 
 const NOTES_SECTION: Section = {
+  ...sampleMetadata(),
   id: 'sec2',
   spaceId: 's1',
   parentSectionId: null,

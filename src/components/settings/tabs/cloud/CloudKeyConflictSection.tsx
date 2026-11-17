@@ -16,7 +16,7 @@ export const CloudKeyConflictSection = ({
   onResolved,
 }: CloudKeyConflictSectionProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.conflict.${name}`);
+  const k = (name: string) => t(`settings.cloud.conflict.${name}`);
   const [open, setOpen] = useState(false);
   return (
     <>

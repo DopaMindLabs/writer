@@ -11,13 +11,21 @@ vi.mock('@/lib/sections', async (orig) => ({
   createSection: createSectionMock,
 }));
 
+import { sampleMetadata } from '@/test/fixtures';
 import { useAddSection } from './useAddSection';
 
 const section = (
   id: string,
   order: number,
   parentSectionId: string | null = null,
-): Section => ({ id, spaceId: 's1', parentSectionId, label: id, order });
+): Section => ({
+  ...sampleMetadata(),
+  id,
+  spaceId: 's1',
+  parentSectionId,
+  label: id,
+  order,
+});
 
 const keyEvent = (key: string): KeyboardEvent<HTMLInputElement> =>
   ({ key, preventDefault: vi.fn() }) as unknown as KeyboardEvent<HTMLInputElement>;

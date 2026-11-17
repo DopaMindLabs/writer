@@ -52,14 +52,14 @@ describe('SettingsScreen', () => {
     }
   });
 
-  it('renders the Account panel on the account tab', async () => {
+  it('renders the profile panel on the profile tab', async () => {
     const { findByRole, getByTestId } = renderWithProviders(<SettingsScreen />, {
-      initialEntries: ['/settings?tab=account'],
+      initialEntries: ['/settings?tab=profile'],
     });
     expect(
-      await findByRole('heading', { name: 'Account' }),
+      await findByRole('heading', { name: 'Profile' }),
     ).toBeInTheDocument();
-    expect(getByTestId('account-privacy-notice')).toBeInTheDocument();
+    expect(getByTestId('profile-privacy-notice')).toBeInTheDocument();
     expect(getByTestId('setting-display-name')).toBeInTheDocument();
   });
 
@@ -110,8 +110,8 @@ describe('SettingsScreen', () => {
       <SettingsScreen />,
       { initialEntries: ['/settings'] },
     );
-    fireEvent.click(getByTestId('settings-tab-account'));
-    expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
+    fireEvent.click(getByTestId('settings-tab-profile'));
+    expect(getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
     expect(queryByRole('heading', { name: 'Editor' })).not.toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { serializedBody } from '@/test/fixtures';
+import { sampleMetadata, serializedBody } from '@/test/fixtures';
 import i18n from '@/i18n';
 import type { Revision } from '@/db/schema';
 import {
@@ -10,6 +10,7 @@ import {
 const t = i18n.getFixedT('en', 'chrome');
 
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
+  ...sampleMetadata(),
   id: 'r',
   docId: 'd1',
   body: serializedBody('b'),

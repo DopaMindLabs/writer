@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/db/db';
+import type { Doc, Note, Space } from '@/db/schema';
+import type { DexieRow } from '@/lib/cloud/dexieRow';
 import {
   readSpaceSnapshot,
   type SpaceSnapshot,
@@ -87,9 +89,12 @@ describe('importSpaceArchive', () => {
 
   it('files an archive of a shared space into the importer\'s private realm', async () => {
     // Stamp the source rows as a shared space, the way sharing would.
-    await db.spaces.update('s1', { realmId: 'rlm-someone-else' });
-    await db.docs.update('d1', { realmId: 'rlm-someone-else' });
-    await db.notes.update('n1', { realmId: 'rlm-someone-else' });
+    const spaceRows = db.table<DexieRow<Space>>('spaces');
+    const docRows = db.table<DexieRow<Doc>>('docs');
+    const noteRows = db.table<DexieRow<Note>>('notes');
+    await spaceRows.update('s1', { realmId: 'rlm-someone-else' });
+    await docRows.update('d1', { realmId: 'rlm-someone-else' });
+    await noteRows.update('n1', { realmId: 'rlm-someone-else' });
 
     const { spaceId } = await importSpaceArchive(
       await parseSpaceArchive(await buildArchiveBlob()),
@@ -97,15 +102,15 @@ describe('importSpaceArchive', () => {
 
     // The import belongs to whoever ran it: no realm travels with the archive,
     // or the rows would land in a realm the importer may not belong to.
-    const space = await db.spaces.get(spaceId);
+    const space = await spaceRows.get(spaceId);
     expect(space?.realmId).toBeUndefined();
-    const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
+    const docs = await docRows.where('spaceId').equals(spaceId).toArray();
     expect(docs.every((doc) => doc.realmId === undefined)).toBe(true);
-    const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
+    const notes = await noteRows.where('spaceId').equals(spaceId).toArray();
     expect(notes.every((note) => note.realmId === undefined)).toBe(true);
 
     // The source keeps its realm — importing is a copy, not a move.
-    expect((await db.spaces.get('s1'))?.realmId).toBe('rlm-someone-else');
+    expect((await spaceRows.get('s1'))?.realmId).toBe('rlm-someone-else');
   });
 
   it('leaves the original space untouched', async () => {

@@ -13,9 +13,11 @@ vi.mock('@/lib/docs', async (orig) => ({
   createDoc: createDocMock,
 }));
 
+import { sampleMetadata } from '@/test/fixtures';
 import { useAddDoc } from './useAddDoc';
 
 const createdDoc: Doc = {
+  ...sampleMetadata(),
   id: 'new-doc',
   spaceId: 's1',
   sectionId: 'sec1',
@@ -26,6 +28,7 @@ const createdDoc: Doc = {
 };
 
 const journalSpace: Space = {
+  ...sampleMetadata(),
   id: 's1',
   tag: 'JRN',
   name: 'Journal',

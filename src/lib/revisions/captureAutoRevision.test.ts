@@ -6,12 +6,18 @@ import {
   captureBaselineRevision,
   resetAutoThrottle,
 } from './captureAutoRevision';
-import { serializedBody } from '@/test/fixtures';
+import { sampleDoc, serializedBody } from '@/test/fixtures';
 
 const DOC = 'd1';
 
 const countFor = (docId: string): Promise<number> =>
   db.revisions.where('docId').equals(docId).count();
+
+// A revision derives its access scope from its document, so the doc row must
+// exist before a revision can be captured for it.
+beforeEach(async () => {
+  await db.docs.put(sampleDoc);
+});
 
 describe('captureBaselineRevision', () => {
   beforeEach(() => { resetAutoThrottle(); });

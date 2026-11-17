@@ -65,12 +65,13 @@ First classify the change.
 2. Add or update the typed `Table` property in `src/db/LoremDB.ts`.
 3. Do **not** add a Dexie `version()` or an `upgrade()` callback. `LoremDB` declares one
    version and the change lands in `STORES` under it. Writer has no users, so wipe and
-   reseed a stale local database rather than adding legacy migration code.
-4. Add a focused DB schema test alongside the DB implementation.
-5. Decide replication separately. On `develop`, add a local-only table to `UNSYNCED` in
-   `src/db/buildDb.ts`; step 6 covers synced content. If the current branch contains a
-   canonical `writerTablePolicy.ts`, locate it with `navigate-writer-codebase` and use it;
-   never assume a future path.
+   reseed a stale local database rather than migrating it. See
+   [AGENTS.md § "Database schema versions"](../../../AGENTS.md).
+4. Add a focused DB schema test alongside the DB implementation, and classify any new
+   table in `src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table
+   fails `writerTablePolicy.test.ts`.
+5. Decide replication separately: `UNSYNCED` in `buildDb.ts` is *derived* from the table
+   policy, so classify the table rather than editing a list.
 6. Add a synced content table to `SYNCED_TABLES`; `cloudCrypto` is the special synced,
    already-wrapped escrow and is not row-encrypted.
 7. Update cascades, archives, restore/import, backup, and revision paths where relevant.
@@ -87,9 +88,9 @@ First classify the change.
 
 ## Hard rules
 
-- `LoremDB` declares **one** Dexie version. Add new tables/indexes to `STORES` under
-  `version(1)`; do not add an upgrade path unless the user explicitly changes Writer's
-  no-legacy-support policy.
+- `LoremDB` declares **one** Dexie version and new tables are added straight to
+  `STORES`. Do **not** add a `version(2)`, an `upgrade()` callback, or any other
+  migration path — Writer has no users and keeps no backward compatibility.
 - Never add a field to a synced table without verifying the encryption middleware
   covers it (`plaintextFieldsFor` in `src/lib/cloud/crypto/tableRules.ts`).
 - `docUpdates` must remain local-only — it is the CRDT update log and is rebuilt

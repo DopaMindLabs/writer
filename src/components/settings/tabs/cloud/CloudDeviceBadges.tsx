@@ -16,7 +16,7 @@ export const CloudDeviceBadges = ({
   isStale,
 }: CloudDeviceBadgesProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.devices.${name}`);
+  const k = (name: string) => t(`settings.cloud.devices.${name}`);
   return (
     <>
       {isThisDevice ? (

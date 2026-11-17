@@ -3,7 +3,7 @@ import type { Doc } from '@/db/schema';
 import { seedDocCrdt } from '@/lib/docs';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
-import { serializedBody } from './fixtures';
+import { sampleMetadata, serializedBody } from './fixtures';
 
 /**
  * Fixtures shared by the two reconciliation suites — the local mount gate
@@ -15,6 +15,7 @@ import { serializedBody } from './fixtures';
 export const RECONCILE_FIXED_TIME = 1_700_000_000_000;
 
 export const makeDoc = (id: string, body: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId: 'sec1',

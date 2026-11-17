@@ -2,6 +2,8 @@ import * as bibParser from '@retorquere/bibtex-parser';
 import { db } from '@/db/db';
 import { newId } from './ids';
 import type { Citation } from '@/db/schema';
+import type { PrincipalId } from 'writer-sync/core';
+import { newEntityMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 
 interface Creator {
   name?: string;
@@ -69,6 +71,7 @@ const mapType = (type: string | undefined): Citation['type'] => {
 export const parseBibtexText = (
   text: string,
   spaceId: string,
+  principal: PrincipalId,
 ): Promise<Citation[]> => {
   const parsed = (bibParser as unknown as { parse: (s: string) => { entries?: RawEntry[] } }).parse(text);
   const out: Citation[] = [];
@@ -76,6 +79,8 @@ export const parseBibtexText = (
     if (!entry.key) continue;
     const fields = entry.fields ?? {};
     out.push({
+      // An imported citation joins the access scope of the target space.
+      ...newEntityMetadata(spaceId, principal),
       id: newId(),
       spaceId,
       key: entry.key,
@@ -92,9 +97,10 @@ export const parseBibtexText = (
 export const parseBibtexFile = async (
   file: File,
   spaceId: string,
+  principal: PrincipalId,
 ): Promise<Citation[]> => {
   const text = await file.text();
-  return parseBibtexText(text, spaceId);
+  return parseBibtexText(text, spaceId, principal);
 };
 
 export const importCitations = async (

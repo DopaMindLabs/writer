@@ -27,7 +27,7 @@ export const useKeyConflictResolution = ({
 
   // Typing this word arms the destructive erase (mirrors typing a space's name to
   // delete it), so it can never fire on a single accidental click.
-  const eraseWord = t('settings.account.cloud.conflict.eraseWord');
+  const eraseWord = t('settings.cloud.conflict.eraseWord');
   const canErase =
     eraseConfirm.trim().toUpperCase() === eraseWord.toUpperCase() && !busy;
 
@@ -47,7 +47,7 @@ export const useKeyConflictResolution = ({
     void onAdopt(value)
       .then(finish)
       .catch(() => {
-        setError(t('settings.account.cloud.conflict.unlockWrong'));
+        setError(t('settings.cloud.conflict.unlockWrong'));
       })
       .finally(() => {
         setBusy(false);

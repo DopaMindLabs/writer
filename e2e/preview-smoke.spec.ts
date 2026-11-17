@@ -30,7 +30,7 @@ test.describe('deployed preview smoke', () => {
     // `blob:` relaxations. A misconfigured directive (e.g. an unreplaced <DB>
     // placeholder) surfaces here as a CSP console error the fixture catches.
     await page.goto('/?cloud-sync=on');
-    await page.goto('/settings?tab=account');
+    await page.goto('/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
   });
 });

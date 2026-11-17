@@ -2,9 +2,11 @@ import type { ComponentProps } from 'react';
 import { DndContext } from '@/components/libs/dnd';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import type { Doc } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { SortableDoc } from './SortableDoc';
 
 const makeDoc = (over: Partial<Doc> = {}): Doc => ({
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

@@ -18,7 +18,7 @@ export const QuickSettingsPopover = () => {
   // (theme, width, focus) below the fold.
   const isMobile = useMediaQuery('(max-width: 767px)');
   const fullSettings = popoverAppMenuLink('universal-settings');
-  const account = popoverAppMenuLink('account');
+  const profile = popoverAppMenuLink('profile');
   const help = popoverAppMenuLink('help');
 
   return (
@@ -52,9 +52,9 @@ export const QuickSettingsPopover = () => {
       />
 
       <QuickLink
-        to={account.href}
-        label={t(account.labelKey)}
-        testId={account.testId}
+        to={profile.href}
+        label={t(profile.labelKey)}
+        testId={profile.testId}
       />
 
       <SectionLabel testId="quick-settings-section-appearance">

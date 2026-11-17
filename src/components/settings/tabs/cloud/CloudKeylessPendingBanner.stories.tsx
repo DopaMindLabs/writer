@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CloudKeylessPendingBanner } from './CloudKeylessPendingBanner';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 const noop = () => {};
 

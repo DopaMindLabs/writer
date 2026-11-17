@@ -10,6 +10,7 @@ import {
 } from '@/lib/backup/buildSpaceMarkdownZip';
 import {
   ATTACHMENT_BYTES,
+  sampleMetadata,
   sampleSpace,
   seedRichSpace,
   serializedBody,
@@ -20,21 +21,48 @@ import { restoreSpaceArchive } from './restoreSpaceArchive';
 
 const WHEN = 1704067200000;
 
-const comparable = (snapshot: SpaceSnapshot): unknown => ({
-  ...snapshot,
-  attachments: snapshot.attachments.map((a) => ({ ...a, blob: undefined })),
-});
+/**
+ * A snapshot reduced to the content a restore must reproduce exactly. The
+ * convergence metadata is deliberately excluded: a restore is a material local
+ * change, so every restored row is reminted (see the reminting test below) and
+ * comparing those fields would assert the opposite of the intended behaviour.
+ */
+const CONVERGENCE_FIELDS = ['mutationId', 'logicalUpdatedAt'];
 
-const rootXml = (doc: Y.Doc): string =>
-  (doc.get('root', Y.XmlText) as Y.XmlText).toString();
+const comparable = (snapshot: SpaceSnapshot): unknown => {
+  const content = (row: object): unknown =>
+    Object.fromEntries(
+      Object.entries(row).filter(([field]) => !CONVERGENCE_FIELDS.includes(field)),
+    );
+  return {
+    ...snapshot,
+    space: content(snapshot.space),
+    sections: snapshot.sections.map(content),
+    docs: snapshot.docs.map(content),
+    notes: snapshot.notes.map(content),
+    attachments: snapshot.attachments.map((a) => content({ ...a, blob: undefined })),
+    annotations: snapshot.annotations.map(content),
+    citations: snapshot.citations.map(content),
+    connections: snapshot.connections.map(content),
+    palettes: snapshot.palettes.map(content),
+    revisions: snapshot.revisions.map(content),
+  };
+};
 
-/** Plain text of a CRDT seed payload's root shared type. */
+/**
+ * Plain text of a CRDT seed payload's root shared type. Read structurally via
+ * `toDelta()` — text lives in string inserts, formatting in attributes — so no
+ * markup is ever rendered, and prose containing literal angle brackets
+ * survives intact.
+ */
 const seedText = (payload: Uint8Array): string => {
   const doc = new Y.Doc();
   Y.applyUpdate(doc, payload, 'test');
-  const xml = rootXml(doc);
+  const ops = (doc.get('root', Y.XmlText) as Y.XmlText).toDelta() as readonly {
+    readonly insert?: unknown;
+  }[];
   doc.destroy();
-  return xml.replace(/<[^>]*>/g, '');
+  return ops.map((op) => (typeof op.insert === 'string' ? op.insert : '')).join('');
 };
 
 const mutateSpace = async (): Promise<void> => {
@@ -42,6 +70,7 @@ const mutateSpace = async (): Promise<void> => {
   await db.notes.delete('n2');
   await db.connections.delete('c1');
   await db.citations.add({
+    ...sampleMetadata(),
     id: 'cit-extra',
     spaceId: 's1',
     key: 'extra',
@@ -70,6 +99,25 @@ describe('restoreSpaceArchive', () => {
     expect(comparable(after)).toEqual(comparable(before));
     expect(await after.attachments[0].blob.text()).toBe(ATTACHMENT_BYTES);
     expect(await db.citations.get('cit-extra')).toBeUndefined();
+  });
+
+  it('remints every restored row so the restore replicates to other devices', async () => {
+    const before = await readSpaceSnapshot('s1');
+    const blob = await buildSpaceArchive(before, WHEN);
+
+    await mutateSpace();
+    await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
+
+    // Re-putting the archived mutation ids would be journalled as operations
+    // the other devices have already accepted: they would discard the restored
+    // rows as replays and keep the deletions that preceded them.
+    const after = await readSpaceSnapshot('s1');
+    expect(after.space.mutationId).not.toBe(before.space.mutationId);
+    for (const note of after.notes) {
+      const archived = before.notes.find((candidate) => candidate.id === note.id);
+      expect(note.mutationId).not.toBe(archived?.mutationId);
+    }
+    expect(after.space.createdBy).toBe(before.space.createdBy);
   });
 
   it('stores a pre-restore snapshot backup before replacing content', async () => {

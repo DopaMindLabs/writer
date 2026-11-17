@@ -29,7 +29,7 @@ export const CloudSignInAckDialog = ({
   onConfirm,
 }: CloudSignInAckDialogProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.ack.${name}`);
+  const k = (name: string) => t(`settings.cloud.ack.${name}`);
   const [acknowledged, setAcknowledged] = useState(false);
   const [backupConfirmed, setBackupConfirmed] = useState(false);
   const reset = () => {

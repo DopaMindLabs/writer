@@ -3,6 +3,21 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 
 vi.mock('@/lib/cloud/cloudClient', () => ({
   startCloudSession: vi.fn(),
+  // Boot's frame ingestion subscribes to the default provider's settled-round
+  // observable, so the facade mock must hand back a real subscription.
+  cloudSyncComplete: vi.fn(() => ({
+    subscribe: () => ({ unsubscribe: () => undefined }),
+  })),
+  requestCloudSync: vi.fn(),
+  cloudSyncState: vi.fn(() => ({
+    subscribe: () => ({ unsubscribe: () => undefined }),
+  })),
+  cloudEscrowPresence: vi.fn(() => ({
+    subscribe: () => ({ unsubscribe: () => undefined }),
+  })),
+  createCloudEncryption: vi.fn(),
+  unlockCloudEncryption: vi.fn(),
+  recoverCloudEncryption: vi.fn(),
 }));
 vi.mock('@/lib/boot/devBootParams', () => ({
   applyDevBootParams: vi.fn(),

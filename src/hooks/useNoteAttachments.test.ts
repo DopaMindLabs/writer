@@ -1,12 +1,14 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
 import type { NoteAttachment } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   useNoteAttachments,
   useNoteAttachmentsBySpace,
 } from './useNoteAttachments';
 
 const makeAttachment = (overrides: Partial<NoteAttachment>): NoteAttachment => ({
+  ...sampleMetadata(),
   id: 'a',
   noteId: 'n1',
   spaceId: 's1',

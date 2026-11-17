@@ -10,11 +10,12 @@ import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import {
   FIXED_TIME,
   sampleAnnotation,
   sampleDoc,
+  sampleMetadata,
   sampleRevision,
 } from '@/test/fixtures';
 import type { Section } from '@/db/schema';
@@ -43,6 +44,7 @@ const seedDocGraph = async (docId: string, sectionId: string): Promise<void> => 
 
 const putSection = (over: Partial<Section> & Pick<Section, 'id' | 'label'>) =>
   db.sections.put({
+    ...sampleMetadata(),
     spaceId: 's1',
     parentSectionId: null,
     order: 0,
@@ -131,7 +133,7 @@ describe('deleteSectionCascade under cloud encryption', () => {
     });
     cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
     await cloudDb.open();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
   });
 
   afterEach(async () => {
@@ -143,10 +145,10 @@ describe('deleteSectionCascade under cloud encryption', () => {
 
   it('deletes the section and its documents even though rows are encrypted', async () => {
     await cloudDb.table<Row>('sections').put({
-      id: 'cs', spaceId: 's', parentSectionId: null, label: 'Cloud', order: 0,
+      id: 'cs', spaceId: 's', parentSectionId: null, accessScopeId: 's', label: 'Cloud', order: 0,
     });
     await cloudDb.table<Row>('docs').put({
-      id: 'cd', spaceId: 's', sectionId: 'cs', updatedAt: 1, name: 'D',
+      id: 'cd', spaceId: 's', sectionId: 'cs', updatedAt: 1, accessScopeId: 's', name: 'D',
     });
 
     await deleteSectionCascade('cs', cloudDb);

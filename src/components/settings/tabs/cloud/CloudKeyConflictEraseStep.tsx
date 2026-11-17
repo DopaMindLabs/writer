@@ -33,7 +33,7 @@ export const CloudKeyConflictEraseStep = ({
   onErase,
 }: CloudKeyConflictEraseStepProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.conflict.${name}`);
+  const k = (name: string) => t(`settings.cloud.conflict.${name}`);
   return (
     <>
       <DialogHeader>
@@ -52,7 +52,7 @@ export const CloudKeyConflictEraseStep = ({
 
       <div className="mt-4">
         <Label htmlFor="cloud-conflict-erase-input" weight="regular">
-          {t('settings.account.cloud.conflict.eraseConfirmLabel', { word: eraseWord })}
+          {t('settings.cloud.conflict.eraseConfirmLabel', { word: eraseWord })}
         </Label>
         <TextField
           id="cloud-conflict-erase-input"

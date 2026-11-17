@@ -9,7 +9,7 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
  */
 export const CloudDeviceLimitBanner = () => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.deviceLimit.${name}`);
+  const k = (name: string) => t(`settings.cloud.deviceLimit.${name}`);
   return (
     <InlineBanner
       kind="warning"

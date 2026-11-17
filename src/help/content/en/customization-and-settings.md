@@ -19,7 +19,7 @@ your document. Open it from the **⋮** button on the app rail — on a phone, o
 the navigation drawer first, where the rail lives. Controls are grouped by purpose:
 
 - **Writing** — the **focus mode** and **floating toolbar** toggles.
-- **Settings** — **universal settings →** and **account →** links, so the full
+- **Settings** — **universal settings →** and **profile →** links, so the full
   settings screen is always one click away.
 - **Appearance** — the **theme** switch and **reading width**.
 - **Help tour** — replay a guided tour (desktop only).
