@@ -4,12 +4,12 @@ export const FEATURE_AREAS = [
   'getting-started',
   'writing',
   'formatting',
-  'organizing',
+  'organising',
   'views-modes',
   'citations',
   'brainspace',
   'annotations',
-  'customization',
+  'customisation',
   'accessibility',
   'shortcuts',
   'data',
@@ -36,12 +36,12 @@ export interface HelpArticle {
 export const HELP_CATEGORIES: readonly HelpCategory[] = [
   { id: 'getting-started', icon: 'Sparkles' },
   { id: 'writing', icon: 'Pencil' },
-  { id: 'organizing', icon: 'List' },
+  { id: 'organising', icon: 'List' },
   { id: 'views', icon: 'Columns2' },
   { id: 'research', icon: 'Quote' },
   { id: 'brainspace', icon: 'Brain' },
   { id: 'annotations', icon: 'Highlighter' },
-  { id: 'customization', icon: 'Settings' },
+  { id: 'customisation', icon: 'Settings' },
   { id: 'data', icon: 'Database' },
   { id: 'mobile', icon: 'Smartphone' },
 ] as const;
@@ -130,8 +130,8 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
   {
     slug: 'organising-your-work',
-    category: 'organizing',
-    featureArea: 'organizing',
+    category: 'organising',
+    featureArea: 'organising',
     keywords: ['space', 'section', 'document', 'template', 'folder', 'organize'],
     related: ['getting-started', 'views-and-modes'],
   },
@@ -180,15 +180,15 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
   {
     slug: 'customisation-and-settings',
-    category: 'customization',
-    featureArea: 'customization',
+    category: 'customisation',
+    featureArea: 'customisation',
     keywords: ['theme', 'dark', 'typography', 'settings', 'preferences', 'editor'],
     related: ['keyboard-shortcuts', 'your-data', 'your-profile'],
   },
   {
     slug: 'your-profile',
-    category: 'customization',
-    featureArea: 'customization',
+    category: 'customisation',
+    featureArea: 'customisation',
     keywords: [
       'account',
       'profile',
@@ -204,7 +204,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
   {
     slug: 'accessibility',
-    category: 'customization',
+    category: 'customisation',
     featureArea: 'accessibility',
     keywords: [
       'accessibility',
@@ -220,7 +220,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
   {
     slug: 'keyboard-shortcuts',
-    category: 'customization',
+    category: 'customisation',
     featureArea: 'shortcuts',
     keywords: ['keyboard', 'shortcut', 'hotkey', 'command', 'cmd', 'ctrl'],
     related: ['views-and-modes', 'formatting-and-markdown'],

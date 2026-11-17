@@ -81,4 +81,20 @@ describe('help registry coverage', () => {
       expect(HELP_SLUGS, `${retired} points nowhere`).toContain(current);
     }
   });
+
+  it('names every category in every locale', () => {
+    // A category id is also its translation key, so renaming one in the
+    // registry but not in a locale shows that reader the raw key instead.
+    const locales = import.meta.glob<{ categories?: Record<string, string> }>(
+      '../../i18n/locales/*/help.json',
+      { eager: true, import: 'default' },
+    );
+    const missing = Object.entries(locales).flatMap(([path, help]) =>
+      HELP_CATEGORIES.filter(({ id }) => !help.categories?.[id]).map(
+        ({ id }) => `${path}: ${id}`,
+      ),
+    );
+    expect(Object.keys(locales).length).toBeGreaterThan(1);
+    expect(missing).toEqual([]);
+  });
 });
